@@ -1,0 +1,7 @@
+*.pyc
+.vscode
+.idea
+.pytest_cache
+__pycache__
+*.ipynb
+*.svg
