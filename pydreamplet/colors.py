@@ -39,6 +39,27 @@ def str2rgb(col):
     return rgb
 
 
+def hex_to_rgb(hex_color: str) -> tuple[int, int, int]:
+    """
+    Convert a hex color string (e.g., "#ff0000") to an (R, G, B) tuple.
+    """
+    hex_color = hex_color.lstrip("#")
+    if len(hex_color) != 6:
+        raise ValueError("Hex color must be in the format RRGGBB")
+    r = int(hex_color[0:2], 16)
+    g = int(hex_color[2:4], 16)
+    b = int(hex_color[4:6], 16)
+    return (r, g, b)
+
+
+def rgb_to_hex(rgb: tuple[int, int, int]) -> str:
+    """
+    Convert an (R, G, B) tuple to a hex color string.
+    """
+    r, g, b = rgb
+    return f"#{r:02x}{g:02x}{b:02x}"
+
+
 def color2rgba(c, alpha=1):
     """
     Converts an input color (which can be a list/tuple of three numbers,

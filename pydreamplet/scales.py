@@ -1,6 +1,8 @@
 import math
 from collections.abc import Callable
 
+from pydreamplet.colors import hex_to_rgb, rgb_to_hex
+
 
 def linear_scale(
     domain: tuple[float, float], range_: tuple[float, float]
@@ -79,6 +81,47 @@ def ordinal_scale(domain: list[str], range_: list) -> Callable[[str], object]:
 
     def scale(value: str) -> object:
         return mapping.get(value)
+
+    return scale
+
+
+def color_scale(
+    domain: tuple[float, float], range_: tuple[str, str]
+) -> Callable[[float], str]:
+    """
+    Create a color scale that maps a numeric value (from the given domain) to a color.
+
+    Args:
+        domain: A tuple (d0, d1) specifying the minimum and maximum numeric values.
+        range_: A tuple of two hex color strings (start_color, end_color).
+                The scale will interpolate between these colors.
+
+    Returns:
+        A function that takes a numeric value, normalizes it based on the domain,
+        and returns an interpolated hex color.
+
+    The mapping is performed by converting the hex colors to RGB, linearly interpolating
+    each channel according to the normalized value, and converting the result back to a hex string.
+    """
+    d0, d1 = domain
+    if d1 == d0:
+        raise ValueError("Domain minimum and maximum must be distinct")
+
+    start_color, end_color = range_
+    rgb_start = hex_to_rgb(start_color)
+    rgb_end = hex_to_rgb(end_color)
+
+    def scale(value: float) -> str:
+        # Normalize the input value to a parameter t between 0 and 1.
+        t = (value - d0) / (d1 - d0)
+        # Optionally, clamp t between 0 and 1:
+        t = max(0, min(1, t))
+
+        # Linearly interpolate each RGB channel.
+        r = int(rgb_start[0] + t * (rgb_end[0] - rgb_start[0]))
+        g = int(rgb_start[1] + t * (rgb_end[1] - rgb_start[1]))
+        b = int(rgb_start[2] + t * (rgb_end[2] - rgb_start[2]))
+        return rgb_to_hex((r, g, b))
 
     return scale
 

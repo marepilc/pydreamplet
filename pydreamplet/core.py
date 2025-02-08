@@ -103,6 +103,16 @@ class SVG(SvgElement):
                 raise ValueError("viewbox must be a list or tuple of 2 or 4 numbers")
         self.attrs({"viewBox": vb})
 
+    @property
+    def width(self):
+        viewbox = [int(v) for v in self.element.get("viewBox").split(" ")]
+        return viewbox[2] - viewbox[0]
+
+    @property
+    def height(self):
+        viewbox = [int(v) for v in self.element.get("viewBox").split(" ")]
+        return viewbox[3] - viewbox[1]
+
     def display(self):
         display(IPythonSVG(self.tostring()))
 
