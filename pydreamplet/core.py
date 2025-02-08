@@ -4,7 +4,6 @@ from IPython.display import SVG as IPythonSVG
 from IPython.display import display
 
 from pydreamplet.constants import PI
-from pydreamplet.typography import TypographyMeasurer
 
 SVG_NS = "http://www.w3.org/2000/svg"
 ET.register_namespace("", SVG_NS)
@@ -79,7 +78,9 @@ class SvgElement:
 
 
 class SVG(SvgElement):
-    def __init__(self, dimensions=(300, 300), viewbox=(0, 0, 300, 300), **kwargs):
+    def __init__(
+        self, dimensions=(300, 300), viewbox: tuple[int] | None = None, **kwargs
+    ):
         """
         Create an SVG root element.
 
@@ -91,12 +92,15 @@ class SVG(SvgElement):
         """
         super().__init__("svg", **kwargs)
         self.attrs({"width": dimensions[0], "height": dimensions[1]})
-        if len(viewbox) == 4:
-            vb = f"{viewbox[0]} {viewbox[1]} {viewbox[2]} {viewbox[3]}"
-        elif len(viewbox) == 2:
-            vb = f"0 0 {viewbox[0]} {viewbox[1]}"
+        if not viewbox:
+            vb = f"0 0 {dimensions[0]} {dimensions[1]}"
         else:
-            raise ValueError("viewbox must be a list or tuple of 2 or 4 numbers")
+            if len(viewbox) == 4:
+                vb = f"{viewbox[0]} {viewbox[1]} {viewbox[2]} {viewbox[3]}"
+            elif len(viewbox) == 2:
+                vb = f"0 0 {viewbox[0]} {viewbox[1]}"
+            else:
+                raise ValueError("viewbox must be a list or tuple of 2 or 4 numbers")
         self.attrs({"viewBox": vb})
 
     def display(self):
