@@ -4,11 +4,8 @@ from pydreamplet import SVG, Rect, Text
 
 
 def test_svg_dimensions():
-    svg = SVG(dimensions=[300, 300], viewbox=[600, 600])
+    svg = SVG(viewbox=[600, 600])
     root = ET.fromstring(str(svg))
-    assert root.attrib.get("width") == "300"
-    assert root.attrib.get("height") == "300"
-    # Since viewbox was passed as 2 numbers, expect "0 0 600 600"
     assert root.attrib.get("viewBox") == "0 0 600 600"
 
 
@@ -38,7 +35,7 @@ def test_text_single_line():
 
 def test_text_multiline():
     text = Text("", x=10, y=10, font_size=20)
-    text.set("Hello,\nWorld!")
+    text.content = "Hello,\nWorld!"
     # When multiline, element.text should be None and two tspans should exist.
     assert text.element.text is None
     tspans = list(text.element)

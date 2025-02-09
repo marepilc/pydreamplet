@@ -14,6 +14,18 @@ def qname(tag):
 
 
 class SvgElement:
+    @classmethod
+    def from_element(cls, element):
+        """
+        Create a new SvgElement from an existing ElementTree element.
+        This allows us to wrap existing elements in our convenience class.
+        """
+        local_tag = element.tag.split("}")[-1]
+
+        instance = cls(local_tag)
+        instance.element = element
+        return instance
+
     def __init__(self, tag, **kwargs):
         # Use object.__setattr__ to avoid triggering our custom __setattr__
         object.__setattr__(self, "element", ET.Element(qname(tag)))
@@ -78,9 +90,15 @@ class SvgElement:
 
 
 class SVG(SvgElement):
-    def __init__(
-        self, dimensions=(300, 300), viewbox: tuple[int] | None = None, **kwargs
-    ):
+    @classmethod
+    def from_file(cls, filename):
+        tree = ET.parse(filename)
+        root = tree.getroot()
+        instance = cls(viewbox=tuple(map(int, root.get("viewBox").split())))
+        instance.element = root
+        return instance
+
+    def __init__(self, viewbox: tuple[int, ...], **kwargs):
         """
         Create an SVG root element.
 
@@ -91,17 +109,36 @@ class SVG(SvgElement):
                    - If 4 numbers, treated as [minX, minY, width, height].
         """
         super().__init__("svg", **kwargs)
-        self.attrs({"width": dimensions[0], "height": dimensions[1]})
-        if not viewbox:
-            vb = f"0 0 {dimensions[0]} {dimensions[1]}"
+        if len(viewbox) == 4:
+            vb = f"{viewbox[0]} {viewbox[1]} {viewbox[2]} {viewbox[3]}"
+        elif len(viewbox) == 2:
+            vb = f"0 0 {viewbox[0]} {viewbox[1]}"
         else:
-            if len(viewbox) == 4:
-                vb = f"{viewbox[0]} {viewbox[1]} {viewbox[2]} {viewbox[3]}"
-            elif len(viewbox) == 2:
-                vb = f"0 0 {viewbox[0]} {viewbox[1]}"
-            else:
-                raise ValueError("viewbox must be a list or tuple of 2 or 4 numbers")
+            raise ValueError("viewbox must be a list or tuple of 2 or 4 numbers")
         self.attrs({"viewBox": vb})
+
+    def find(self, tag, nested=False):
+        """
+        Find the first sub-element matching the given tag and wrap it in SvgElement.
+        Return None if no such element is found.
+        """
+        if nested:
+            found = self.element.find(".//" + qname(tag))
+        else:
+            found = self.element.find(qname(tag))
+        if found is not None:
+            return SvgElement.from_element(found)
+        return None
+
+    def find_all(self, tag, nested=False):
+        """
+        Find all sub-elements matching the given tag, returning a list of SvgElement objects.
+        """
+        if nested:
+            found_list = self.element.findall(".//" + qname(tag))
+        else:
+            found_list = self.element.findall(qname(tag))
+        return [SvgElement.from_element(el) for el in found_list]
 
     @property
     def width(self):
