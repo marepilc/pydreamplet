@@ -248,29 +248,41 @@ class Text(SvgElement):
             # For single-line text, set the text directly.
             self.element.text = new_text
 
-    # def dimensions(self, measurer: TypographyMeasurer) -> tuple[float, float]:
-    #     """
-    #     Returns the (width, height) of the text element using the TypographyMeasurer.
-    #     Uses the stored raw text and relevant font attributes.
-    #     """
-    #     font_family = self.element.attrib.get("font-family", "Arial")
-    #     try:
-    #         font_size = float(self.element.attrib.get("font-size", "16"))
-    #     except ValueError:
-    #         font_size = 16
-    #     try:
-    #         font_weight = int(self.element.attrib.get("font-weight", 400))
-    #     except ValueError:
-    #         font_weight = 400
 
-    #     return measurer.measure_text(
-    #         self._raw_text, font_family, font_weight, font_size
-    #     )
+class TextOnPath(SvgElement):
+    def __init__(self, initial_text="", path="", text_path_args=None, **kwargs):
+        """
+        Create a <text> element containing a nested <textPath> element for rendering text along a path.
 
-    # def width(self, measurer: TypographyMeasurer) -> float:
-    #     """Return the width of the text element."""
-    #     return self.dimensions(measurer)[0]
+        Parameters:
+          initial_text: The text to display along the path.
+          path: A string representing the reference to the path (e.g. "#myPath").
+          text_path_kwargs: A dictionary of attributes to set on the inner <textPath> element.
+          kwargs: Additional attributes for the outer <text> element (e.g. x, y, font_family).
+        """
+        # Create the outer <text> element.
+        super().__init__("text", **kwargs)
+        # Bypass __setattr__ to store the textPath element as an instance variable.
+        object.__setattr__(self, "text_path", SvgElement("textPath"))
+        # Initialize text_path_kwargs if not provided.
+        if text_path_args is None:
+            text_path_args = {}
+        # If a path reference is provided, set it in text_path_kwargs (if not already provided).
+        if path:
+            text_path_args.setdefault("href", path)
+        # Set attributes on the <textPath> element.
+        self.text_path.attrs(text_path_args)
+        # Append the <textPath> element to the <text> element.
+        self.append(self.text_path)
+        # Set the text content.
+        self.content = initial_text
 
-    # def height(self, measurer: TypographyMeasurer) -> float:
-    #     """Return the height of the text element."""
-    #     return self.dimensions(measurer)[1]
+    @property
+    def content(self) -> str:
+        """Return the current text content of the textPath element."""
+        return self.text_path.element.text or ""
+
+    @content.setter
+    def content(self, new_text: str):
+        """Update the text content of the textPath element."""
+        self.text_path.element.text = new_text

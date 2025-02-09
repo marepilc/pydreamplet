@@ -6,6 +6,7 @@ from pydreamplet.core import (
     Rect,
     SvgElement,
     Text,
+    TextOnPath,
 )
 
 __all__ = [
@@ -16,4 +17,5 @@ __all__ = [
     "Rect",
     "SvgElement",
     "Text",
+    "TextOnPath",
 ]

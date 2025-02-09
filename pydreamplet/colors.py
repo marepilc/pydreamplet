@@ -11,7 +11,7 @@ def hexStr(n):
     return format(n, "02x")
 
 
-def randomInt(min_val, max_val):
+def random_int(min_val, max_val):
     """Returns a random integer N such that min_val <= N <= max_val."""
     return random.randint(min_val, max_val)
 
@@ -126,11 +126,11 @@ def blend(color1, color2, proportion):
         return "#000000"
 
 
-def randomColor():
+def random_color():
     """
     Generates a random hex color string.
     """
-    r = hexStr(randomInt(0, 255))
-    g = hexStr(randomInt(0, 255))
-    b = hexStr(randomInt(0, 255))
+    r = hexStr(random_int(0, 255))
+    g = hexStr(random_int(0, 255))
+    b = hexStr(random_int(0, 255))
     return "#" + r + g + b
