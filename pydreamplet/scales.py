@@ -1,180 +1,380 @@
 import math
-from collections.abc import Callable
 
 from pydreamplet.colors import hex_to_rgb, rgb_to_hex
 
 
-def linear_scale(
-    domain: tuple[float, float], range_: tuple[float, float]
-) -> Callable[[float], float]:
+class LinearScale:
     """
-    Linearly maps a value from the input domain to the output range.
+    A linear scale that maps a numeric value from a given domain
+    to an output range.
     """
-    d0, d1 = domain
-    r0, r1 = range_
 
-    def scale(value: float) -> float:
-        return ((value - d0) / (d1 - d0)) * (r1 - r0) + r0
+    def __init__(self, domain: tuple[float, float], output_range: tuple[float, float]):
+        self._domain = domain
+        self._output_range = output_range
+        self._calculate_slope()
 
-    return scale
+    def _calculate_slope(self):
+        """Calculates the slope for the linear scale."""
+        self.slope = (self._output_range[1] - self._output_range[0]) / (
+            self._domain[1] - self._domain[0]
+        )
+
+    def map(self, value: float) -> float:
+        """Scales a value from the domain to the output range."""
+        return self._output_range[0] + self.slope * (value - self._domain[0])
+
+    def invert(self, value: float) -> float:
+        """Maps a value from the output range back to the domain."""
+        return self._domain[0] + (value - self._output_range[0]) / self.slope
+
+    @property
+    def domain(self) -> tuple[float, float]:
+        return self._domain
+
+    @domain.setter
+    def domain(self, new_domain: tuple[float, float]):
+        self._domain = new_domain
+        self._calculate_slope()
+
+    @property
+    def output_range(self) -> tuple[float, float]:
+        return self._output_range
+
+    @output_range.setter
+    def output_range(self, new_output_range: tuple[float, float]):
+        self._output_range = new_output_range
+        self._calculate_slope()
 
 
-def band_scale(
-    domain: list[str], range_: tuple[float, float], padding: float = 0.1
-) -> Callable[[str], float | None]:
+class BandScale:
     """
-    Maps categorical values (strings) to evenly spaced positions in the range.
-    The returned function also carries a `bandwidth` attribute that gives the computed band width.
+    Maps categorical values (strings) to evenly spaced positions in the output range.
+    The mapping includes a configurable inner padding and outer padding.
     """
-    r0, r1 = range_
-    n = len(domain)
-    if n == 0:
-        raise ValueError("Domain must contain at least one value")
-    # Compute the step: total range divided by number of bands plus gaps
-    step = (r1 - r0) / (n + padding * (n - 1))
-    # Each band takes (1 - padding) portion of the step.
-    band_width = step * (1 - padding)
 
-    def scale(value: str) -> float | None:
+    def __init__(
+        self,
+        domain: list[str],
+        output_range: tuple[float, float],
+        padding: float = 0.1,
+        outer_padding: float | None = None,
+    ):
+        self._domain = domain
+        self._output_range = output_range
+        self._padding = padding
+        self._outer_padding = outer_padding if outer_padding is not None else padding
+        self._calculate_band_properties()
+
+    def _calculate_band_properties(self):
+        """Calculates the band width and step size for the band scale."""
+        num_bands = len(self._domain)
+        total_padding = (num_bands - 1) * self._padding + 2 * self._outer_padding
+        total_width = self._output_range[1] - self._output_range[0]
+
+        # Compute the band width considering the total padding.
+        self._band_width = total_width / (num_bands + total_padding)
+        # Step size includes the band width and the padding between bands.
+        self.step = self._band_width * (1 + self._padding)
+
+    def map(self, value: str) -> float:
+        """
+        Maps a value from the domain to the start position of its band in the output range.
+        Raises a ValueError if the value is not found in the domain.
+        """
+        index = self._domain.index(value)
+        return (
+            self._output_range[0]
+            + self._band_width * self._outer_padding
+            + self.step * index
+        )
+
+    @property
+    def bandwidth(self) -> float:
+        """Returns the computed width of each band."""
+        return self._band_width
+
+    @property
+    def domain(self) -> list[str]:
+        return self._domain
+
+    @domain.setter
+    def domain(self, new_domain: list[str]):
+        self._domain = new_domain
+        self._calculate_band_properties()
+
+    @property
+    def output_range(self) -> tuple[float, float]:
+        return self._output_range
+
+    @output_range.setter
+    def output_range(self, new_output_range: tuple[float, float]):
+        self._output_range = new_output_range
+        self._calculate_band_properties()
+
+    @property
+    def padding(self) -> float:
+        return self._padding
+
+    @padding.setter
+    def padding(self, new_padding: float):
+        self._padding = new_padding
+        self._calculate_band_properties()
+
+    @property
+    def outer_padding(self) -> float:
+        return self._outer_padding
+
+    @outer_padding.setter
+    def outer_padding(self, new_outer_padding: float):
+        self._outer_padding = new_outer_padding
+        self._calculate_band_properties()
+
+
+class PointScale:
+    """
+    Maps categorical values to discrete points within the output range,
+    placing a specified amount of padding at both ends.
+    """
+
+    def __init__(
+        self, domain: list[str], output_range: tuple[float, float], padding: float = 0.5
+    ):
+        self._domain = domain
+        self._output_range = output_range
+        self._padding = padding
+        self._calculate_step()
+
+    def _calculate_step(self):
+        """Calculates the step size based on the domain length and padding."""
+        if not self._domain:
+            raise ValueError("Domain must contain at least one value")
+        r0, r1 = self._output_range
+        n = len(self._domain)
+        self._step = (r1 - r0) / (n - 1 + 2 * self._padding)
+
+    def map(self, value: str) -> float | None:
+        """
+        Maps a categorical value to a point in the output range.
+        Returns None if the value is not in the domain.
+        """
         try:
-            index = domain.index(value)
-            # Position is offset by index * step * (1 + padding)
-            return r0 + index * step * (1 + padding)
-        except ValueError:
-            return None  # value not found in the domain
-
-    # Attach a bandwidth method to the scale function.
-    scale.bandwidth = lambda: band_width  # type: ignore
-    return scale
-
-
-def point_scale(
-    domain: list[str], range_: tuple[float, float], padding: float = 0.5
-) -> Callable[[str], float | None]:
-    """
-    Maps categorical values to points in the range, placing padding at both ends.
-    """
-    r0, r1 = range_
-    n = len(domain)
-    if n == 0:
-        raise ValueError("Domain must contain at least one value")
-    # Compute step based on (n - 1) intervals plus padding on each end.
-    step = (r1 - r0) / (n - 1 + 2 * padding)
-
-    def scale(value: str) -> float | None:
-        try:
-            index = domain.index(value)
-            return r0 + step * (index + padding)
+            index = self._domain.index(value)
         except ValueError:
             return None
+        return self._output_range[0] + self._step * (index + self._padding)
 
-    return scale
+    @property
+    def domain(self) -> list[str]:
+        return self._domain
+
+    @domain.setter
+    def domain(self, new_domain: list[str]):
+        self._domain = new_domain
+        self._calculate_step()
+
+    @property
+    def output_range(self) -> tuple[float, float]:
+        return self._output_range
+
+    @output_range.setter
+    def output_range(self, new_output_range: tuple[float, float]):
+        self._output_range = new_output_range
+        self._calculate_step()
+
+    @property
+    def padding(self) -> float:
+        return self._padding
+
+    @padding.setter
+    def padding(self, new_padding: float):
+        self._padding = new_padding
+        self._calculate_step()
 
 
-def ordinal_scale(domain: list[str], range_: list) -> Callable[[str], object]:
+class OrdinalScale:
     """
     Maps categorical values to a set of output values in a cyclic fashion.
+    For example, if the output range is a list of colors, the scale will
+    assign each domain value one of those colors in order (wrapping around if needed).
     """
-    if not range_:
-        raise ValueError("Range must contain at least one value")
-    mapping = {d: range_[i % len(range_)] for i, d in enumerate(domain)}
 
-    def scale(value: str) -> object:
-        return mapping.get(value)
+    def __init__(self, domain: list[str], output_range: list):
+        if not output_range:
+            raise ValueError("Output range must contain at least one value")
+        self._domain = domain
+        self._output_range = output_range
+        self._generate_mapping()
 
-    return scale
+    def _generate_mapping(self):
+        self._mapping = {
+            d: self._output_range[i % len(self._output_range)]
+            for i, d in enumerate(self._domain)
+        }
+
+    def map(self, value: str) -> object:
+        """Returns the mapped output value for the given domain value."""
+        return self._mapping.get(value)
+
+    @property
+    def domain(self) -> list[str]:
+        return self._domain
+
+    @domain.setter
+    def domain(self, new_domain: list[str]):
+        self._domain = new_domain
+        self._generate_mapping()
+
+    @property
+    def output_range(self) -> list:
+        return self._output_range
+
+    @output_range.setter
+    def output_range(self, new_output_range: list):
+        if not new_output_range:
+            raise ValueError("Output range must contain at least one value")
+        self._output_range = new_output_range
+        self._generate_mapping()
 
 
-def color_scale(
-    domain: tuple[float, float], range_: tuple[str, str]
-) -> Callable[[float], str]:
+class ColorScale:
     """
-    Create a color scale that maps a numeric value (from the given domain) to a color.
-
-    Args:
-        domain: A tuple (d0, d1) specifying the minimum and maximum numeric values.
-        range_: A tuple of two hex color strings (start_color, end_color).
-                The scale will interpolate between these colors.
-
-    Returns:
-        A function that takes a numeric value, normalizes it based on the domain,
-        and returns an interpolated hex color.
-
-    The mapping is performed by converting the hex colors to RGB, linearly interpolating
-    each channel according to the normalized value, and converting the result back to a hex string.
+    Creates a color scale that maps a numeric value (from a given domain)
+    to an interpolated hex color between two provided hex color strings.
     """
-    d0, d1 = domain
-    if d1 == d0:
-        raise ValueError("Domain minimum and maximum must be distinct")
 
-    start_color, end_color = range_
-    rgb_start = hex_to_rgb(start_color)
-    rgb_end = hex_to_rgb(end_color)
+    def __init__(self, domain: tuple[float, float], output_range: tuple[str, str]):
+        self._domain = domain
+        self._output_range = output_range
+        d0, d1 = domain
+        if d1 == d0:
+            raise ValueError("Domain minimum and maximum must be distinct")
+        self._start_color = output_range[0]
+        self._end_color = output_range[1]
+        self._rgb_start = hex_to_rgb(self._start_color)
+        self._rgb_end = hex_to_rgb(self._end_color)
 
-    def scale(value: float) -> str:
-        # Normalize the input value to a parameter t between 0 and 1.
+    def map(self, value: float) -> str:
+        """Maps the input value to an interpolated hex color."""
+        d0, d1 = self._domain
         t = (value - d0) / (d1 - d0)
-        # Optionally, clamp t between 0 and 1:
+        # Clamp t to [0, 1]
         t = max(0, min(1, t))
-
-        # Linearly interpolate each RGB channel.
-        r = int(rgb_start[0] + t * (rgb_end[0] - rgb_start[0]))
-        g = int(rgb_start[1] + t * (rgb_end[1] - rgb_start[1]))
-        b = int(rgb_start[2] + t * (rgb_end[2] - rgb_start[2]))
+        r = int(self._rgb_start[0] + t * (self._rgb_end[0] - self._rgb_start[0]))
+        g = int(self._rgb_start[1] + t * (self._rgb_end[1] - self._rgb_start[1]))
+        b = int(self._rgb_start[2] + t * (self._rgb_end[2] - self._rgb_start[2]))
         return rgb_to_hex((r, g, b))
 
-    return scale
+    @property
+    def domain(self) -> tuple[float, float]:
+        return self._domain
+
+    @domain.setter
+    def domain(self, new_domain: tuple[float, float]):
+        self._domain = new_domain
+
+    @property
+    def output_range(self) -> tuple[str, str]:
+        return self._output_range
+
+    @output_range.setter
+    def output_range(self, new_output_range: tuple[str, str]):
+        if len(new_output_range) != 2:
+            raise ValueError("Output range must contain exactly two colors")
+        self._output_range = new_output_range
+        self._start_color = new_output_range[0]
+        self._end_color = new_output_range[1]
+        self._rgb_start = hex_to_rgb(self._start_color)
+        self._rgb_end = hex_to_rgb(self._end_color)
 
 
-def square_scale(
-    domain: tuple[float, float], range_: tuple[float, float]
-) -> Callable[[float], float]:
+class SquareScale:
     """
-    Maps an input value (e.g. an area) to an output using a square-root transformation.
-
-    This is useful when the visual representation (like the side length of a square)
-    should be proportional to the square root of the area so that the actual area
-    is proportional to the input value.
-
-    The transformation is defined as:
-        scale(value) = r0 + ((sqrt(value) - sqrt(d0)) / (sqrt(d1) - sqrt(d0))) * (r1 - r0)
+    Maps an input value (such as an area) to an output using a square-root transformation.
+    This is useful when a visual property (like a square’s side length) should be proportional
+    to the square root of the area.
     """
-    d0, d1 = domain
-    r0, r1 = range_
-    if d0 < 0 or d1 < 0:
-        raise ValueError("Domain values must be non-negative for square scale")
-    sqrt_d0, sqrt_d1 = math.sqrt(d0), math.sqrt(d1)
-    if sqrt_d1 == sqrt_d0:
-        raise ValueError("Invalid domain: sqrt(d1) and sqrt(d0) cannot be equal")
 
-    def scale(value: float) -> float:
-        return r0 + ((math.sqrt(value) - sqrt_d0) / (sqrt_d1 - sqrt_d0)) * (r1 - r0)
+    def __init__(self, domain: tuple[float, float], output_range: tuple[float, float]):
+        self._domain = domain
+        self._output_range = output_range
+        d0, d1 = domain
+        if d0 < 0 or d1 < 0:
+            raise ValueError("Domain values must be non-negative for square scale")
+        self._sqrt_d0 = math.sqrt(d0)
+        self._sqrt_d1 = math.sqrt(d1)
+        if self._sqrt_d1 == self._sqrt_d0:
+            raise ValueError("Invalid domain: sqrt(d1) and sqrt(d0) cannot be equal")
 
-    return scale
+    def map(self, value: float) -> float:
+        """Scales the value using a square-root transformation."""
+        r0, r1 = self._output_range
+        return r0 + (
+            (math.sqrt(value) - self._sqrt_d0) / (self._sqrt_d1 - self._sqrt_d0)
+        ) * (r1 - r0)
+
+    @property
+    def domain(self) -> tuple[float, float]:
+        return self._domain
+
+    @domain.setter
+    def domain(self, new_domain: tuple[float, float]):
+        self._domain = new_domain
+        d0, d1 = new_domain
+        if d0 < 0 or d1 < 0:
+            raise ValueError("Domain values must be non-negative for square scale")
+        self._sqrt_d0 = math.sqrt(d0)
+        self._sqrt_d1 = math.sqrt(d1)
+        if self._sqrt_d1 == self._sqrt_d0:
+            raise ValueError("Invalid domain: sqrt(d1) and sqrt(d0) cannot be equal")
+
+    @property
+    def output_range(self) -> tuple[float, float]:
+        return self._output_range
+
+    @output_range.setter
+    def output_range(self, new_output_range: tuple[float, float]):
+        self._output_range = new_output_range
 
 
-def circle_scale(
-    domain: tuple[float, float], range_: tuple[float, float]
-) -> Callable[[float], float]:
+class CircleScale:
     """
-    Maps an input value to the radius of a circle such that the circle's area is linearly
-    proportional to the input value.
+    Maps an input value to the radius of a circle such that the circle's area
+    is linearly proportional to the input value. Given a domain (vmin, vmax)
+    and a desired radius range (rmin, rmax), the radius is computed as:
 
-    If the input domain is (d0, d1) and the desired radius range is (r0, r1), then the area of the circle
-    will vary from π·r0² to π·r1². The mapping is given by:
-
-        radius(v) = sqrt( ((v - d0) / (d1 - d0)) * (r1² - r0²) + r0² )
-
-    This way, if you use π·radius(v)² as the circle’s area, it will be proportional to v.
+        radius(v) = sqrt( ((v - vmin)/(vmax - vmin))*(rmax^2 - rmin^2) + rmin^2 )
     """
-    d0, d1 = domain
-    r0, r1 = range_
-    if d1 == d0:
-        raise ValueError("Domain values must be distinct")
 
-    def scale(value: float) -> float:
-        # Linearly interpolate between r0^2 and r1^2, then take the square root.
-        r_squared = ((value - d0) / (d1 - d0)) * (r1 * r1 - r0 * r0) + r0 * r0
+    def __init__(self, domain: tuple[float, float], output_range: tuple[float, float]):
+        self._domain = domain
+        self._output_range = output_range
+        d0, d1 = domain
+        if d1 == d0:
+            raise ValueError("Domain values must be distinct")
+
+    def map(self, value: float) -> float:
+        """Maps the input value to a circle radius such that the circle's area is proportional to the value."""
+        d0, d1 = self._domain
+        r0, r1 = self._output_range
+        r_squared = ((value - d0) / (d1 - d0)) * (r1**2 - r0**2) + r0**2
         return math.sqrt(r_squared)
 
-    return scale
+    @property
+    def domain(self) -> tuple[float, float]:
+        return self._domain
+
+    @domain.setter
+    def domain(self, new_domain: tuple[float, float]):
+        self._domain = new_domain
+        d0, d1 = new_domain
+        if d1 == d0:
+            raise ValueError("Domain values must be distinct")
+
+    @property
+    def output_range(self) -> tuple[float, float]:
+        return self._output_range
+
+    @output_range.setter
+    def output_range(self, new_output_range: tuple[float, float]):
+        self._output_range = new_output_range

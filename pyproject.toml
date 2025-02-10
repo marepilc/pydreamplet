@@ -1,6 +1,6 @@
 [project]
 name = "pydreamplet"
-version = "0.1.4"
+version = "0.1.5"
 description = "A library for assembling SVGs from Python"
 authors = [{ name = "Marek Pilczuk", email = "user@mp76.pl" }]
 license = "MIT"

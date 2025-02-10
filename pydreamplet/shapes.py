@@ -1,4 +1,5 @@
 import math
+from typing import Sequence
 
 
 def star(
@@ -45,6 +46,33 @@ def star(
 
     # Build the SVG path string: move to the first point, draw lines to the rest, then close the path.
     d_string = "M " + " L ".join(points) + " Z"
+    return d_string
+
+
+def line(x_coords: Sequence[float], y_coords: Sequence[float]) -> str:
+    """
+    Returns a d-string for a polyline connecting the points specified by x_coords and y_coords.
+
+    The path will start at the first coordinate and then draw lines to each subsequent coordinate.
+
+    Parameters:
+      x_coords (list or tuple of float): A sequence of x coordinates.
+      y_coords (list or tuple of float): A sequence of y coordinates.
+
+    Returns:
+      str: A string suitable for the "d" attribute in an SVG path element.
+
+    Raises:
+      ValueError: If the lengths of x_coords and y_coords do not match.
+    """
+    if len(x_coords) != len(y_coords):
+        raise ValueError("x_coords and y_coords must have the same length")
+
+    # Create a list of formatted point strings (with two decimal places).
+    points = [f"{x:.2f},{y:.2f}" for x, y in zip(x_coords, y_coords)]
+
+    # Build the SVG path string: move to the first point, then draw lines to the rest.
+    d_string = "M " + " L ".join(points)
     return d_string
 
 
