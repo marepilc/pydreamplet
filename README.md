@@ -24,7 +24,7 @@ def waffle_chart(data, side=100, rows=10, cols=10, gutter=2, colors=[]):
     while len(colors) < len(sorted_data):
         colors.append(randomColor())
 
-    svg = SVG(dimensions=(side, side))
+    svg = SVG((side, side))
     
     total_cells = rows * cols
     total = sum(data)
