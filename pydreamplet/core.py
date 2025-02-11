@@ -98,24 +98,33 @@ class SVG(SvgElement):
         instance.element = root
         return instance
 
-    def __init__(self, viewbox: tuple[int, ...], **kwargs):
+    def __init__(self, *viewbox, **kwargs):
         """
         Create an SVG root element.
 
-        Parameters:
-          dimensions: tuple with 2 numbers [width, height] (e.g. (300, 300))
-          viewbox: tuple of 2 or 4 numbers.
-                   - If 2 numbers, treated as [width, height] with origin (0, 0).
-                   - If 4 numbers, treated as [minX, minY, width, height].
+        Accepts either:
+          - A single tuple (or list) of 2 or 4 numbers, e.g. SVG((300, 200)) or SVG((0, 0, 300, 200))
+          - Two or four separate numbers, e.g. SVG(300, 200) or SVG(0, 0, 300, 200)
         """
+        if len(viewbox) == 1 and isinstance(viewbox[0], (tuple, list)):
+            viewbox = viewbox[0]
+        if len(viewbox) not in (2, 4):
+            raise ValueError("viewbox must be a tuple or list of 2 or 4 numbers")
+
         super().__init__("svg", **kwargs)
+
         if len(viewbox) == 4:
             vb = f"{viewbox[0]} {viewbox[1]} {viewbox[2]} {viewbox[3]}"
-        elif len(viewbox) == 2:
-            vb = f"0 0 {viewbox[0]} {viewbox[1]}"
         else:
-            raise ValueError("viewbox must be a list or tuple of 2 or 4 numbers")
-        self.attrs({"viewBox": vb})
+            vb = f"0 0 {viewbox[0]} {viewbox[1]}"
+
+        self.attrs(
+            {
+                "viewBox": vb,
+                "width": f"{viewbox[0]}px",
+                "height": f"{viewbox[1]}px",
+            }
+        )
 
     def find(self, tag, nested=False):
         """
