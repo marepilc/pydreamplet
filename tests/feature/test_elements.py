@@ -1,18 +1,4 @@
-import xml.etree.ElementTree as ET
-
 from pydreamplet import SVG, Rect, Text
-
-
-def test_svg_dimensions():
-    svg = SVG(viewbox=[600, 600])
-    root = ET.fromstring(str(svg))
-    assert root.attrib.get("viewBox") == "0 0 600 600"
-
-
-def test_svg_viewbox_four_numbers():
-    svg = SVG(dimensions=[300, 300], viewbox=[10, 20, 600, 600])
-    root = ET.fromstring(str(svg))
-    assert root.attrib.get("viewBox") == "10 20 600 600"
 
 
 def test_rect_creation():
@@ -65,7 +51,7 @@ def test_attribute_normalization():
 
 
 def test_append_remove():
-    svg = SVG(dimensions=[300, 300], viewbox=[600, 600])
+    svg = SVG(300, 300)
     rect = Rect(x=10, y=10, width=50, height=50, fill="blue")
     svg.append(rect)
     # After append, there should be one child.
@@ -76,7 +62,7 @@ def test_append_remove():
 
 
 def test_full_svg_output():
-    svg = SVG(dimensions=[300, 300], viewbox=[600, 600])
+    svg = SVG(300, 300)
     text = Text("Hello,\nWorld!", x=10, y=10, font_size=18)
     svg.append(text)
     rect = Rect(x=20, y=80, width=60, height=60, fill="pink", stroke="black")

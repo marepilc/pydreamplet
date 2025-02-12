@@ -4,11 +4,14 @@ from pydreamplet.core import (
     Circle,
     Ellipse,
     G,
+    Line,
+    Path,
     Rect,
     SvgElement,
     Text,
     TextOnPath,
 )
+from pydreamplet.math import Vector
 
 __all__ = [
     "SVG",
@@ -16,8 +19,11 @@ __all__ = [
     "Circle",
     "Ellipse",
     "G",
+    "Line",
+    "Path",
     "Rect",
     "SvgElement",
     "Text",
     "TextOnPath",
+    "Vector",
 ]

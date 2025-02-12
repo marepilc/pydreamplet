@@ -35,7 +35,6 @@ class SvgElement:
         """
         local_tag = element.tag.split("}")[-1]
         subclass = cls._class_registry.get(local_tag, cls)
-        # If the registered subclass has overridden from_element, use it.
         if (
             subclass is not cls
             and getattr(subclass, "from_element", None) is not SvgElement.from_element
@@ -62,14 +61,20 @@ class SvgElement:
     def append(self, child):
         if hasattr(child, "element"):
             self.element.append(child.element)
+            # Track the parent on the child.
+            child._parent = self
         else:
             self.element.append(child)
+        return self
 
     def remove(self, child):
         if hasattr(child, "element"):
             self.element.remove(child.element)
+            if hasattr(child, "_parent"):
+                del child._parent
         else:
             self.element.remove(child)
+        return self
 
     def tostring(self):
         return ET.tostring(self.element, encoding="unicode")
@@ -99,10 +104,6 @@ class SvgElement:
             self.element.set(name.replace("_", "-"), str(value))
 
     def find(self, tag, nested=False):
-        """
-        Find the first sub-element matching the given tag.
-        Wrap the found element with the appropriate registered class.
-        """
         if nested:
             found = self.element.find(".//" + qname(tag))
         else:
@@ -112,10 +113,6 @@ class SvgElement:
         return None
 
     def find_all(self, tag, nested=False):
-        """
-        Find all sub-elements matching the given tag.
-        Yields each element wrapped in the appropriate registered class.
-        """
         if nested:
             found_list = self.element.findall(".//" + qname(tag))
         else:
@@ -125,8 +122,15 @@ class SvgElement:
 
 # -----------------------------------------------------------------------------
 # Transformable mixin used ONLY for group (<g>) elements.
-# Its _update_transform method removes the transform attribute when the transform
-# is the identity.
+# This version always outputs transforms in fixed order:
+# translate, then rotate, then scale.
+# -----------------------------------------------------------------------------
+# -----------------------------------------------------------------------------
+# Transformable mixin used ONLY for group (<g>) elements.
+# This version always outputs transforms in the fixed order:
+#   1. rotate
+#   2. translate
+#   3. scale
 # -----------------------------------------------------------------------------
 class Transformable:
     def __init__(
@@ -137,17 +141,10 @@ class Transformable:
         *args,
         **kwargs,
     ):
-        # Track assignment order (if needed)
-        self._transform_order = []
         self._pos = pos if pos is not None else Vector(0, 0)
         self._scale = scale if scale is not None else Vector(1, 1)
         self._angle = angle
         self._update_transform()
-
-    def _record_transform(self, key: str):
-        if key in self._transform_order:
-            self._transform_order.remove(key)
-        self._transform_order.append(key)
 
     def _update_transform(self) -> None:
         parts = []
@@ -169,7 +166,6 @@ class Transformable:
     @pos.setter
     def pos(self, value: Vector) -> None:
         self._pos = value
-        self._record_transform("pos")
         self._update_transform()
 
     @property
@@ -179,7 +175,6 @@ class Transformable:
     @scale.setter
     def scale(self, value: Vector) -> None:
         self._scale = value
-        self._record_transform("scale")
         self._update_transform()
 
     @property
@@ -189,7 +184,6 @@ class Transformable:
     @angle.setter
     def angle(self, value: float) -> None:
         self._angle = value
-        self._record_transform("angle")
         self._update_transform()
 
 
@@ -201,7 +195,6 @@ class SVG(SvgElement):
     def from_element(cls, element: ET.Element):
         local_tag = element.tag.split("}")[-1]
         subclass = cls._class_registry.get(local_tag, cls)
-        # Always use the subclass’s own from_element if available.
         if subclass is not cls:
             return subclass.from_element(element)
         instance = cls.__new__(cls)
@@ -209,10 +202,6 @@ class SVG(SvgElement):
         return instance
 
     def __init__(self, *viewbox, **kwargs):
-        """
-        Create an SVG root element.
-        Accepts either a tuple/list of 2 or 4 numbers, or two/four separate numbers.
-        """
         if len(viewbox) == 1 and isinstance(viewbox[0], (tuple, list)):
             viewbox = viewbox[0]
         if len(viewbox) not in (2, 4):
@@ -249,8 +238,7 @@ class SVG(SvgElement):
 
 
 # -----------------------------------------------------------------------------
-# Group element <g> uses Transformable (with transform attribute) to control its
-# translation, rotation, and scaling.
+# Group element <g> uses Transformable to control its translation, rotation, and scaling.
 # -----------------------------------------------------------------------------
 class G(Transformable, SvgElement):
     def __init__(
@@ -259,24 +247,71 @@ class G(Transformable, SvgElement):
         SvgElement.__init__(self, "g", **kwargs)
         Transformable.__init__(self, pos=pos, scale=scale, angle=angle)
 
+    def remove(self, child):
+        # Remove the specified child using the base method.
+        super().remove(child)
+        # If the group is now empty and it has a parent, remove the group from its parent.
+        if len(self.element) == 0 and hasattr(self, "_parent"):
+            parent = self._parent
+            parent.remove(self)
+        return self
+
+    def attrs(self, attributes):
+        if "transform" in attributes:
+            transform_str = attributes.pop("transform")
+            # Parse the transform string similar to from_element
+            pos = Vector(0, 0)
+            angle = 0
+            scale = Vector(1, 1)
+            m_rotate = re.search(r"rotate\(([^)]+)\)", transform_str)
+            if m_rotate:
+                try:
+                    angle = float(m_rotate.group(1))
+                except Exception:
+                    pass
+            m_translate = re.search(r"translate\(([^)]+)\)", transform_str)
+            if m_translate:
+                try:
+                    parts = m_translate.group(1).split()
+                    if len(parts) >= 2:
+                        pos = Vector(float(parts[0]), float(parts[1]))
+                except Exception:
+                    pass
+            m_scale = re.search(r"scale\(([^)]+)\)", transform_str)
+            if m_scale:
+                try:
+                    parts = m_scale.group(1).split()
+                    if len(parts) == 1:
+                        s = float(parts[0])
+                        scale = Vector(s, s)
+                    elif len(parts) >= 2:
+                        scale = Vector(float(parts[0]), float(parts[1]))
+                except Exception:
+                    pass
+            self._pos = pos
+            self._angle = angle
+            self._scale = scale
+            # Update the element attribute from the internal state.
+            self._update_transform()
+        # Call the parent method for any other attributes.
+        super().attrs(attributes)
+        return self
+
     @classmethod
     def from_element(cls, element: ET.Element):
         instance = cls.__new__(cls)
         instance.element = element
-        instance._transform_order = []  # Initialize assignment order tracker.
-        # Set default transformation values.
+        # Parse the transform attribute (same as before)
+        transform = element.get("transform", "")
         pos = Vector(0, 0)
         angle = 0
         scale = Vector(1, 1)
-        transform = element.get("transform", "")
-        # Parse rotation: e.g., "rotate(45)"
         m_rotate = re.search(r"rotate\(([^)]+)\)", transform)
         if m_rotate:
             try:
                 angle = float(m_rotate.group(1))
             except Exception:
                 pass
-        # Parse translation: e.g., "translate(150 150)"
         m_translate = re.search(r"translate\(([^)]+)\)", transform)
         if m_translate:
             try:
@@ -285,7 +320,6 @@ class G(Transformable, SvgElement):
                     pos = Vector(float(parts[0]), float(parts[1]))
             except Exception:
                 pass
-        # Parse scale: e.g., "scale(1.5)" or "scale(1.5 1.5)"
         m_scale = re.search(r"scale\(([^)]+)\)", transform)
         if m_scale:
             try:
@@ -297,7 +331,6 @@ class G(Transformable, SvgElement):
                     scale = Vector(float(parts[0]), float(parts[1]))
             except Exception:
                 pass
-        # Set the Transformable internal state.
         instance._pos = pos
         instance._angle = angle
         instance._scale = scale
@@ -310,9 +343,6 @@ class G(Transformable, SvgElement):
 # -----------------------------------------------------------------------------
 class Animate(SvgElement):
     def __init__(self, **kwargs):
-        """
-        Create an animate element. Accepts attributes like attributeName, from, to, etc.
-        """
         super().__init__("animate", **kwargs)
         self._repeat_count: int | str = "indefinite"
         self._values: list[int] = []
@@ -343,13 +373,11 @@ class Animate(SvgElement):
 
 
 # -----------------------------------------------------------------------------
-# Shape and text elements do not use a transform attribute.
-# Their position is controlled by attributes (e.g. cx, cy for circle, x, y for rect/text).
+# Shape and text elements (do not use transform); their position is controlled by native attributes.
 # -----------------------------------------------------------------------------
 class Circle(SvgElement):
     def __init__(self, **kwargs):
         super().__init__("circle", **kwargs)
-        # If a 'pos' keyword was provided, use it to set cx and cy.
         if "pos" in kwargs:
             pos = kwargs.pop("pos")
             self.element.set("cx", str(pos.x))
@@ -437,93 +465,20 @@ class Rect(SvgElement):
 
 class Path(SvgElement):
     def __init__(self, d: str = "", **kwargs):
-        """
-        Create a <path> element.
-
-        Parameters:
-          d (str): The path data string. Default is empty.
-          kwargs: Additional attributes for the path.
-        """
         super().__init__("path", **kwargs)
         self.d = d
 
     @property
     def d(self) -> str:
-        """Get the path data string."""
         return self.element.get("d", "")
 
     @d.setter
     def d(self, value: str) -> None:
-        """Set the path data string."""
         self.element.set("d", value)
-
-
-class Text(SvgElement):
-    def __init__(self, initial_text="", **kwargs):
-        super().__init__("text", **kwargs)
-        if "pos" in kwargs:
-            pos = kwargs.pop("pos")
-            self.element.set("x", str(pos.x))
-            self.element.set("y", str(pos.y))
-        self._raw_text = initial_text
-        if initial_text:
-            self.content = initial_text
-
-    @property
-    def pos(self) -> Vector:
-        return Vector(
-            float(self.element.get("x", "0")), float(self.element.get("y", "0"))
-        )
-
-    @pos.setter
-    def pos(self, value: Vector) -> None:
-        self.element.set("x", str(value.x))
-        self.element.set("y", str(value.y))
-
-    @property
-    def content(self) -> str:
-        return self._raw_text
-
-    @content.setter
-    def content(self, new_text: str):
-        self._raw_text = new_text
-        # Remove any existing child <tspan> elements.
-        for child in list(self.element):
-            self.element.remove(child)
-        if "\n" in new_text:
-            self.element.text = None
-            lines = new_text.split("\n")
-            for i, line in enumerate(lines):
-                tspan = ET.Element(qname("tspan"))
-                if i == 0:
-                    if "x" in self.element.attrib:
-                        tspan.set("x", self.element.attrib["x"])
-                    if "y" in self.element.attrib:
-                        tspan.set("y", self.element.attrib["y"])
-                else:
-                    if "x" in self.element.attrib:
-                        tspan.set("x", self.element.attrib["x"])
-                    try:
-                        dy_val = float(self.element.attrib.get("font-size", 16))
-                    except ValueError:
-                        dy_val = 16
-                    tspan.set("dy", str(dy_val))
-                tspan.text = line
-                self.element.append(tspan)
-        else:
-            self.element.text = new_text
 
 
 class Line(SvgElement):
     def __init__(self, x1=0, y1=0, x2=0, y2=0, **kwargs):
-        """
-        Create a <line> element.
-
-        Parameters:
-          x1, y1: The starting point coordinates.
-          x2, y2: The ending point coordinates.
-          kwargs: Additional SVG attributes.
-        """
         super().__init__("line", **kwargs)
         self.element.set("x1", str(x1))
         self.element.set("y1", str(y1))
@@ -564,18 +519,78 @@ class Line(SvgElement):
 
     @property
     def length(self) -> float:
-        """
-        Calculate and return the length of the line.
-        """
         dx = self.x2 - self.x1
         dy = self.y2 - self.y1
         return math.hypot(dx, dy)
+
+    @property
+    def angle(self) -> float:
+        dx = self.x2 - self.x1
+        dy = self.y2 - self.y1
+        angle = math.degrees(math.atan2(dy, dx))
+        if angle < 0:
+            angle += 360
+        return angle
+
+
+class Text(SvgElement):
+    def __init__(self, initial_text="", **kwargs):
+        super().__init__("text", **kwargs)
+        if "pos" in kwargs:
+            pos = kwargs.pop("pos")
+            self.element.set("x", str(pos.x))
+            self.element.set("y", str(pos.y))
+        self._raw_text = initial_text
+        if initial_text:
+            self.content = initial_text
+
+    @property
+    def pos(self) -> Vector:
+        return Vector(
+            float(self.element.get("x", "0")), float(self.element.get("y", "0"))
+        )
+
+    @pos.setter
+    def pos(self, value: Vector) -> None:
+        self.element.set("x", str(value.x))
+        self.element.set("y", str(value.y))
+
+    @property
+    def content(self) -> str:
+        return self._raw_text
+
+    @content.setter
+    def content(self, new_text: str):
+        self._raw_text = new_text
+        for child in list(self.element):
+            self.element.remove(child)
+        if "\n" in new_text:
+            self.element.text = None
+            lines = new_text.split("\n")
+            for i, line in enumerate(lines):
+                tspan = ET.Element(qname("tspan"))
+                if i == 0:
+                    if "x" in self.element.attrib:
+                        tspan.set("x", self.element.attrib["x"])
+                    if "y" in self.element.attrib:
+                        tspan.set("y", self.element.attrib["y"])
+                else:
+                    if "x" in self.element.attrib:
+                        tspan.set("x", self.element.attrib["x"])
+                    try:
+                        dy_val = float(self.element.attrib.get("font-size", 16))
+                    except ValueError:
+                        dy_val = 16
+                    tspan.set("dy", str(dy_val))
+                tspan.text = line
+                self.element.append(tspan)
+        else:
+            self.element.text = new_text
 
 
 class TextOnPath(SvgElement):
     def __init__(self, initial_text="", path="", text_path_args=None, **kwargs):
         super().__init__("text", **kwargs)
-        # Create and attach a nested <textPath> element.
         object.__setattr__(self, "text_path", SvgElement("textPath"))
         if text_path_args is None:
             text_path_args = {}
@@ -601,5 +616,7 @@ SvgElement.register("g", G)
 SvgElement.register("circle", Circle)
 SvgElement.register("ellipse", Ellipse)
 SvgElement.register("rect", Rect)
+SvgElement.register("path", Path)
+SvgElement.register("line", Line)
 SvgElement.register("text", Text)
 SvgElement.register("textPath", TextOnPath)
