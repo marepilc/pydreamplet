@@ -135,21 +135,19 @@ class Transformable:
         self._update_transform()
 
     def _update_transform(self) -> None:
-        # Only update transform if not the identity transformation.
-        if (
-            self._pos == Vector(0, 0)
-            and self._scale == Vector(1, 1)
-            and self._angle == 0
-        ):
+        parts = []
+        if self._pos != Vector(0, 0):
+            parts.append(f"translate({self._pos.x} {self._pos.y})")
+        if self._angle != 0:
+            parts.append(f"rotate({self._angle})")
+        if self._scale != Vector(1, 1):
+            parts.append(f"scale({self._scale.x} {self._scale.y})")
+
+        if parts:
+            self.element.set("transform", " ".join(parts))
+        else:
             if "transform" in self.element.attrib:
                 del self.element.attrib["transform"]
-        else:
-            transform_str = (
-                f"translate({self._pos.x} {self._pos.y}) "
-                f"rotate({self._angle}) "
-                f"scale({self._scale.x} {self._scale.y})"
-            )
-            self.element.set("transform", transform_str)
 
     @property
     def pos(self) -> Vector:

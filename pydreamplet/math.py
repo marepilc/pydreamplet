@@ -37,6 +37,11 @@ class Vector:
         """Returns a duplicate of the vector."""
         return Vector(self._x, self._y)
 
+    def __eq__(self, other):
+        if isinstance(other, Vector):
+            return self._x == other._x and self._y == other._y
+        return NotImplemented
+
     # Operator overloading for addition
     def __add__(self, other: "Vector") -> "Vector":
         if not isinstance(other, Vector):
