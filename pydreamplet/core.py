@@ -476,6 +476,49 @@ class Path(SvgElement):
     def d(self, value: str) -> None:
         self.element.set("d", value)
 
+    def _get_coordinates(self):
+        """
+        Parse the path 'd' attribute to extract all numbers and group them into (x, y) pairs.
+        This is a simplistic parser that assumes the path string is composed of commands that use
+        coordinate pairs (e.g., "M10 20 L110 20 L110 70 L10 70 Z").
+        """
+        # Find all numbers (including floats and scientific notation)
+        numbers = re.findall(r"[-+]?\d*\.?\d+(?:e[-+]?\d+)?", self.d)
+        coords = [float(num) for num in numbers]
+        if len(coords) % 2 != 0:
+            raise ValueError(
+                "Path 'd' attribute does not contain pairs of coordinates."
+            )
+        points = [Vector(coords[i], coords[i + 1]) for i in range(0, len(coords), 2)]
+        return points
+
+    @property
+    def width(self) -> float:
+        points = self._get_coordinates()
+        if not points:
+            return 0
+        xs = [p.x for p in points]
+        return max(xs) - min(xs)
+
+    @property
+    def height(self) -> float:
+        points = self._get_coordinates()
+        if not points:
+            return 0
+        ys = [p.y for p in points]
+        return max(ys) - min(ys)
+
+    @property
+    def center(self) -> Vector:
+        points = self._get_coordinates()
+        if not points:
+            return Vector(0, 0)
+        xs = [p.x for p in points]
+        ys = [p.y for p in points]
+        center_x = (max(xs) + min(xs)) / 2
+        center_y = (max(ys) + min(ys)) / 2
+        return Vector(center_x, center_y)
+
 
 class Line(SvgElement):
     def __init__(self, x1=0, y1=0, x2=0, y2=0, **kwargs):
