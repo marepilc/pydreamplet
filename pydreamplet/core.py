@@ -1,3 +1,4 @@
+import math
 import re
 import xml.etree.ElementTree as ET
 
@@ -434,6 +435,29 @@ class Rect(SvgElement):
         return float(self.element.get("height", 0))
 
 
+class Path(SvgElement):
+    def __init__(self, d: str = "", **kwargs):
+        """
+        Create a <path> element.
+
+        Parameters:
+          d (str): The path data string. Default is empty.
+          kwargs: Additional attributes for the path.
+        """
+        super().__init__("path", **kwargs)
+        self.d = d
+
+    @property
+    def d(self) -> str:
+        """Get the path data string."""
+        return self.element.get("d", "")
+
+    @d.setter
+    def d(self, value: str) -> None:
+        """Set the path data string."""
+        self.element.set("d", value)
+
+
 class Text(SvgElement):
     def __init__(self, initial_text="", **kwargs):
         super().__init__("text", **kwargs)
@@ -488,6 +512,64 @@ class Text(SvgElement):
                 self.element.append(tspan)
         else:
             self.element.text = new_text
+
+
+class Line(SvgElement):
+    def __init__(self, x1=0, y1=0, x2=0, y2=0, **kwargs):
+        """
+        Create a <line> element.
+
+        Parameters:
+          x1, y1: The starting point coordinates.
+          x2, y2: The ending point coordinates.
+          kwargs: Additional SVG attributes.
+        """
+        super().__init__("line", **kwargs)
+        self.element.set("x1", str(x1))
+        self.element.set("y1", str(y1))
+        self.element.set("x2", str(x2))
+        self.element.set("y2", str(y2))
+
+    @property
+    def x1(self) -> float:
+        return float(self.element.get("x1", "0"))
+
+    @x1.setter
+    def x1(self, value: float):
+        self.element.set("x1", str(value))
+
+    @property
+    def y1(self) -> float:
+        return float(self.element.get("y1", "0"))
+
+    @y1.setter
+    def y1(self, value: float):
+        self.element.set("y1", str(value))
+
+    @property
+    def x2(self) -> float:
+        return float(self.element.get("x2", "0"))
+
+    @x2.setter
+    def x2(self, value: float):
+        self.element.set("x2", str(value))
+
+    @property
+    def y2(self) -> float:
+        return float(self.element.get("y2", "0"))
+
+    @y2.setter
+    def y2(self, value: float):
+        self.element.set("y2", str(value))
+
+    @property
+    def length(self) -> float:
+        """
+        Calculate and return the length of the line.
+        """
+        dx = self.x2 - self.x1
+        dy = self.y2 - self.y1
+        return math.hypot(dx, dy)
 
 
 class TextOnPath(SvgElement):
