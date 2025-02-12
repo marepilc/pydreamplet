@@ -1,3 +1,4 @@
+import re
 import xml.etree.ElementTree as ET
 
 from IPython.display import SVG as IPythonSVG
@@ -33,6 +34,12 @@ class SvgElement:
         """
         local_tag = element.tag.split("}")[-1]
         subclass = cls._class_registry.get(local_tag, cls)
+        # If the registered subclass has overridden from_element, use it.
+        if (
+            subclass is not cls
+            and getattr(subclass, "from_element", None) is not SvgElement.from_element
+        ):
+            return subclass.from_element(element)
         instance = subclass.__new__(subclass)
         instance.element = element
         return instance
@@ -129,25 +136,30 @@ class Transformable:
         *args,
         **kwargs,
     ):
+        # Track assignment order (if needed)
+        self._transform_order = []
         self._pos = pos if pos is not None else Vector(0, 0)
         self._scale = scale if scale is not None else Vector(1, 1)
         self._angle = angle
         self._update_transform()
 
+    def _record_transform(self, key: str):
+        if key in self._transform_order:
+            self._transform_order.remove(key)
+        self._transform_order.append(key)
+
     def _update_transform(self) -> None:
         parts = []
-        if self._pos != Vector(0, 0):
-            parts.append(f"translate({self._pos.x} {self._pos.y})")
         if self._angle != 0:
             parts.append(f"rotate({self._angle})")
+        if self._pos != Vector(0, 0):
+            parts.append(f"translate({self._pos.x} {self._pos.y})")
         if self._scale != Vector(1, 1):
             parts.append(f"scale({self._scale.x} {self._scale.y})")
-
         if parts:
             self.element.set("transform", " ".join(parts))
         else:
-            if "transform" in self.element.attrib:
-                del self.element.attrib["transform"]
+            self.element.attrib.pop("transform", None)
 
     @property
     def pos(self) -> Vector:
@@ -156,6 +168,7 @@ class Transformable:
     @pos.setter
     def pos(self, value: Vector) -> None:
         self._pos = value
+        self._record_transform("pos")
         self._update_transform()
 
     @property
@@ -165,6 +178,7 @@ class Transformable:
     @scale.setter
     def scale(self, value: Vector) -> None:
         self._scale = value
+        self._record_transform("scale")
         self._update_transform()
 
     @property
@@ -174,6 +188,7 @@ class Transformable:
     @angle.setter
     def angle(self, value: float) -> None:
         self._angle = value
+        self._record_transform("angle")
         self._update_transform()
 
 
@@ -182,11 +197,14 @@ class Transformable:
 # -----------------------------------------------------------------------------
 class SVG(SvgElement):
     @classmethod
-    def from_file(cls, filename):
-        tree = ET.parse(filename)
-        root = tree.getroot()
-        instance = cls(viewbox=tuple(map(int, root.get("viewBox").split())))
-        instance.element = root
+    def from_element(cls, element: ET.Element):
+        local_tag = element.tag.split("}")[-1]
+        subclass = cls._class_registry.get(local_tag, cls)
+        # Always use the subclass’s own from_element if available.
+        if subclass is not cls:
+            return subclass.from_element(element)
+        instance = cls.__new__(cls)
+        instance.element = element
         return instance
 
     def __init__(self, *viewbox, **kwargs):
@@ -240,7 +258,55 @@ class G(Transformable, SvgElement):
         SvgElement.__init__(self, "g", **kwargs)
         Transformable.__init__(self, pos=pos, scale=scale, angle=angle)
 
+    @classmethod
+    def from_element(cls, element: ET.Element):
+        instance = cls.__new__(cls)
+        instance.element = element
+        instance._transform_order = []  # Initialize assignment order tracker.
+        # Set default transformation values.
+        pos = Vector(0, 0)
+        angle = 0
+        scale = Vector(1, 1)
+        transform = element.get("transform", "")
+        # Parse rotation: e.g., "rotate(45)"
+        m_rotate = re.search(r"rotate\(([^)]+)\)", transform)
+        if m_rotate:
+            try:
+                angle = float(m_rotate.group(1))
+            except Exception:
+                pass
+        # Parse translation: e.g., "translate(150 150)"
+        m_translate = re.search(r"translate\(([^)]+)\)", transform)
+        if m_translate:
+            try:
+                parts = m_translate.group(1).split()
+                if len(parts) >= 2:
+                    pos = Vector(float(parts[0]), float(parts[1]))
+            except Exception:
+                pass
+        # Parse scale: e.g., "scale(1.5)" or "scale(1.5 1.5)"
+        m_scale = re.search(r"scale\(([^)]+)\)", transform)
+        if m_scale:
+            try:
+                parts = m_scale.group(1).split()
+                if len(parts) == 1:
+                    s = float(parts[0])
+                    scale = Vector(s, s)
+                elif len(parts) >= 2:
+                    scale = Vector(float(parts[0]), float(parts[1]))
+            except Exception:
+                pass
+        # Set the Transformable internal state.
+        instance._pos = pos
+        instance._angle = angle
+        instance._scale = scale
+        instance._update_transform()
+        return instance
 
+
+# -----------------------------------------------------------------------------
+# Animate element.
+# -----------------------------------------------------------------------------
 class Animate(SvgElement):
     def __init__(self, **kwargs):
         """
