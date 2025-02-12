@@ -4,6 +4,7 @@ from IPython.display import SVG as IPythonSVG
 from IPython.display import display
 
 from pydreamplet.constants import PI
+from pydreamplet.math import Vector
 
 SVG_NS = "http://www.w3.org/2000/svg"
 ET.register_namespace("", SVG_NS)
@@ -13,28 +14,36 @@ def qname(tag):
     return f"{{{SVG_NS}}}{tag}"
 
 
+# -----------------------------------------------------------------------------
+# Base SVG element with a registry so that find/find_all wrap elements with the
+# appropriate specialized class.
+# -----------------------------------------------------------------------------
 class SvgElement:
+    _class_registry = {}
+
     @classmethod
-    def from_element(cls, element):
+    def register(cls, tag: str, subclass: type) -> None:
+        cls._class_registry[tag] = subclass
+
+    @classmethod
+    def from_element(cls, element: ET.Element):
         """
-        Create a new SvgElement from an existing ElementTree element.
-        This allows us to wrap existing elements in our convenience class.
+        Create an instance from an ElementTree element.
+        Look up the local tag name and use the registered subclass if available.
         """
         local_tag = element.tag.split("}")[-1]
-
-        instance = cls(local_tag)
+        subclass = cls._class_registry.get(local_tag, cls)
+        instance = subclass.__new__(subclass)
         instance.element = element
         return instance
 
     def __init__(self, tag, **kwargs):
-        # Use object.__setattr__ to avoid triggering our custom __setattr__
         object.__setattr__(self, "element", ET.Element(qname(tag)))
         for k, v in self.normalize_attrs(kwargs).items():
             self.element.set(k, str(v))
 
     @staticmethod
     def normalize_attrs(attrs):
-        """Convert keys replacing underscores with hyphens."""
         return {k.replace("_", "-"): str(v) for k, v in attrs.items()}
 
     def attrs(self, attributes):
@@ -61,34 +70,118 @@ class SvgElement:
         return self.tostring()
 
     def __getattr__(self, name):
-        # This is only called if the attribute wasn't found normally.
         attr_name = name.replace("_", "-")
         if attr_name in self.element.attrib:
             val = self.element.attrib[attr_name]
-            # Try to convert to a number if possible.
             try:
-                # If there's no decimal point or exponent, convert to int.
                 if "." not in val and "e" not in val.lower():
                     return int(val)
                 else:
                     return float(val)
             except ValueError:
-                # If conversion fails, return the original string.
                 return val
         raise AttributeError(
             f"{type(self).__name__!r} object has no attribute {name!r}"
         )
 
     def __setattr__(self, name, value):
-        # If the attribute is one of our internal attributes or methods,
-        # set it normally. Otherwise, store it as an SVG attribute.
         if name == "element" or name.startswith("_") or hasattr(type(self), name):
             object.__setattr__(self, name, value)
         else:
-            # Convert underscores to hyphens for attribute names.
             self.element.set(name.replace("_", "-"), str(value))
 
+    def find(self, tag, nested=False):
+        """
+        Find the first sub-element matching the given tag.
+        Wrap the found element with the appropriate registered class.
+        """
+        if nested:
+            found = self.element.find(".//" + qname(tag))
+        else:
+            found = self.element.find(qname(tag))
+        if found is not None:
+            return SvgElement.from_element(found)
+        return None
 
+    def find_all(self, tag, nested=False):
+        """
+        Find all sub-elements matching the given tag.
+        Yields each element wrapped in the appropriate registered class.
+        """
+        if nested:
+            found_list = self.element.findall(".//" + qname(tag))
+        else:
+            found_list = self.element.findall(qname(tag))
+        return (SvgElement.from_element(el) for el in found_list)
+
+
+# -----------------------------------------------------------------------------
+# Transformable mixin used ONLY for group (<g>) elements.
+# Its _update_transform method removes the transform attribute when the transform
+# is the identity.
+# -----------------------------------------------------------------------------
+class Transformable:
+    def __init__(
+        self,
+        pos: Vector = None,
+        scale: Vector = None,
+        angle: float = 0,
+        *args,
+        **kwargs,
+    ):
+        self._pos = pos if pos is not None else Vector(0, 0)
+        self._scale = scale if scale is not None else Vector(1, 1)
+        self._angle = angle
+        self._update_transform()
+
+    def _update_transform(self) -> None:
+        # Only update transform if not the identity transformation.
+        if (
+            self._pos == Vector(0, 0)
+            and self._scale == Vector(1, 1)
+            and self._angle == 0
+        ):
+            if "transform" in self.element.attrib:
+                del self.element.attrib["transform"]
+        else:
+            transform_str = (
+                f"translate({self._pos.x} {self._pos.y}) "
+                f"rotate({self._angle}) "
+                f"scale({self._scale.x} {self._scale.y})"
+            )
+            self.element.set("transform", transform_str)
+
+    @property
+    def pos(self) -> Vector:
+        return self._pos
+
+    @pos.setter
+    def pos(self, value: Vector) -> None:
+        self._pos = value
+        self._update_transform()
+
+    @property
+    def scale(self) -> Vector:
+        return self._scale
+
+    @scale.setter
+    def scale(self, value: Vector) -> None:
+        self._scale = value
+        self._update_transform()
+
+    @property
+    def angle(self) -> float:
+        return self._angle
+
+    @angle.setter
+    def angle(self, value: float) -> None:
+        self._angle = value
+        self._update_transform()
+
+
+# -----------------------------------------------------------------------------
+# The root SVG element.
+# -----------------------------------------------------------------------------
 class SVG(SvgElement):
     @classmethod
     def from_file(cls, filename):
@@ -101,23 +194,17 @@ class SVG(SvgElement):
     def __init__(self, *viewbox, **kwargs):
         """
         Create an SVG root element.
-
-        Accepts either:
-          - A single tuple (or list) of 2 or 4 numbers, e.g. SVG((300, 200)) or SVG((0, 0, 300, 200))
-          - Two or four separate numbers, e.g. SVG(300, 200) or SVG(0, 0, 300, 200)
+        Accepts either a tuple/list of 2 or 4 numbers, or two/four separate numbers.
         """
         if len(viewbox) == 1 and isinstance(viewbox[0], (tuple, list)):
             viewbox = viewbox[0]
         if len(viewbox) not in (2, 4):
             raise ValueError("viewbox must be a tuple or list of 2 or 4 numbers")
-
         super().__init__("svg", **kwargs)
-
         if len(viewbox) == 4:
             vb = f"{viewbox[0]} {viewbox[1]} {viewbox[2]} {viewbox[3]}"
         else:
             vb = f"0 0 {viewbox[0]} {viewbox[1]}"
-
         self.attrs(
             {
                 "viewBox": vb,
@@ -125,29 +212,6 @@ class SVG(SvgElement):
                 "height": f"{viewbox[1]}px",
             }
         )
-
-    def find(self, tag, nested=False):
-        """
-        Find the first sub-element matching the given tag and wrap it in SvgElement.
-        Return None if no such element is found.
-        """
-        if nested:
-            found = self.element.find(".//" + qname(tag))
-        else:
-            found = self.element.find(qname(tag))
-        if found is not None:
-            return SvgElement.from_element(found)
-        return None
-
-    def find_all(self, tag, nested=False):
-        """
-        Find all sub-elements matching the given tag, returning a list of SvgElement objects.
-        """
-        if nested:
-            found_list = self.element.findall(".//" + qname(tag))
-        else:
-            found_list = self.element.findall(qname(tag))
-        return [SvgElement.from_element(el) for el in found_list]
 
     @property
     def width(self):
@@ -165,6 +229,18 @@ class SVG(SvgElement):
     def save(self, filename):
         with open(filename, "w") as f:
             f.write(self.tostring())
+
+
+# -----------------------------------------------------------------------------
+# Group element <g> uses Transformable (with transform attribute) to control its
+# translation, rotation, and scaling.
+# -----------------------------------------------------------------------------
+class G(Transformable, SvgElement):
+    def __init__(
+        self, pos: Vector = None, scale: Vector = None, angle: float = 0, **kwargs
+    ):
+        SvgElement.__init__(self, "g", **kwargs)
+        Transformable.__init__(self, pos=pos, scale=scale, angle=angle)
 
 
 class Animate(SvgElement):
@@ -201,20 +277,41 @@ class Animate(SvgElement):
         self.attrs({"values": ";".join([str(v) for v in value])})
 
 
+# -----------------------------------------------------------------------------
+# Shape and text elements do not use a transform attribute.
+# Their position is controlled by attributes (e.g. cx, cy for circle, x, y for rect/text).
+# -----------------------------------------------------------------------------
 class Circle(SvgElement):
     def __init__(self, **kwargs):
-        """
-        Create a circle element. Accepts attributes like cx, cy, r, etc.
-        """
         super().__init__("circle", **kwargs)
+        # If a 'pos' keyword was provided, use it to set cx and cy.
+        if "pos" in kwargs:
+            pos = kwargs.pop("pos")
+            self.element.set("cx", str(pos.x))
+            self.element.set("cy", str(pos.y))
+
+    @property
+    def pos(self) -> Vector:
+        return Vector(
+            float(self.element.get("cx", "0")), float(self.element.get("cy", "0"))
+        )
+
+    @pos.setter
+    def pos(self, value: Vector) -> None:
+        self.element.set("cx", str(value.x))
+        self.element.set("cy", str(value.y))
 
     @property
     def radius(self):
         return float(self.element.get("r", 0))
 
+    @radius.setter
+    def radius(self, r: float) -> None:
+        self.element.set("r", str(r))
+
     @property
     def center(self):
-        return (float(self.element.get("cx", 0)), float(self.element.get("cy", 0)))
+        return self.pos
 
     @property
     def diameter(self):
@@ -227,60 +324,95 @@ class Circle(SvgElement):
 
 class Ellipse(SvgElement):
     def __init__(self, **kwargs):
-        """
-        Create an ellipse element. Accepts attributes like cx, cy, rx, ry, etc.
-        """
         super().__init__("ellipse", **kwargs)
+        if "pos" in kwargs:
+            pos = kwargs.pop("pos")
+            self.element.set("cx", str(pos.x))
+            self.element.set("cy", str(pos.y))
+
+    @property
+    def pos(self) -> Vector:
+        return Vector(
+            float(self.element.get("cx", "0")), float(self.element.get("cy", "0"))
+        )
+
+    @pos.setter
+    def pos(self, value: Vector) -> None:
+        self.element.set("cx", str(value.x))
+        self.element.set("cy", str(value.y))
 
 
 class Rect(SvgElement):
     def __init__(self, **kwargs):
-        """
-        Create a rectangle element. Accepts attributes like x, y, width, height, etc.
-        """
         super().__init__("rect", **kwargs)
+        if "pos" in kwargs:
+            pos = kwargs.pop("pos")
+            self.element.set("x", str(pos.x))
+            self.element.set("y", str(pos.y))
+
+    @property
+    def pos(self) -> Vector:
+        return Vector(
+            float(self.element.get("x", "0")), float(self.element.get("y", "0"))
+        )
+
+    @pos.setter
+    def pos(self, value: Vector) -> None:
+        self.element.set("x", str(value.x))
+        self.element.set("y", str(value.y))
+
+    @property
+    def width(self):
+        return float(self.element.get("width", 0))
+
+    @property
+    def height(self):
+        return float(self.element.get("height", 0))
 
 
 class Text(SvgElement):
     def __init__(self, initial_text="", **kwargs):
-        """
-        Create a text element.
-
-        Args:
-          initial_text: The initial text to display.
-          kwargs: Additional SVG attributes (e.g. font_family, font_size, font_weight).
-        """
         super().__init__("text", **kwargs)
+        if "pos" in kwargs:
+            pos = kwargs.pop("pos")
+            self.element.set("x", str(pos.x))
+            self.element.set("y", str(pos.y))
         self._raw_text = initial_text
         if initial_text:
-            self.content = initial_text  # Use the property setter
+            self.content = initial_text
+
+    @property
+    def pos(self) -> Vector:
+        return Vector(
+            float(self.element.get("x", "0")), float(self.element.get("y", "0"))
+        )
+
+    @pos.setter
+    def pos(self, value: Vector) -> None:
+        self.element.set("x", str(value.x))
+        self.element.set("y", str(value.y))
 
     @property
     def content(self) -> str:
-        """Return the current text content (raw string)."""
         return self._raw_text
 
     @content.setter
     def content(self, new_text: str):
-        """Update the text content and rebuild child <tspan> elements as needed."""
         self._raw_text = new_text
-        # Clear any existing child elements.
+        # Remove any existing child <tspan> elements.
         for child in list(self.element):
             self.element.remove(child)
-
         if "\n" in new_text:
             self.element.text = None
             lines = new_text.split("\n")
             for i, line in enumerate(lines):
                 tspan = ET.Element(qname("tspan"))
-                # For the first line, if x and y exist on the parent, set them.
                 if i == 0:
                     if "x" in self.element.attrib:
                         tspan.set("x", self.element.attrib["x"])
                     if "y" in self.element.attrib:
                         tspan.set("y", self.element.attrib["y"])
                 else:
-                    # For subsequent lines, copy x and add a dy offset.
                     if "x" in self.element.attrib:
                         tspan.set("x", self.element.attrib["x"])
                     try:
@@ -291,44 +423,37 @@ class Text(SvgElement):
                 tspan.text = line
                 self.element.append(tspan)
         else:
-            # For single-line text, set the text directly.
             self.element.text = new_text
 
 
 class TextOnPath(SvgElement):
     def __init__(self, initial_text="", path="", text_path_args=None, **kwargs):
-        """
-        Create a <text> element containing a nested <textPath> element for rendering text along a path.
-
-        Parameters:
-          initial_text: The text to display along the path.
-          path: A string representing the reference to the path (e.g. "#myPath").
-          text_path_kwargs: A dictionary of attributes to set on the inner <textPath> element.
-          kwargs: Additional attributes for the outer <text> element (e.g. x, y, font_family).
-        """
-        # Create the outer <text> element.
         super().__init__("text", **kwargs)
-        # Bypass __setattr__ to store the textPath element as an instance variable.
+        # Create and attach a nested <textPath> element.
         object.__setattr__(self, "text_path", SvgElement("textPath"))
-        # Initialize text_path_kwargs if not provided.
         if text_path_args is None:
             text_path_args = {}
-        # If a path reference is provided, set it in text_path_kwargs (if not already provided).
         if path:
             text_path_args.setdefault("href", path)
-        # Set attributes on the <textPath> element.
         self.text_path.attrs(text_path_args)
-        # Append the <textPath> element to the <text> element.
         self.append(self.text_path)
-        # Set the text content.
         self.content = initial_text
 
     @property
     def content(self) -> str:
-        """Return the current text content of the textPath element."""
         return self.text_path.element.text or ""
 
     @content.setter
     def content(self, new_text: str):
-        """Update the text content of the textPath element."""
         self.text_path.element.text = new_text
+
+
+# -----------------------------------------------------------------------------
+# Register element classes so that find/find_all returns the proper type.
+# -----------------------------------------------------------------------------
+SvgElement.register("g", G)
+SvgElement.register("circle", Circle)
+SvgElement.register("ellipse", Ellipse)
+SvgElement.register("rect", Rect)
+SvgElement.register("text", Text)
+SvgElement.register("textPath", TextOnPath)
