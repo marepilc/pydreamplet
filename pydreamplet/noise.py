@@ -9,7 +9,6 @@ class Noise:
     def __init__(self, min_val: float, max_val: float, noise_range: float):
         self._min = min_val
         self._max = max_val
-        # Use the setter to compute _range
         self.noise_range = noise_range
         self._value = random.uniform(min_val, max_val)
 
@@ -19,15 +18,11 @@ class Noise:
 
     @min.setter
     def min(self, value: float):
+        old_relative = self.noise_range
         if self._value < value:
             self._value = value
-        old_max = self._max
         self._min = value
-        # Update _range proportionally (this calculation mirrors the TS code)
-        if (old_max - value) != 0:
-            self._range = (self._range / (old_max - self._min)) * (old_max - value)
-        else:
-            self._range = 0
+        self._range = old_relative * (self._max - self._min)
 
     @property
     def max(self) -> float:
@@ -35,25 +30,20 @@ class Noise:
 
     @max.setter
     def max(self, value: float):
+        old_relative = self.noise_range
         if self._value > value:
             self._value = value
-        old_min = self._min
         self._max = value
-        if (value - old_min) != 0:
-            self._range = (self._range / (self._max - self._min)) * (value - old_min)
-        else:
-            self._range = 0
+        self._range = old_relative * (self._max - self._min)
 
     @property
     def noise_range(self) -> float:
-        # Return the relative noise range (if needed)
         return (
             self._range / (self._max - self._min) if (self._max - self._min) != 0 else 0
         )
 
     @noise_range.setter
     def noise_range(self, value: float):
-        # Only update if the noise range is between 0 and 1.
         if 0 < value < 1:
             self._range = value * (self._max - self._min)
 

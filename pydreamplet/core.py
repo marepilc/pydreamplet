@@ -54,8 +54,12 @@ class SvgElement:
         return {k.replace("_", "-"): str(v) for k, v in attrs.items()}
 
     def attrs(self, attributes):
-        for key, value in self.normalize_attrs(attributes).items():
-            self.element.set(key, value)
+        for key, value in attributes.items():
+            attr_key = key.replace("_", "-")
+            if value is None:
+                self.element.attrib.pop(attr_key, None)
+            else:
+                self.element.set(attr_key, str(value))
         return self
 
     def append(self, child):
@@ -101,7 +105,11 @@ class SvgElement:
         if name == "element" or name.startswith("_") or hasattr(type(self), name):
             object.__setattr__(self, name, value)
         else:
-            self.element.set(name.replace("_", "-"), str(value))
+            attr_name = name.replace("_", "-")
+            if value is None:
+                self.element.attrib.pop(attr_name, None)
+            else:
+                self.element.set(attr_name, str(value))
 
     def find(self, tag, nested=False):
         if nested:
