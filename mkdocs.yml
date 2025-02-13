@@ -14,6 +14,9 @@ nav:
       - reference/fundamentals/svgelement.md
     - Math:
       - reference/math/vector.md
+    - Noise:
+      - reference/noise/noise.md
+      - reference/noise/simplex.md
   - Blog:
     - blog/index.md
 theme:

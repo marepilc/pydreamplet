@@ -1,3 +1,13 @@
+[data-md-color-scheme="default"] {
+  --custom-background: white;
+  --param-color: rgb(119, 82, 3);
+}
+
+[data-md-color-scheme="slate"] {
+  --custom-background: rgb(128, 128, 128);
+  --param-color: rgb(207, 180, 120);
+}
+
 .class {
   color: rgb(8, 34, 8);
   background-color: rgba(139, 226, 200, 0.5);
@@ -39,9 +49,9 @@
   content: "prop";
 }
 
-.param {
-  color: rgb(8, 17, 34);
-  background-color: rgba(221, 230, 168, 0.5);
+.param,
+.returns {
+  color: var(--param-color);
   padding: 0.25rem;
   margin-right: 0.5rem;
   font-family: "Roboto Mono", monospace;
@@ -53,14 +63,6 @@
     color: black;
   }
 } */
-
-[data-md-color-scheme="default"] {
-  --custom-background: white;
-}
-
-[data-md-color-scheme="slate"] {
-  --custom-background: rgb(128, 128, 128);
-}
 
 figure > img {
   background-color: var(--custom-background);

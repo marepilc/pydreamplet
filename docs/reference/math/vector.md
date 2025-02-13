@@ -20,7 +20,11 @@ v = Vector(3.0, 4.0)
 print(v)  # Output: Vector(x=3.0, y=4.0)
 ```
 
-### <span class="meth"></span>`set(self, x: float, y: float) -> None`
+### <span class="meth"></span>`set`
+
+```py
+set(self, x: float, y: float) -> None
+```
 
 Updates the x and y coordinates of the vector.
 
@@ -31,7 +35,11 @@ print(v.xy)  # Output: (5.0, 6.0)
 
 ```
 
-### <span class="meth"></span>`copy(self) -> Vector`
+### <span class="meth"></span>`copy`
+
+```py
+copy(self) -> Vector
+```
 
 Returns a duplicate of the vector.
 
@@ -41,7 +49,11 @@ v2 = v1.copy()
 print(v1 == v2)  # Output: True
 ```
 
-### <span class="meth"></span>`dot(self, other: "Vector") -> float`
+### <span class="meth"></span>`dot`
+
+```py
+dot(self, other: "Vector") -> float
+```
 
 Calculates the dot product of the current vector with another vector.
 
@@ -52,7 +64,11 @@ result = v1.dot(v2)
 print(result)  # Output: 11.0 (1*3 + 2*4)
 ```
 
-### <span class="meth"></span>`normalize(self) -> Vector`
+### <span class="meth"></span>`normalize`
+
+```py
+normalize(self) -> Vector
+```
 
 Returns a new vector that is the normalized version of the current vector (i.e., with a magnitude of 1). Raises a ValueError if the vector is zero.
 
@@ -62,7 +78,11 @@ normalized_v = v.normalize()
 print(normalized_v.magnitude)  # Output: 1.0
 ```
 
-### <span class="meth"></span>`limit(self, limit_scalar: float) -> None`
+### <span class="meth"></span>`limit`
+
+```py
+limit(self, limit_scalar: float) -> None
+```
 
 Limits the magnitude of the vector to `limit_scalar`. If the current magnitude exceeds the limit, the vector is scaled down to the specified maximum.
 
