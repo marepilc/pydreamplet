@@ -1,0 +1,71 @@
+.class {
+  color: rgb(8, 34, 8);
+  background-color: rgba(139, 226, 200, 0.5);
+  padding: 0.25rem;
+  margin-right: 0.5rem;
+  font-family: "Roboto Mono", monospace;
+}
+.class::before {
+  content: "class";
+}
+.attr {
+  color: rgb(32, 34, 8);
+  background-color: rgb(226, 181, 139, 0.5);
+  padding: 0.25rem;
+  margin-right: 0.5rem;
+  font-family: "Roboto Mono", monospace;
+}
+.attr::before {
+  content: "attr";
+}
+.meth {
+  color: rgb(8, 17, 34);
+  background-color: rgb(170, 168, 230, 0.5);
+  padding: 0.25rem;
+  margin-right: 0.5rem;
+  font-family: "Roboto Mono", monospace;
+}
+.meth::before {
+  content: "meth";
+}
+.prop {
+  color: rgb(8, 17, 34);
+  background-color: rgba(230, 168, 199, 0.5);
+  padding: 0.25rem;
+  margin-right: 0.5rem;
+  font-family: "Roboto Mono", monospace;
+}
+.prop::before {
+  content: "prop";
+}
+
+.param {
+  color: rgb(8, 17, 34);
+  background-color: rgba(221, 230, 168, 0.5);
+  padding: 0.25rem;
+  margin-right: 0.5rem;
+  font-family: "Roboto Mono", monospace;
+}
+
+/* Light mode styles */
+@media (prefers-color-scheme: light) {
+  img {
+    background-color: white;
+    color: black;
+  }
+}
+
+/* Light mode */
+[data-md-color-scheme="default"] {
+  --custom-background: white;
+}
+
+/* Dark mode */
+[data-md-color-scheme="slate"] {
+  --custom-background: rgb(128, 128, 128);
+}
+
+/* Apply styles */
+img {
+  background-color: var(--custom-background);
+}

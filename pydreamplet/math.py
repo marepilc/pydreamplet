@@ -111,17 +111,6 @@ class Vector:
             raise ValueError("Cannot normalize a zero vector")
         return Vector(self._x / mag, self._y / mag)
 
-    def normalize2(self) -> None:
-        """
-        Normalizes the vector in place.
-        Raises a ValueError if the vector is zero.
-        """
-        mag = self.magnitude
-        if mag == 0:
-            raise ValueError("Cannot normalize a zero vector")
-        self._x /= mag
-        self._y /= mag
-
     @property
     def direction(self) -> float:
         """
