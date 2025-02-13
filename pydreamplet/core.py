@@ -242,31 +242,72 @@ class SVG(SvgElement):
 # -----------------------------------------------------------------------------
 class G(Transformable, SvgElement):
     def __init__(
-        self, pos: Vector = None, scale: Vector = None, angle: float = 0, **kwargs
+        self,
+        pos: Vector = None,
+        scale: Vector = None,
+        angle: float = 0,
+        pivot: Vector = None,
+        order: str = "trs",
+        **kwargs,
     ):
+        # Set _order and _pivot before calling the base __init__ to avoid issues.
+        self._order = order
+        self._pivot = pivot if pivot is not None else Vector(0, 0)
         SvgElement.__init__(self, "g", **kwargs)
         Transformable.__init__(self, pos=pos, scale=scale, angle=angle)
+        self._update_transform()
+
+    @property
+    def pivot(self):
+        return self._pivot
+
+    @pivot.setter
+    def pivot(self, value: Vector):
+        self._pivot = value
+        self._update_transform()
+
+    @property
+    def order(self):
+        return self._order
+
+    @order.setter
+    def order(self, value: str):
+        self._order = value
+        self._update_transform()
 
     def remove(self, child):
-        # Remove the specified child using the base method.
         super().remove(child)
-        # If the group is now empty and it has a parent, remove the group from its parent.
         if len(self.element) == 0 and hasattr(self, "_parent"):
             parent = self._parent
             parent.remove(self)
         return self
 
     def attrs(self, attributes):
+        if "order" in attributes:
+            self.order = attributes.pop("order")  # use property setter
+        if "pivot" in attributes:
+            pivot_str = attributes.pop("pivot")
+            try:
+                parts = pivot_str.replace(",", " ").split()
+                if len(parts) >= 2:
+                    self.pivot = Vector(float(parts[0]), float(parts[1]))
+            except Exception:
+                pass
+
         if "transform" in attributes:
             transform_str = attributes.pop("transform")
-            # Parse the transform string similar to from_element
             pos = Vector(0, 0)
             angle = 0
             scale = Vector(1, 1)
+            pivot = Vector(0, 0)
             m_rotate = re.search(r"rotate\(([^)]+)\)", transform_str)
             if m_rotate:
                 try:
-                    angle = float(m_rotate.group(1))
+                    parts = m_rotate.group(1).replace(",", " ").split()
+                    if len(parts) >= 1:
+                        angle = float(parts[0])
+                    if len(parts) >= 3:
+                        pivot = Vector(float(parts[1]), float(parts[2]))
                 except Exception:
                     pass
             m_translate = re.search(r"translate\(([^)]+)\)", transform_str)
@@ -291,25 +332,62 @@ class G(Transformable, SvgElement):
             self._pos = pos
             self._angle = angle
             self._scale = scale
-            # Update the element attribute from the internal state.
+            # Use parsed pivot only if not already set.
+            if not hasattr(self, "_pivot") or self._pivot is None:
+                self._pivot = pivot
             self._update_transform()
-        # Call the parent method for any other attributes.
         super().attrs(attributes)
         return self
+
+    def _update_transform(self):
+        # Check if all transformations are at their default values.
+        if (
+            self._pos == Vector(0, 0)
+            and self._angle == 0
+            and self._scale == Vector(1, 1)
+        ):
+            # Remove any existing transform attribute and exit.
+            if "transform" in self.element.attrib:
+                del self.element.attrib["transform"]
+            return
+
+        parts = []
+        for op in self._order:
+            if op == "t" and self._pos != Vector(0, 0):
+                parts.append(f"translate({self._pos.x} {self._pos.y})")
+            elif op == "r" and self._angle != 0:
+                if self._pivot and (self._pivot.x != 0 or self._pivot.y != 0):
+                    parts.append(
+                        f"rotate({self._angle},{self._pivot.x},{self._pivot.y})"
+                    )
+                else:
+                    parts.append(f"rotate({self._angle})")
+            elif op == "s" and self._scale != Vector(1, 1):
+                parts.append(f"scale({self._scale.x} {self._scale.y})")
+        # Set the transform attribute only if there is at least one transform.
+        if parts:
+            self.element.set("transform", " ".join(parts))
+        else:
+            if "transform" in self.element.attrib:
+                del self.element.attrib["transform"]
 
     @classmethod
     def from_element(cls, element: ET.Element):
         instance = cls.__new__(cls)
         instance.element = element
-        # Parse the transform attribute (same as before)
         transform = element.get("transform", "")
         pos = Vector(0, 0)
         angle = 0
         scale = Vector(1, 1)
+        pivot = Vector(0, 0)
         m_rotate = re.search(r"rotate\(([^)]+)\)", transform)
         if m_rotate:
             try:
-                angle = float(m_rotate.group(1))
+                parts = m_rotate.group(1).replace(",", " ").split()
+                if len(parts) >= 1:
+                    angle = float(parts[0])
+                if len(parts) >= 3:
+                    pivot = Vector(float(parts[1]), float(parts[2]))
             except Exception:
                 pass
         m_translate = re.search(r"translate\(([^)]+)\)", transform)
@@ -334,6 +412,8 @@ class G(Transformable, SvgElement):
         instance._pos = pos
         instance._angle = angle
         instance._scale = scale
+        instance._pivot = pivot
+        instance._order = element.get("order", "trs")
         instance._update_transform()
         return instance
 
