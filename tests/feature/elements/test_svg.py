@@ -53,3 +53,10 @@ def test_svg_append_remove(svg_300, two_rectangles):
     assert len(list(svg_300.element)) == 1
     svg_300.remove(rect2)
     assert len(list(svg_300.element)) == 0
+
+
+def test_attribute_normalization():
+    # Passing font_size should become font-size.
+    rect = dp.Text("test", x=5, y=5, font_size=12, fill="green")
+    assert "font-size" in rect.element.attrib
+    assert rect.element.attrib["font-size"] == "12"
