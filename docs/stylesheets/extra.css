@@ -47,25 +47,21 @@
   font-family: "Roboto Mono", monospace;
 }
 
-/* Light mode styles */
-@media (prefers-color-scheme: light) {
+/* @media (prefers-color-scheme: light) {
   img {
     background-color: white;
     color: black;
   }
-}
+} */
 
-/* Light mode */
 [data-md-color-scheme="default"] {
   --custom-background: white;
 }
 
-/* Dark mode */
 [data-md-color-scheme="slate"] {
   --custom-background: rgb(128, 128, 128);
 }
 
-/* Apply styles */
-img {
+figure > img {
   background-color: var(--custom-background);
 }
