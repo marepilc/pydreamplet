@@ -64,6 +64,6 @@
   }
 } */
 
-figure > img {
+.light-dark-bg > img {
   background-color: var(--custom-background);
 }

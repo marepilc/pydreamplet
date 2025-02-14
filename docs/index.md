@@ -6,3 +6,10 @@ Welcome to [pyDreamplet](https://pypi.org/project/pydreamplet/) – a gateway to
 
 Ready to dive in? Explore the Getting Started section to discover a guide that will help you create your first visual. For more inspiration and advanced examples, check out the reference materials and blog, which showcase creative projects and real-world applications of pyDreamplet. Unleash your creativity and start building beautiful visualizations today!
 
+
+
+
+<figure markdown="span">
+  ![creative coding example](assets/pages/home/creative_coding.svg)
+  <figcaption>Creative Coding</figcaption>
+</figure>

@@ -430,13 +430,14 @@ class G(Transformable, SvgElement):
 # Animate element.
 # -----------------------------------------------------------------------------
 class Animate(SvgElement):
-    def __init__(self, **kwargs):
+    def __init__(self, attr: str, **kwargs):
         super().__init__("animate", **kwargs)
         self._repeat_count: int | str = "indefinite"
-        self._values: list[int] = []
+        self._values: list[any] = []
         self.attrs(
             {
                 "attributeType": "XML",
+                "attributeName": attr,
                 "repeatCount": self._repeat_count,
             }
         )

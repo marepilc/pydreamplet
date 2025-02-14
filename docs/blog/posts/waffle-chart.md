@@ -10,7 +10,7 @@ categories:
 
 Everyone knows that pie charts are overused. This example shows how to quickly build the waffle chart.
 
-<figure markdown="span">
+<figure class="light-dark-bg" markdown="span">
   ![Image title](assets/waffle_chart/waffle_chart.svg){ width="300" }
   <figcaption>Waffle chart</figcaption>
 </figure>
