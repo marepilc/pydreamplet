@@ -1,6 +1,6 @@
 # `SVG`
 
-The SVG class represents the root SVG element. It manages the viewbox, provides properties for dimensions, and includes methods for displaying and saving the SVG.
+The `SVG` class represents the root SVG element. It manages the viewbox, provides properties for dimensions, and includes methods for displaying and saving the SVG.
 
 !!! info
 

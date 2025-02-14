@@ -1,6 +1,6 @@
 # `Animate`
 
-The Animate class represents an SVG animation element. It allows you to animate an attribute by specifying repeat count and a sequence of values.
+The `Animate` class represents an SVG animation element. It allows you to animate an attribute by specifying repeat count and a sequence of values.
 
 !!! info
 

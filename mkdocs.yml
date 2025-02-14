@@ -17,7 +17,11 @@ nav:
       - reference/core/animate.md
       - reference/core/circle.md
       - reference/core/ellipse.md
+      - reference/core/line.md
+      - reference/core/path.md
       - reference/core/rect.md
+      - reference/core/text.md
+      - reference/core/textonpath.md
     - Math:
       - reference/math/vector.md
     - Noise:

@@ -729,13 +729,16 @@ class Text(SvgElement):
 
 
 class TextOnPath(SvgElement):
-    def __init__(self, initial_text="", path="", text_path_args=None, **kwargs):
+    def __init__(self, initial_text="", path_id="", text_path_args=None, **kwargs):
         super().__init__("text", **kwargs)
         object.__setattr__(self, "text_path", SvgElement("textPath"))
         if text_path_args is None:
             text_path_args = {}
-        if path:
-            text_path_args.setdefault("href", path)
+        if path_id:
+            if path_id.startswith("#"):
+                text_path_args.setdefault("href", path_id)
+            else:
+                text_path_args.setdefault("href", f"#{path_id}")
         self.text_path.attrs(text_path_args)
         self.append(self.text_path)
         self.content = initial_text

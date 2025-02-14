@@ -1,6 +1,6 @@
 # `Ellipse`
 
-The Ellipse class represents an SVG ellipse element. It supports setting the center position.
+The `Ellipse` class represents an SVG ellipse element. It supports setting the center position.
 
 !!! info
 

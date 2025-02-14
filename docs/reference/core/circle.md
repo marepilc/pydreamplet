@@ -1,6 +1,6 @@
 # `Circle`
 
-The Circle class represents an SVG circle element. It supports setting the center position and radius, and provides computed properties such as diameter and area.
+The `Circle` class represents an SVG circle element. It supports setting the center position and radius, and provides computed properties such as diameter and area.
 
 !!! info
 

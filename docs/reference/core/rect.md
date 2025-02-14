@@ -1,6 +1,6 @@
 # `Rect`
 
-The Rect class represents an SVG rectangle element. It supports setting the position and provides properties for width and height.
+The `Rect` class represents an SVG rectangle element. It supports setting the position and provides properties for width and height.
 
 !!! info
 
