@@ -42,6 +42,8 @@ nav:
       - reference/scales/colorscale.md
       - reference/scales/squarescale.md
       - reference/scales/circlescale.md
+    - Typography:
+      - reference/typography/index.md
 
   - Blog:
     - blog/index.md

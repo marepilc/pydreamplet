@@ -1,4 +1,4 @@
-# color utilities
+# Color utilities
 
 This module provides various utility functions for color conversion, manipulation, and random color generation.
 
