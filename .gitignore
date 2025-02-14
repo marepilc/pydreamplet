@@ -8,3 +8,4 @@ __pycache__
 !pydreamplet/resources/*.svg
 dist
 data
+site
