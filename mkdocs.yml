@@ -12,6 +12,9 @@ nav:
     - Core:
       - reference/core/svg.md
       - reference/core/svgelement.md
+      - reference/core/transformable.md
+      - reference/core/g.md
+      - reference/core/animate.md
     - Math:
       - reference/math/vector.md
     - Noise:
