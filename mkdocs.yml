@@ -17,6 +17,8 @@ nav:
     - Noise:
       - reference/noise/noise.md
       - reference/noise/simplex.md
+      - reference/noise/simplex2D.md
+      - reference/noise/simplex3D.md
   - Blog:
     - blog/index.md
 theme:

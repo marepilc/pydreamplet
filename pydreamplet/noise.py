@@ -173,20 +173,20 @@ class SimplexNoise2D(NoiseBase):
         self.G2 = (3.0 - math.sqrt(3.0)) / 6.0
 
     def noise(
-        self, xin: float, yin: float, frequency: float = 1, amplitude: float = 1
+        self, x: float, y: float, frequency: float = 1, amplitude: float = 1
     ) -> float:
-        xin *= frequency
-        yin *= frequency
+        x *= frequency
+        y *= frequency
 
-        s = (xin + yin) * self.F2
-        i = math.floor(xin + s)
-        j = math.floor(yin + s)
+        s = (x + y) * self.F2
+        i = math.floor(x + s)
+        j = math.floor(y + s)
 
         t = (i + j) * self.G2
         X0 = i - t
         Y0 = j - t
-        x0 = xin - X0
-        y0 = yin - Y0
+        x0 = x - X0
+        y0 = y - Y0
 
         if x0 > y0:
             i1, j1 = 1, 0

@@ -34,3 +34,13 @@ def test_g_element_append_remove(svg_300, two_rectangles):
     assert len(list(svg_300.element)) == 1
     g.remove(rect2)
     assert len(list(svg_300.element)) == 0
+
+def test_g_transformation_order(svg_300):
+    g = dp.G()
+    g.pos = dp.Vector(20, 20)
+    g.angle = 45
+    g.scale = dp.Vector(2, 2)
+    svg_300.append(g)
+    assert 'transform="translate(20 20) rotate(45) scale(2 2)"' in str(svg_300)
+    g.order = "rts"
+    assert 'transform="rotate(45) translate(20 20) scale(2 2)"' in str(svg_300)
