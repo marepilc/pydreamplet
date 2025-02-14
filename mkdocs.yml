@@ -128,8 +128,8 @@ extra:
     actions:
       - accept
       - manage
-  version:
-    provider: mike
+  # version:
+  #   provider: mike
 copyright: >
   Copyright &copy; 2025 Marek Pilczuk —
   <a href="#__consent">Change cookie settings</a>
