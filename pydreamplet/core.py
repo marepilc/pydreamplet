@@ -209,6 +209,14 @@ class SVG(SvgElement):
         instance.element = element
         return instance
 
+    @classmethod
+    def from_file(cls, filename):
+        tree = ET.parse(filename)
+        root = tree.getroot()
+        instance = cls(tuple(map(int, root.get("viewBox").split())))
+        instance.element = root
+        return instance
+
     def __init__(self, *viewbox, **kwargs):
         if len(viewbox) == 1 and isinstance(viewbox[0], (tuple, list)):
             viewbox = viewbox[0]
