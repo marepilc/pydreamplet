@@ -508,7 +508,7 @@ class Circle(SvgElement):
 
     @property
     def area(self):
-        return math.PI * self.radius**2
+        return math.pi * self.radius**2
 
 
 class Ellipse(SvgElement):
