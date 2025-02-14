@@ -41,6 +41,6 @@ def calculate_ticks(min_val, max_val, num_ticks=5):
 
     start = ceil(min_val / step) * step
     end = floor(max_val / step) * step
-    gridlines = list(range(int(start), int(end) + int(step), int(step)))
+    ticks = list(range(int(start), int(end) + int(step), int(step)))
 
-    return gridlines
+    return ticks

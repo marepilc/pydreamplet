@@ -44,6 +44,8 @@ nav:
       - reference/scales/circlescale.md
     - Typography:
       - reference/typography/index.md
+    - Utils:
+      - reference/utils/index.md
 
   - Blog:
     - blog/index.md
