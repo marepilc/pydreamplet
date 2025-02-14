@@ -36,6 +36,9 @@ nav:
       - reference/scales/bandscale.md
       - reference/scales/pointscale.md
       - reference/scales/ordinalscale.md
+      - reference/scales/colorscale.md
+      - reference/scales/squarescale.md
+      - reference/scales/circlescale.md
 
   - Blog:
     - blog/index.md
