@@ -38,6 +38,16 @@
 .meth::before {
   content: "meth";
 }
+.func {
+  color: rgb(8, 17, 34);
+  background-color: rgb(170, 168, 230, 0.5);
+  padding: 0.25rem;
+  margin-right: 0.5rem;
+  font-family: "Roboto Mono", monospace;
+}
+.func::before {
+  content: "func";
+}
 .prop {
   color: rgb(8, 17, 34);
   background-color: rgba(230, 168, 199, 0.5);

@@ -29,6 +29,14 @@ nav:
       - reference/noise/simplex.md
       - reference/noise/simplex2D.md
       - reference/noise/simplex3D.md
+    - Colors:
+      - reference/colors/index.md
+    - Scales:
+      - reference/scales/linearscale.md
+      - reference/scales/bandscale.md
+      - reference/scales/pointscale.md
+      - reference/scales/ordinalscale.md
+
   - Blog:
     - blog/index.md
 theme:
