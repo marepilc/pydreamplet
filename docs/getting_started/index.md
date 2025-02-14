@@ -58,5 +58,5 @@ For detailed information on all available functions and parameters, consult the 
 !!! info "Next steps"
 
     - **Experiment with Examples:** Modify the basic example by adding new shapes or changing colors to see different effects.
-    - [**Review the API Documentation:**](../reference/fundamentals/svg.md) Learn about the full range of functions available in pyDreamplet.
+    - [**Review the API Documentation:**](../reference/core/svg.md) Learn about the full range of functions available in pyDreamplet.
     - [**Explore the Blog:**](../blog/index.md) Discover advanced examples and creative projects that showcase the library’s capabilities.

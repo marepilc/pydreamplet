@@ -9,9 +9,9 @@ nav:
   - Getting started:
     - getting_started/index.md
   - Reference:
-    - Fundamentals:
-      - reference/fundamentals/svg.md
-      - reference/fundamentals/svgelement.md
+    - Core:
+      - reference/core/svg.md
+      - reference/core/svgelement.md
     - Math:
       - reference/math/vector.md
     - Noise:
@@ -36,7 +36,7 @@ theme:
     # - navigation.tabs.sticky
     - navigation.instant
     - navigation.tracking
-    # - navigation.sections
+    - navigation.expand
     - content.code.copy
     - search.suggest
   palette:

@@ -23,8 +23,8 @@ print(value)  # Outputs a noise value scaled to [0, 1]
 ```py
 noise(
     self,
-    xin: float,
-    yin: float,
+    x: float,
+    y: float,
     frequency: float = 1,
     amplitude: float = 1,
 ) -> float

@@ -7,11 +7,15 @@ Welcome to [pyDreamplet](https://pypi.org/project/pydreamplet/) – a gateway to
 Check out the examples below. Ready to dive in? Explore the Getting Started section to discover a guide that will help you create your first visual. For more inspiration and advanced examples, check out the reference materials and blog, which showcase creative projects and real-world applications of pyDreamplet. Unleash your creativity and start building beautiful visualizations today!
 
 
-
 <figure markdown="span">
   ![data vizualization example - suppliers performance](assets/pages/home/supplier_quality.svg#only-light)
   ![data vizualization example - suppliers performance](assets/pages/home/supplier_quality_dark_bg.svg#only-dark)
   <figcaption>Data Vizualization Example - Supplier Quality Performance</figcaption>
+</figure>
+
+<figure markdown="span">
+  ![data vizualization example - colored map](assets/pages/home/world_map_colored.svg)
+  <figcaption>Data Vizualization Example - World Map</figcaption>
 </figure>
 
 <figure markdown="span">

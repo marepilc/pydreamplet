@@ -2,7 +2,7 @@
 
 The Vector class provides a simple implementation of a two-dimensional vector. It supports common operations such as addition, subtraction, scalar multiplication and division, normalization, and more. The class makes use of Python’s operator overloading to enable intuitive arithmetic with vectors, and it also offers properties for accessing and modifying the vector’s components, magnitude, and direction.
 
-## <span class=class></span>dreamplet.math.Vector
+## <span class=class></span>`dreamplet.math.Vector`
 
 ```py
 Vector(self, x: float, y: float)
