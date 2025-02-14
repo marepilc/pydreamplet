@@ -5,7 +5,6 @@ import xml.etree.ElementTree as ET
 from IPython.display import SVG as IPythonSVG
 from IPython.display import display
 
-from pydreamplet.constants import PI
 from pydreamplet.math import Vector
 
 SVG_NS = "http://www.w3.org/2000/svg"
@@ -509,7 +508,7 @@ class Circle(SvgElement):
 
     @property
     def area(self):
-        return PI * self.radius**2
+        return math.PI * self.radius**2
 
 
 class Ellipse(SvgElement):
