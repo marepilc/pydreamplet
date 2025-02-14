@@ -2,6 +2,10 @@
 
 The Animate class represents an SVG animation element. It allows you to animate an attribute by specifying repeat count and a sequence of values.
 
+!!! info
+
+    This class inherites from [**`SvgElement`**](svgelement.md).
+
 ## <span class=class></span>`pydreamplet.core.Animate`
 
 ```py

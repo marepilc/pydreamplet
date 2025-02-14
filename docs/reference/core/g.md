@@ -2,6 +2,10 @@
 
 The G class represents a group (`<g>`) element in SVG. It inherits from both SvgElement and Transformable to allow grouped elements to be transformed together.
 
+!!! info
+
+    This class inherites from [**`Transformable`**](transformable.md) and [**`SvgElement`**](svgelement.md).
+
 ## <span class=class></span>`pydreamplet.core.G`
 
 ```py
