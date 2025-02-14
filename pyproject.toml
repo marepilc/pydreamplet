@@ -26,3 +26,5 @@ include = ["pydreamplet/resources/*.svg"]
 jupyter = "^1.1.1"
 ruff = "^0.9.5"
 pytest = "^8.3.4"
+mkdocs-material = "^9.6.4"
+mike = "^2.1.3"
