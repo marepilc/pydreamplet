@@ -4,7 +4,7 @@ from typing import Sequence
 
 def star(
     x: float = 0,
-    y: float = 5,
+    y: float = 0,
     n: int = 5,
     *,
     inner_radius: float,

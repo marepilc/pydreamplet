@@ -22,6 +22,9 @@ nav:
       - reference/core/rect.md
       - reference/core/text.md
       - reference/core/textonpath.md
+    - Shapes:
+      - reference/shapes/index.md
+
     - Math:
       - reference/math/vector.md
     - Noise:
