@@ -63,6 +63,6 @@ svg.display()
 ```
 
 <figure class="light-dark-bg" markdown="span">
-  ![Resule](assets/textonpath_example.svg)
+  ![Result](assets/textonpath_example.svg)
   <figcaption>Result</figcaption>
 </figure>
