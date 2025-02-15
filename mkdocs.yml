@@ -8,6 +8,7 @@ nav:
   - index.md
   - Getting started:
     - getting_started/index.md
+    - getting_started/tutorial.md
   - Reference:
     - Core:
       - reference/core/svg.md
