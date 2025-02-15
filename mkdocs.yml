@@ -108,6 +108,9 @@ plugins:
   - search
   - blog
 extra:
+  analytics:
+    provider: google
+    property: G-FSQCYYF079
   consent:
     title: Cookie consent
     description: >- 
