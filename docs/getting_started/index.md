@@ -46,6 +46,7 @@ This will create such a image
   <figcaption>Output of the code above</figcaption>
 </figure>
 
+
 pyDreamplet provides various functions to generate complex visuals, such as:
 
 - **Drawing Multiple Shapes:** Create combinations of lines, circles, and custom paths.
