@@ -76,4 +76,5 @@
 
 .light-dark-bg > img {
   background-color: var(--custom-background);
+  border: 1px solid gray;
 }
