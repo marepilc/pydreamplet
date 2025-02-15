@@ -15,6 +15,10 @@ With pip:
 pip install pydreamplet
 ```
 
+## Documentation
+
+[https://marepilc.github.io/pydreamplet/](https://marepilc.github.io/pydreamplet/)
+
 ## Usage example
 
 
