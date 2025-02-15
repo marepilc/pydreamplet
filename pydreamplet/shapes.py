@@ -76,6 +76,146 @@ def line(x_coords: Sequence[float], y_coords: Sequence[float]) -> str:
     return d_string
 
 
+def cardinal_spline(
+    points: list[float] | list[tuple[float, float]],
+    tension: float = 0.0,
+    closed: bool = False,
+):
+    """
+    Generate an SVG path 'd' string for a cardinal spline
+    through the given points, with adjustable 'tension'.
+
+    This replicates the approach of D3’s 'cardinal' curve:
+      - Each pair of adjacent points is joined by a cubic Bézier.
+      - The two Bézier control points are computed based on 'tension'.
+      - Tension=0 => classic cardinal; Tension=1 => straight lines.
+
+    Parameters
+    ----------
+    points : list
+        Either a flat list [x0, y0, x1, y1, ...] or
+        a list of (x, y) pairs [(x0,y0), (x1,y1), ...].
+    tension : float
+        A number in [0..1]. 0 => looser, 1 => no curvature.
+    closed : bool
+        Whether to close the spline (end connects back to start).
+
+    Returns
+    -------
+    str
+        An SVG path 'd' string, e.g. "M x0,y0 C c1x,c1y c2x,c2y x1,y1 ..."
+    """
+    # 1) Convert 'points' to a list of (x, y) pairs if it's flat
+    xy = []
+    if not points:
+        return ""  # nothing to draw
+    if isinstance(points[0], (int, float)) and len(points) % 2 == 0:
+        # Flat list [x0, y0, x1, y1, ...]
+        for i in range(0, len(points), 2):
+            xy.append((points[i], points[i + 1]))
+    elif isinstance(points[0], (tuple, list)) and len(points[0]) == 2:
+        # Already a list of (x, y) pairs
+        xy = points
+    else:
+        raise ValueError(
+            "points must be either flat [x0, y0, ...] or a list of (x, y) pairs"
+        )
+
+    n = len(xy)
+    if n == 0:
+        return ""
+    if n == 1:
+        # Just a single point => Move there, no lines
+        return f"M {xy[0][0]},{xy[0][1]}"
+    if n == 2 and not closed:
+        # Just two points => a straight line
+        return f"M {xy[0][0]},{xy[0][1]} L {xy[1][0]},{xy[1][1]}"
+
+    # 2) 'k' is the factor that controls how "long" the tangents are
+    #    D3 uses k = (1 - tension) / 6 for its cardinal spline
+    k = (1 - tension) / 6
+
+    # We'll build up an SVG path in parts
+    d_parts = []
+
+    if closed:
+        # -----------------------------
+        #   CLOSED CARDINAL SPLINE
+        # -----------------------------
+        # For a closed curve, we can "wrap around" so that:
+        #   - The final control points reference the first points
+        #   - The first control points reference the last points
+        #
+        # One simple trick is to pad with 2 points at each end:
+        #   e.g. [p_{n-2}, p_{n-1}, p0, p1, ..., p_{n-1}, p0, p1]
+        # But a more direct approach is:
+        #   - Start with "M x0,y0"
+        #   - Then for i in [0..n-1], let p[i+1], p[i+2] wrap around mod n
+        #   - Each segment is "C c1x,c1y c2x,c2y x_{i+1},y_{i+1}"
+        #   - Finally "Z" to close
+        #
+        # For clarity, we'll just do modular indexing.
+
+        # Move to the first point
+        d_parts.append(f"M {xy[0][0]},{xy[0][1]}")
+
+        for i in range(n):
+            p0 = xy[(i - 1) % n]  # previous
+            p1 = xy[i % n]  # current
+            p2 = xy[(i + 1) % n]  # next
+            p3 = xy[(i + 2) % n]  # next-next
+
+            # Control point 1
+            c1x = p1[0] + (p2[0] - p0[0]) * k
+            c1y = p1[1] + (p2[1] - p0[1]) * k
+            # Control point 2
+            c2x = p2[0] - (p3[0] - p1[0]) * k
+            c2y = p2[1] - (p3[1] - p1[1]) * k
+
+            # Cubic Bezier to p2
+            d_parts.append(f"C {c1x},{c1y} {c2x},{c2y} {p2[0]},{p2[1]}")
+
+        # Close the path
+        d_parts.append("Z")
+
+    else:
+        # -----------------------------
+        #   OPEN CARDINAL SPLINE
+        # -----------------------------
+        # A common technique: "pad" the start and end so each real
+        # point has neighbors for tangents. D3 does something similar
+        # internally for the open cardinal.
+        #
+        # We'll define an extended array:
+        #   e = [p0, p0] + [p1..p_{n-2}] + [p_{n-1}, p_{n-1}]
+        # Then each segment i in [1..n-1] uses p0..p3 => e[i-1..i+2].
+
+        # Build extended
+        e = [xy[0]] + xy + [xy[-1]]  # length = n+2
+        # Start path at the first real point
+        d_parts.append(f"M {e[1][0]},{e[1][1]}")
+
+        # We'll have (n-1) segments from i=1..(n-1)
+        # Each segment goes from e[i] to e[i+1]
+        # with tangents referencing e[i-1], e[i+2].
+        for i in range(1, n):
+            p0 = e[i - 1]
+            p1 = e[i]
+            p2 = e[i + 1]
+            p3 = e[i + 2]
+
+            c1x = p1[0] + (p2[0] - p0[0]) * k
+            c1y = p1[1] + (p2[1] - p0[1]) * k
+
+            c2x = p2[0] - (p3[0] - p1[0]) * k
+            c2y = p2[1] - (p3[1] - p1[1]) * k
+
+            d_parts.append(f"C {c1x},{c1y} {c2x},{c2y} {p2[0]},{p2[1]}")
+
+    # Combine everything into a single path string
+    return " ".join(d_parts)
+
+
 def cross(
     x: float = 0, y: float = 0, *, size: float, thickness: float, angle: float = 0
 ) -> str:

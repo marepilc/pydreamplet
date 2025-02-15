@@ -62,6 +62,37 @@ d_str = line([0, 50, 100], [0, 100, 0])
 print(d_str)
 ```
 
+## <span class="func"></span>`cardinal_spline`
+
+```py
+cardinal_spline(
+    points: list[float] | list[tuple[float, float]],
+    tension: float = 0.0,
+    closed: bool = False,
+) -> str
+```
+
+Generates an SVG path `d` string for a cardinal spline that smoothly interpolates through a set of points with adjustable tension. The spline is built from a series of cubic Bézier segments computed using the cardinal spline algorithm. A `tension` of `0.0` produces the classic smooth cardinal spline, while a `tension` of `1.0` yields straight-line segments. When `closed` is `True`, the spline wraps around so that the last point connects back to the first.
+
+<span class="param">**Parameters**</span>
+
+- `points` *(list[float] | list[tuple[float, float]])*: A sequence of points. This can be a flat list in the form `[x0, y0, x1, y1, …]` or a list of `(x, y)` tuples.
+- `tension` *(float)*: A number between `0.0` and `1.0` that controls the curvature of the spline. Lower values yield a looser, more curved line; higher values produce a tighter, straighter line.
+- `closed` *(bool)*: Whether the spline should be closed (i.e. the last point connects back to the first).
+
+<span class="returns">**Returns**</span>
+
+*(str)*: A string suitable for the `d` attribute of an SVG `<path>` element.
+
+```py
+d_str = cardinal_spline(
+    [50, 50, 100, 100, 150, 50, 200, 100, 250, 50, 300, 100, 350, 50],
+    tension=0.5,
+    closed=False
+)
+print(d_str)
+```
+
 ## <span class="func"></span>`cross`
 
 ```py
