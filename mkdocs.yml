@@ -60,11 +60,8 @@ theme:
     repo: material/github
   custom_dir: overrides
   features:
-    # - navigation.tabs
-    # - navigation.tabs.sticky
     - navigation.instant
     - navigation.tracking
-    # - navigation.expand
     - content.code.copy
     - search.suggest
   palette:
@@ -110,7 +107,6 @@ markdown_extensions:
 plugins:
   - search
   - blog
-  # - awesome-pages
 extra:
   consent:
     title: Cookie consent
@@ -124,8 +120,6 @@ extra:
     actions:
       - accept
       - manage
-  # version:
-  #   provider: mike
 copyright: >
   Copyright &copy; 2025 Marek Pilczuk —
   <a href="#__consent">Change cookie settings</a>
