@@ -49,7 +49,7 @@ def star(
     return d_string
 
 
-def line(x_coords: Sequence[float], y_coords: Sequence[float]) -> str:
+def polyline(x_coords: Sequence[float], y_coords: Sequence[float]) -> str:
     """
     Returns a d-string for a polyline connecting the points specified by x_coords and y_coords.
 

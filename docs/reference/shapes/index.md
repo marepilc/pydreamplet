@@ -36,10 +36,10 @@ d_str = star(inner_radius=10, outer_radius=20)
 print(d_str)
 ```
 
-## <span class="func"></span>`line`
+## <span class="func"></span>`polyline`
 
 ```py
-line(
+polyline(
     x_coords: Sequence[float],
     y_coords: Sequence[float]
 ) -> str
@@ -58,7 +58,7 @@ Raises a `ValueError` if the lengths of `x_coords` and `y_coords` do not match.
 *(str)*: A string suitable for the "d" attribute in an SVG path element.
 
 ```py
-d_str = line([0, 50, 100], [0, 100, 0])
+d_str = polyline([0, 50, 100], [0, 100, 0])
 print(d_str)
 ```
 
