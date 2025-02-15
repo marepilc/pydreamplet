@@ -93,6 +93,37 @@ d_str = cardinal_spline(
 print(d_str)
 ```
 
+## <span class="func"></span>`polygon`
+
+```py
+polygon(
+    x: float,
+    y: float,
+    radius: float,
+    n: int,
+    angle: float = 0,
+) -> str
+```
+
+Returns a `d`-string for a regular polygon with `n` sides. The polygon is centered at `(x, y)` and is inscribed in a circle of the specified `radius`. An optional rotation `angle` (in degrees) is applied, rotating the polygon around its center. By default, the first vertex is positioned at the top of the circle (i.e. at -90°) and then rotated by the given `angle`.
+
+<span class="param">**Parameters**</span>
+
+- `x` *(float)*: The x-coordinate of the polygon’s center.
+- `y` *(float)*: The y-coordinate of the polygon’s center.
+- `radius` *(float)*: The radius of the circle in which the polygon is inscribed.
+- `n` *(int)*: The number of sides (vertices) of the polygon.
+- `angle` *(float)*: The rotation angle in degrees to be applied to the polygon (default is 0).
+
+<span class="returns">**Returns**</span>
+
+*(str)*: A string suitable for the d attribute of an SVG `<path>` element.
+
+```py
+d_str = polygon(200, 200, 100, 6)
+print(d_str)
+```
+
 ## <span class="func"></span>`cross`
 
 ```py

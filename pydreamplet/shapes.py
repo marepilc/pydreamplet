@@ -216,6 +216,36 @@ def cardinal_spline(
     return " ".join(d_parts)
 
 
+def polygon(x: float, y: float, radius: float, n: int, angle: float = 0) -> str:
+    """
+    Returns an SVG path d-string for a regular polygon with n sides,
+    optionally rotated by a specified angle.
+
+    The polygon is centered at (x, y) and inscribed in a circle with the
+    given radius. The optional angle (in degrees) rotates the polygon around
+    its center. By default, the first vertex is positioned at the top of the circle.
+
+    Parameters:
+      x (float): The x-coordinate of the polygon's center.
+      y (float): The y-coordinate of the polygon's center.
+      radius (float): The radius of the circle in which the polygon is inscribed.
+      n (int): The number of sides (vertices) of the polygon.
+      angle (float): The rotation angle in degrees (default is 0).
+
+    Returns:
+      str: A string suitable for the "d" attribute in an SVG <path> element.
+    """
+    angle_offset = math.radians(angle)
+    angle_step = 2 * math.pi / n
+    points = []
+    for i in range(n):
+        a = i * angle_step - math.pi / 2 + angle_offset
+        sx = x + math.cos(a) * radius
+        sy = y + math.sin(a) * radius
+        points.append(f"{sx:.2f},{sy:.2f}")
+    return "M " + " L ".join(points) + " Z"
+
+
 def cross(
     x: float = 0, y: float = 0, *, size: float, thickness: float, angle: float = 0
 ) -> str:
