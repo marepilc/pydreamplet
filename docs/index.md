@@ -20,5 +20,5 @@ Check out the examples below. Ready to dive in? Explore the Getting Started sect
 
 <figure markdown="span">
   ![creative coding example](assets/pages/home/creative_coding.svg)
-  <figcaption>Creative Coding</figcaption>
+  <figcaption>Creative coding example</figcaption>
 </figure>

@@ -60,18 +60,14 @@ theme:
     repo: material/github
   custom_dir: overrides
   features:
-    - navigation.tabs
+    # - navigation.tabs
     # - navigation.tabs.sticky
     - navigation.instant
     - navigation.tracking
-    - navigation.expand
+    # - navigation.expand
     - content.code.copy
     - search.suggest
   palette:
-    # - media: "(prefers-color-scheme)"
-    #   toggle:
-    #     icon: material/brightness-auto
-    #     name: Switch to light mode
     - media: "(prefers-color-scheme: light)"
       scheme: default
       toggle:
