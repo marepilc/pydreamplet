@@ -36,10 +36,10 @@ d_str = star(inner_radius=10, outer_radius=20)
 print(d_str)
 ```
 
-## <span class="func"></span>`line`
+## <span class="func"></span>`polyline`
 
 ```py
-line(
+polyline(
     x_coords: Sequence[float],
     y_coords: Sequence[float]
 ) -> str
@@ -58,7 +58,69 @@ Raises a `ValueError` if the lengths of `x_coords` and `y_coords` do not match.
 *(str)*: A string suitable for the "d" attribute in an SVG path element.
 
 ```py
-d_str = line([0, 50, 100], [0, 100, 0])
+d_str = polyline([0, 50, 100], [0, 100, 0])
+print(d_str)
+```
+
+## <span class="func"></span>`cardinal_spline`
+
+```py
+cardinal_spline(
+    points: list[float] | list[tuple[float, float]],
+    tension: float = 0.0,
+    closed: bool = False,
+) -> str
+```
+
+Generates an SVG path `d` string for a cardinal spline that smoothly interpolates through a set of points with adjustable tension. The spline is built from a series of cubic Bézier segments computed using the cardinal spline algorithm. A `tension` of `0.0` produces the classic smooth cardinal spline, while a `tension` of `1.0` yields straight-line segments. When `closed` is `True`, the spline wraps around so that the last point connects back to the first.
+
+<span class="param">**Parameters**</span>
+
+- `points` *(list[float] | list[tuple[float, float]])*: A sequence of points. This can be a flat list in the form `[x0, y0, x1, y1, …]` or a list of `(x, y)` tuples.
+- `tension` *(float)*: A number between `0.0` and `1.0` that controls the curvature of the spline. Lower values yield a looser, more curved line; higher values produce a tighter, straighter line.
+- `closed` *(bool)*: Whether the spline should be closed (i.e. the last point connects back to the first).
+
+<span class="returns">**Returns**</span>
+
+*(str)*: A string suitable for the `d` attribute of an SVG `<path>` element.
+
+```py
+d_str = cardinal_spline(
+    [50, 50, 100, 100, 150, 50, 200, 100, 250, 50, 300, 100, 350, 50],
+    tension=0.5,
+    closed=False
+)
+print(d_str)
+```
+
+## <span class="func"></span>`polygon`
+
+```py
+polygon(
+    x: float,
+    y: float,
+    radius: float,
+    n: int,
+    angle: float = 0,
+) -> str
+```
+
+Returns a `d`-string for a regular polygon with `n` sides. The polygon is centered at `(x, y)` and is inscribed in a circle of the specified `radius`. An optional rotation `angle` (in degrees) is applied, rotating the polygon around its center. By default, the first vertex is positioned at the top of the circle (i.e. at -90°) and then rotated by the given `angle`.
+
+<span class="param">**Parameters**</span>
+
+- `x` *(float)*: The x-coordinate of the polygon’s center.
+- `y` *(float)*: The y-coordinate of the polygon’s center.
+- `radius` *(float)*: The radius of the circle in which the polygon is inscribed.
+- `n` *(int)*: The number of sides (vertices) of the polygon.
+- `angle` *(float)*: The rotation angle in degrees to be applied to the polygon (default is 0).
+
+<span class="returns">**Returns**</span>
+
+*(str)*: A string suitable for the d attribute of an SVG `<path>` element.
+
+```py
+d_str = polygon(200, 200, 100, 6)
 print(d_str)
 ```
 

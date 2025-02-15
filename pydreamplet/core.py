@@ -237,12 +237,12 @@ class SVG(SvgElement):
     @property
     def w(self):
         viewbox = [int(v) for v in self.element.get("viewBox").split(" ")]
-        return viewbox[2] - viewbox[0]
+        return viewbox[2]
 
     @property
     def h(self):
         viewbox = [int(v) for v in self.element.get("viewBox").split(" ")]
-        return viewbox[3] - viewbox[1]
+        return viewbox[3]
 
     def display(self):
         display(IPythonSVG(self.tostring()))

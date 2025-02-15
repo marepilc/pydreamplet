@@ -5,6 +5,7 @@ __pycache__
 *.ipynb
 *.svg
 !pydreamplet/resources/*.svg
+!docs/**/*.svg
 dist
 data
 site
