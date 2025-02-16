@@ -1783,7 +1783,7 @@
 </span></code></pre></div></td></tr></table></div>
 <p>This will create such a image</p>
 <figure>
-  <img alt="Image title" src="assets/getting_started.svg" width="300" />
+  <img alt="Image title" src="assets/getting_started_img_01.svg" width="300" />
   <figcaption>Output of the code above</figcaption>
 </figure>
 <p>pyDreamplet provides various functions to generate complex visuals, such as:</p>
@@ -1792,11 +1792,65 @@
 <li><strong>Styling Options:</strong> Apply gradients, patterns, and advanced styling techniques.</li>
 <li><strong>Animations:</strong> If supported, add animation effects to SVG elements.</li>
 </ul>
+<p>Let's take a look at a little more interesting example. In this snippet, we create a 600×600 SVG canvas and build an animated radial design with 35 circles. Each circle animates its position and size, while its stroke color transitions smoothly from black to red. Here’s a detailed breakdown:</p>
+<p>First, import <code>pydreamplet</code> and scales.</p>
+<div class="language-py highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pydreamplet</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dp</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="kn">from</span><span class="w"> </span><span class="nn">pydreamplet.scales</span><span class="w"> </span><span class="kn">import</span> <span class="n">LinearScale</span><span class="p">,</span> <span class="n">ColorScale</span>
+</span></code></pre></div>
+<p>Next, we create a 600×600 SVG canvas. A group element (<code>G</code>) is defined with its position set at the center of the canvas. This ensures that all contained elements are rendered relative to the center, making the radial design easier to manage.</p>
+<div class="language-py highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">svg</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">SVG</span><span class="p">(</span><span class="mi">600</span><span class="p">,</span> <span class="mi">600</span><span class="p">)</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="n">g</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">G</span><span class="p">(</span><span class="n">pos</span><span class="o">=</span><span class="n">dp</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="n">svg</span><span class="o">.</span><span class="n">w</span> <span class="o">/</span> <span class="mi">2</span><span class="p">,</span> <span class="n">svg</span><span class="o">.</span><span class="n">h</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">svg</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+</span></code></pre></div>
+<p>We define the total number of circles (<code>circles_count</code>) and set the minimum and maximum radius values. The <code>LinearScale</code> maps the circle’s index (from 0 to 35) to a radius that varies between <code>min_radius</code> and <code>max_radius</code>. Similarly, the <code>ColorScale</code> maps these indices to a color gradient from black to red.</p>
+<div class="language-py highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">circles_count</span> <span class="o">=</span> <span class="mi">35</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="n">max_radius</span> <span class="o">=</span> <span class="mi">250</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="n">min_radius</span> <span class="o">=</span> <span class="mi">5</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="n">r_scale</span> <span class="o">=</span> <span class="n">LinearScale</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">circles_count</span><span class="p">),</span> <span class="p">(</span><span class="n">min_radius</span><span class="p">,</span> <span class="n">max_radius</span><span class="p">))</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="n">color_scale</span> <span class="o">=</span> <span class="n">ColorScale</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span> <span class="n">circles_count</span><span class="p">),</span> <span class="p">(</span><span class="s2">&quot;#000000&quot;</span><span class="p">,</span> <span class="s2">&quot;#FF0000&quot;</span><span class="p">))</span>
+</span></code></pre></div>
+<p>We start from a point on the right of an imaginary circle (at the maximum radius) and then loop over the total number of circles. For each iteration:</p>
+<ul>
+<li>A circle is created with no fill and a stroke color determined by its index.</li>
+<li>Animations are added to the circle for the x (<code>cx</code>) and y (<code>cy</code>) coordinates. These animate the circle’s center from its starting position to the center of the canvas and then back.</li>
+<li>The circle’s radius is animated from a minimum value to a computed value (using the linear scale) and back.</li>
+<li>The starting position is rotated slightly (by 360° divided by the total number of circles) for the next circle, creating the radial layout.</li>
+</ul>
+<div class="language-py highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">start_pos</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="n">max_radius</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">circles_count</span><span class="p">):</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>    <span class="c1"># Create a circle with a dynamic stroke color.</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>    <span class="n">c</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">Circle</span><span class="p">(</span><span class="n">fill</span><span class="o">=</span><span class="s2">&quot;none&quot;</span><span class="p">,</span> <span class="n">stroke</span><span class="o">=</span><span class="n">color_scale</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="n">c</span><span class="o">.</span><span class="n">pos</span> <span class="o">=</span> <span class="n">start_pos</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="c1"># Animate the circle&#39;s horizontal and vertical positions.</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>    <span class="n">pos_x_anim</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">Animate</span><span class="p">(</span><span class="s2">&quot;cx&quot;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="n">start_pos</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">start_pos</span><span class="o">.</span><span class="n">x</span><span class="p">],</span> <span class="n">dur</span><span class="o">=</span><span class="s2">&quot;5s&quot;</span><span class="p">)</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>    <span class="n">pos_y_anim</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">Animate</span><span class="p">(</span><span class="s2">&quot;cy&quot;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="n">start_pos</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="n">start_pos</span><span class="o">.</span><span class="n">y</span><span class="p">],</span> <span class="n">dur</span><span class="o">=</span><span class="s2">&quot;5s&quot;</span><span class="p">)</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>
+</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>    <span class="c1"># Rotate the starting position for the next circle.</span>
+</span><span id="__span-6-12"><a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>    <span class="n">start_pos</span><span class="o">.</span><span class="n">direction</span> <span class="o">+=</span> <span class="mi">360</span> <span class="o">/</span> <span class="n">circles_count</span>
+</span><span id="__span-6-13"><a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>
+</span><span id="__span-6-14"><a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>    <span class="c1"># Animate the circle&#39;s radius using the linear scale.</span>
+</span><span id="__span-6-15"><a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>    <span class="n">r_anim</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">Animate</span><span class="p">(</span><span class="s2">&quot;r&quot;</span><span class="p">,</span> <span class="n">values</span><span class="o">=</span><span class="p">[</span><span class="n">min_radius</span><span class="p">,</span> <span class="n">r_scale</span><span class="o">.</span><span class="n">map</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">min_radius</span><span class="p">],</span> <span class="n">dur</span><span class="o">=</span><span class="s2">&quot;5s&quot;</span><span class="p">)</span>
+</span><span id="__span-6-16"><a id="__codelineno-6-16" name="__codelineno-6-16" href="#__codelineno-6-16"></a>
+</span><span id="__span-6-17"><a id="__codelineno-6-17" name="__codelineno-6-17" href="#__codelineno-6-17"></a>    <span class="c1"># Append animations to the circle.</span>
+</span><span id="__span-6-18"><a id="__codelineno-6-18" name="__codelineno-6-18" href="#__codelineno-6-18"></a>    <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pos_x_anim</span><span class="p">)</span>
+</span><span id="__span-6-19"><a id="__codelineno-6-19" name="__codelineno-6-19" href="#__codelineno-6-19"></a>    <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">pos_y_anim</span><span class="p">)</span>
+</span><span id="__span-6-20"><a id="__codelineno-6-20" name="__codelineno-6-20" href="#__codelineno-6-20"></a>    <span class="n">c</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">r_anim</span><span class="p">)</span>
+</span><span id="__span-6-21"><a id="__codelineno-6-21" name="__codelineno-6-21" href="#__codelineno-6-21"></a>
+</span><span id="__span-6-22"><a id="__codelineno-6-22" name="__codelineno-6-22" href="#__codelineno-6-22"></a>    <span class="c1"># Add the circle to the group.</span>
+</span><span id="__span-6-23"><a id="__codelineno-6-23" name="__codelineno-6-23" href="#__codelineno-6-23"></a>    <span class="n">g</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Finally, we can render the SVG. In environments like Jupyter Notebook, calling <code>svg.display()</code> will show the animated visualization directly in your notebook. Alternatively, you can save your art by calling <code>svg.save("circles.svg")</code>.</p>
+<figure class="light-dark-bg">
+  <img alt="Image title" src="assets/getting_started_img_02.svg" />
+  <figcaption>Animated circles</figcaption>
+</figure>
 <p>For detailed information on all available functions and parameters, consult the API reference.</p>
 <div class="admonition info">
 <p class="admonition-title">Next steps</p>
 <ul>
 <li><strong>Experiment with Examples:</strong> Modify the basic example by adding new shapes or changing colors to see different effects.</li>
+<li><a href="tutorial/"><strong>Check the tutorial</strong></a>.</li>
 <li><a href="../reference/core/svg/"><strong>Review the API Documentation:</strong></a> Learn about the full range of functions available in pyDreamplet.</li>
 <li><a href="../blog/"><strong>Explore the Blog:</strong></a> Discover advanced examples and creative projects that showcase the library’s capabilities.</li>
 </ul>

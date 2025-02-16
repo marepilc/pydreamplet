@@ -2077,13 +2077,13 @@
 </span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">xy</span><span class="p">)</span>  <span class="c1"># Output: (5.0, 6.0)</span>
 </span></code></pre></div>
 <h3 id="direction"><span class="prop"></span><code>direction</code></h3>
-<p><strong>Getter:</strong> Returns the angle (in radians) of the vector relative to the positive x-axis, calculated using <code>atan2</code>.</p>
+<p><strong>Getter:</strong> Returns the angle (in degrees) of the vector relative to the positive x-axis, calculated using <code>atan2</code>.</p>
 <div class="language-py highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="n">v</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">)</span>
-</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">direction</span><span class="p">)</span>  <span class="c1"># Output: ~0.785 (approximately pi/4)</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">direction</span><span class="p">)</span>  <span class="c1"># Output: ~45.0 (approximately 45 degrees)</span>
 </span></code></pre></div>
-<p><strong>Setter:</strong> Sets the vector’s direction (angle in radians) while preserving its magnitude.</p>
+<p><strong>Setter:</strong> Sets the vector’s direction (angle in degrees) while preserving its magnitude.</p>
 <div class="language-py highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="n">v</span> <span class="o">=</span> <span class="n">Vector</span><span class="p">(</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">)</span>
-</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">v</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">pi</span> <span class="o">/</span> <span class="mi">2</span>  <span class="c1"># Set direction to 90 degrees</span>
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="n">v</span><span class="o">.</span><span class="n">direction</span> <span class="o">=</span> <span class="mi">90</span>  <span class="c1"># Set direction to 90 degrees</span>
 </span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a><span class="nb">print</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>  <span class="c1"># Output: Vector(x≈0.0, y=5.0)</span>
 </span></code></pre></div>
 <h3 id="magnitude"><span class="prop"></span><code>magnitude</code></h3>
