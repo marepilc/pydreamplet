@@ -114,18 +114,19 @@ class Vector:
     @property
     def direction(self) -> float:
         """
-        Returns the direction (angle in radians) of the vector.
+        Returns the direction (angle in degrees) of the vector.
         """
-        return math.atan2(self._y, self._x)
+        return math.degrees(math.atan2(self._y, self._x))
 
     @direction.setter
-    def direction(self, angle: float) -> None:
+    def direction(self, angle_deg: float) -> None:
         """
-        Sets the direction (angle in radians) of the vector while preserving its magnitude.
+        Sets the direction (angle in degrees) of the vector while preserving its magnitude.
         """
         mag = self.magnitude
-        self._x = math.cos(angle) * mag
-        self._y = math.sin(angle) * mag
+        angle_rad = math.radians(angle_deg)
+        self._x = math.cos(angle_rad) * mag
+        self._y = math.sin(angle_rad) * mag
 
     @property
     def magnitude(self) -> float:
@@ -137,9 +138,11 @@ class Vector:
         """
         Sets the magnitude of the vector while preserving its direction.
         """
-        angle = self.direction
-        self._x = math.cos(angle) * new_magnitude
-        self._y = math.sin(angle) * new_magnitude
+        # Get the current direction in degrees, then convert to radians.
+        angle_deg = self.direction
+        angle_rad = math.radians(angle_deg)
+        self._x = math.cos(angle_rad) * new_magnitude
+        self._y = math.sin(angle_rad) * new_magnitude
 
     def limit(self, limit_scalar: float) -> None:
         """
@@ -147,9 +150,7 @@ class Vector:
         If the current magnitude exceeds the limit, the vector is scaled down.
         """
         if self.magnitude > limit_scalar:
-            angle = self.direction
-            self._x = math.cos(angle) * limit_scalar
-            self._y = math.sin(angle) * limit_scalar
+            self.magnitude = limit_scalar
 
     def __repr__(self) -> str:
         return f"Vector(x={self._x}, y={self._y})"

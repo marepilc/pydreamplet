@@ -226,11 +226,16 @@ class SVG(SvgElement):
             vb = f"{viewbox[0]} {viewbox[1]} {viewbox[2]} {viewbox[3]}"
         else:
             vb = f"0 0 {viewbox[0]} {viewbox[1]}"
+
+        if "width" not in kwargs:
+            kwargs["width"] = f"{viewbox[0]}px"
+        if "height" not in kwargs:
+            kwargs["height"] = f"{viewbox[1]}px"
         self.attrs(
             {
                 "viewBox": vb,
-                "width": f"{viewbox[0]}px",
-                "height": f"{viewbox[1]}px",
+                "width": kwargs.pop("width"),
+                "height": kwargs.pop("height"),
             }
         )
 
@@ -439,10 +444,21 @@ class G(Transformable, SvgElement):
 class Animate(SvgElement):
     def __init__(self, attr: str, **kwargs):
         super().__init__("animate", **kwargs)
-        self._repeat_count: int | str = "indefinite"
-        self._values: list[any] = []
+        if "repeatCount" in kwargs:
+            self._repeat_count: int | str = kwargs.pop("repeatCount")
+        else:
+            self._repeat_count: int | str = "indefinite"
+        if "values" in kwargs:
+            if isinstance(kwargs["values"], list):
+                self._values = kwargs.pop("values")
+                self.attrs({"values": ";".join([str(v) for v in self._values])})
+            else:
+                self._values: list[any] = []
+        if "dur" not in kwargs:
+            kwargs["dur"] = "2s"
         self.attrs(
             {
+                "dur": kwargs.pop("dur"),
                 "attributeType": "XML",
                 "attributeName": attr,
                 "repeatCount": self._repeat_count,
