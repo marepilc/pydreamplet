@@ -46,20 +46,20 @@ svg.append(layer0).append(layer1)
 
 Two loops create arcs that form the bottom and top halves of a circle. The arcs are generated with a decreasing radius and blended colors for a gradient-like effect.
 
-### Bottom-Half Arcs
+### Top-Half Arcs
 
-For the bottom half, arcs are drawn from 180° to 360°. The starting x-coordinate is at the canvas center and shifts left on each iteration. The radius shrinks gradually, and the blend proportion increases to interpolate between `color1` and `color2`.
+For the top half, arcs are drawn from 180° to 360°. The starting x-coordinate is at the canvas center and shifts left on each iteration. The radius shrinks gradually, and the blend proportion increases to interpolate between `color1` and `color2`.
 
 
 ```py
-# Initialize parameters for the bottom half arcs
+# Initialize parameters for the top half arcs
 x = svg.w / 2          # Starting at the horizontal center
 blend_prop = 0         # Initial blend proportion for color blending
 radius = 200           # Initial radius for arcs
 radius_delta = radius / 6  # Amount to reduce the radius on each loop
 
 for i in range(6):
-    # Create an arc for the bottom half using the ring function
+    # Create an arc for the top half using the ring function
     arc = dp.Path(
         d=ring(
             x,
@@ -67,7 +67,7 @@ for i in range(6):
             inner_radius=0,     # arcs start from the center
             outer_radius=radius, 
             start_angle=180,    # start at 180° (left side)
-            end_angle=360,      # end at 360° (completing the bottom half)
+            end_angle=360,      # end at 360° (completing the top half)
         ),
     )
     # Set the arc's fill by blending color1 and color2
@@ -85,18 +85,18 @@ for i in range(6):
   <figcaption>Each iteration creates an arc with slightly different dimensions and a gradually changing fill color.</figcaption>
 </figure>
 
-### Top-Half Arcs
+### Bottom-Half Arcs
 
-The next loop draws the top half from 0° to 180°. Here, the x-coordinate shifts right on each iteration, and the fill color blends between `color3` and `color4`.
+The next loop draws the bottom half from 0° to 180°. Here, the x-coordinate shifts right on each iteration, and the fill color blends between `color3` and `color4`.
 
 ```py
-# Reset parameters for the top half arcs
+# Reset parameters for the bottom half arcs
 x = svg.w / 2          # Restart from the center
 blend_prop = 0         # Reset blend proportion
 radius = 200           # Reset radius to initial value
 
 for i in range(6):
-    # Create an arc for the top half using the ring function
+    # Create an arc for the bottom half using the ring function
     arc = dp.Path(
         d=ring(
             x,
@@ -104,7 +104,7 @@ for i in range(6):
             inner_radius=0,
             outer_radius=radius,
             start_angle=0,    # start at 0° (right side)
-            end_angle=180,    # end at 180° (completing the top half)
+            end_angle=180,    # end at 180° (completing the bottom half)
         ),
     )
     # Set the arc's fill by blending color3 and color4
