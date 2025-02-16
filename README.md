@@ -8,6 +8,7 @@ With poetry:
 
 ```schell
 poetry add pydreamplet
+```
 
 With pip:
 
