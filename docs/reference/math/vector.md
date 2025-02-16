@@ -115,18 +115,18 @@ print(v.xy)  # Output: (5.0, 6.0)
 
 ### <span class="prop"></span>`direction`
 
-**Getter:** Returns the angle (in radians) of the vector relative to the positive x-axis, calculated using `atan2`.
+**Getter:** Returns the angle (in degrees) of the vector relative to the positive x-axis, calculated using `atan2`.
 
 ```py
 v = Vector(1.0, 1.0)
-print(v.direction)  # Output: ~0.785 (approximately pi/4)
+print(v.direction)  # Output: ~45.0 (approximately 45 degrees)
 ```
 
-**Setter:** Sets the vector’s direction (angle in radians) while preserving its magnitude.
+**Setter:** Sets the vector’s direction (angle in degrees) while preserving its magnitude.
 
 ```py
 v = Vector(3.0, 4.0)
-v.direction = math.pi / 2  # Set direction to 90 degrees
+v.direction = 90  # Set direction to 90 degrees
 print(v)  # Output: Vector(x≈0.0, y=5.0)
 ```
 

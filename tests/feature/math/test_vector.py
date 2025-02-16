@@ -126,7 +126,7 @@ def test_normalize_zero(vector_zero):
 
 # Test direction (angle) property
 def test_direction_getter(vector_3_4):
-    expected_angle = math.atan2(4, 3)
+    expected_angle = math.degrees(math.atan2(4, 3))
     assert math.isclose(vector_3_4.direction, expected_angle)
 
 
@@ -148,9 +148,10 @@ def test_magnitude_getter(vector_3_4):
 def test_magnitude_setter(vector_3_4):
     v = vector_3_4.copy()
     v.magnitude = 10
-    expected_angle = math.atan2(4, 3)
-    expected_x = math.cos(expected_angle) * 10
-    expected_y = math.sin(expected_angle) * 10
+    expected_angle_deg = math.degrees(math.atan2(4, 3))
+    expected_angle_rad = math.radians(expected_angle_deg)
+    expected_x = math.cos(expected_angle_rad) * 10
+    expected_y = math.sin(expected_angle_rad) * 10
     assert math.isclose(v.x, expected_x)
     assert math.isclose(v.y, expected_y)
 
