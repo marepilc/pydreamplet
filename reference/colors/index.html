@@ -1992,36 +1992,25 @@ Returns the blended color as a hex string.</p>
 <h2 id="generate_colors"><span class="func"></span><code>generate_colors</code></h2>
 <div class="language-py highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="n">generate_colors</span><span class="p">(</span>
 </span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>    <span class="n">base_color</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
-</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>    <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">4</span><span class="p">,</span>
-</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>    <span class="n">harmony</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;complementary&quot;</span>
-</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>    <span class="n">n</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">10</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
 </span></code></pre></div>
-<p>Generates a list of colors based on a selected color harmony. The function takes a base hex color and produces a palette of n colors by applying a specific harmony rule. It supports the following harmonies:</p>
-<ul>
-<li><code>complementary:</code> Uses the base color and its direct opposite on the color wheel.</li>
-<li><code>compound:</code> Uses the base color along with two hues adjacent to its complement (a split-complementary scheme).</li>
-<li><code>square:</code> Produces four colors evenly spaced around the color wheel.</li>
-<li>
+<p>Generates a list of colors equally distributed on the color wheel. The function uses the hue of the provided base color as a starting point and preserves its lightness and saturation, then rotates the hue in equal increments to produce a balanced palette of <code>n</code> colors.</p>
 <p><span class="param"><strong>Parameters</strong></span></p>
-</li>
-<li>
-<p><code>base_color</code> <em>(str)</em>: The starting color in hex format (e.g., "#db45f9").</p>
-</li>
+<ul>
+<li><code>base_color</code> <em>(str)</em>: The starting color in hex format (e.g., "#db45f9"). This color provides the lightness and saturation for the generated palette.</li>
 <li><code>n</code> <em>(int)</em>: The total number of colors to generate.</li>
-<li><code>harmony</code> <em>(str)</em>: The color harmony to apply. Supported options are <code>"complementary"</code>, <code>"compound"</code>, and <code>"square"</code>.</li>
-<li>
-<p><span class="returns"><strong>Returns</strong></span></p>
-</li>
-<li>
-<p><em>(list[str])</em>: A list of hex color strings representing the generated color palette.</p>
-</li>
 </ul>
-<div class="language-py highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Example: Generate a complementary palette of 4 colors.</span>
-</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="n">palette</span> <span class="o">=</span> <span class="n">generate_colors</span><span class="p">(</span><span class="n">base_color</span><span class="o">=</span><span class="s2">&quot;#db45f9&quot;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">4</span><span class="p">,</span> <span class="n">harmony</span><span class="o">=</span><span class="s2">&quot;complementary&quot;</span><span class="p">)</span>
+<p><span class="returns"><strong>Returns</strong></span></p>
+<ul>
+<li><em>(list[str])</em>: A list of hex color strings representing the generated color palette.</li>
+</ul>
+<div class="language-py highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="c1"># Example: Generate an equally distributed palette of 10 colors.</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a><span class="n">palette</span> <span class="o">=</span> <span class="n">generate_colors</span><span class="p">(</span><span class="n">base_color</span><span class="o">=</span><span class="s2">&quot;#db45f9&quot;</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
 </span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="nb">print</span><span class="p">(</span><span class="n">palette</span><span class="p">)</span>
-</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="c1"># Example output: [&#39;#db45f9&#39;, &#39;#f945db&#39;, ...]</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="c1"># Example output: [&#39;#db45f9&#39;, &#39;#c4f95d&#39;, &#39;#6cf95d&#39;, &#39;#5d9ef9&#39;, ...]</span>
 </span></code></pre></div>
-<p>This function leverages color space conversions and lightness variations to create balanced palettes that adhere to the selected harmony.</p>
+<p>This function leverages color space conversions (RGB ↔ HLS) to evenly distribute hues, ensuring that the generated colors are well balanced while maintaining the original color's lightness and saturation.</p>
 
 
 
