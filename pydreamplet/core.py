@@ -79,11 +79,11 @@ class SvgElement:
             self.element.remove(child)
         return self
 
-    def tostring(self):
+    def to_string(self):
         return ET.tostring(self.element, encoding="unicode")
 
     def __str__(self):
-        return self.tostring()
+        return self.to_string()
 
     def __getattr__(self, name):
         attr_name = name.replace("_", "-")
@@ -250,11 +250,11 @@ class SVG(SvgElement):
         return viewbox[3]
 
     def display(self):
-        display(IPythonSVG(self.tostring()))
+        display(IPythonSVG(self.to_string()))
 
     def save(self, filename):
         with open(filename, "w") as f:
-            f.write(self.tostring())
+            f.write(self.to_string())
 
 
 # -----------------------------------------------------------------------------

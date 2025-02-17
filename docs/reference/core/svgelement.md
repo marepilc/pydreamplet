@@ -50,6 +50,17 @@ attrs(self, attributes: dict) -> SvgElement
 
 Sets multiple attributes on the element.
 
+```py
+drop_shadow = SvgElement("feDropShadow")
+drop_shadow.attrs({
+    "id": "shadow",
+    "dx": "0.2",
+    "dy": "0.4",
+    "stdDeviation": "0.2",
+})
+print(drop_shadow)  # <feDropShadow xmlns="http://www.w3.org/2000/svg" id="shadow" dx="0.2" dy="0.4" stdDeviation="0.2" />
+```
+
 ### <span class="meth"></span>`append`
 
 ```py
@@ -66,10 +77,26 @@ remove(self, child) -> SvgElement
 
 Removes a child element from the current element. If the child was wrapped, it removes its underlying element.
 
-### <span class="meth"></span>`tostring`
+```py
+svg = SVG(800, 600, width="400px", height="300px")
+g1 = G()
+g2 = G()
+svg.append(g1).append(g2)
+g1.append(Circle())
+g2.append(Rect())
+
+print(svg)
+# <svg xmlns="http://www.w3.org/2000/svg" width="400px" height="300px" viewBox="0 0 800 600"><g><circle /></g><g><rect /></g></svg>
+
+svg.remove(g1)
+print(svg)
+# <svg xmlns="http://www.w3.org/2000/svg" width="400px" height="300px" viewBox="0 0 800 600"><g><rect /></g></svg>
+```
+
+### <span class="meth"></span>`to_string`
 
 ```py
-tostring(self) -> str
+to_string(self) -> str
 ```
 
 Returns the SVG element as a string.
