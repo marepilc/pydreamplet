@@ -16,3 +16,10 @@ def test_polygon_points_setter(polygon):
     polygon.points = [0, 0, 0, 20, 20, 20, 20, 0]
     assert polygon.points == [0, 0, 0, 20, 20, 20, 20, 0]
     assert 'points="0,0 0,20 20,20 20,0"' in str(polygon)
+
+
+def test_can_be_found_as_proper_type(polygon):
+    svg = dp.SVG(300, 300)
+    svg.append(polygon)
+    pl = svg.find("polygon")
+    assert isinstance(pl, dp.Polygon)

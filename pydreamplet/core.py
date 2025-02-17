@@ -714,6 +714,32 @@ class Polygon(SvgElement):
         self.element.set("points", formatted_points)
 
 
+class Polyline(SvgElement):
+    def __init__(self, points: list[int | float], **kwargs):
+        super().__init__("polyline", **kwargs)
+        self._points = points
+        self._update_element()
+
+    @property
+    def points(self) -> list[int | float]:
+        return self._points
+
+    @points.setter
+    def points(self, value: list[int | float]) -> None:
+        self._points = value
+        self._update_element()
+
+    def _update_element(self):
+        """Update the SVG 'points' attribute correctly."""
+        formatted_points = " ".join(
+            [
+                f"{self._points[i]},{self._points[i + 1]}"
+                for i in range(0, len(self._points), 2)
+            ]
+        )
+        self.element.set("points", formatted_points)
+
+
 class Text(SvgElement):
     def __init__(self, initial_text="", **kwargs):
         super().__init__("text", **kwargs)
@@ -801,6 +827,8 @@ SvgElement.register("circle", Circle)
 SvgElement.register("ellipse", Ellipse)
 SvgElement.register("rect", Rect)
 SvgElement.register("path", Path)
+SvgElement.register("polygon", Polygon)
+SvgElement.register("polyline", Polyline)
 SvgElement.register("line", Line)
 SvgElement.register("text", Text)
 SvgElement.register("textPath", TextOnPath)
