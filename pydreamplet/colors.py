@@ -137,89 +137,45 @@ def random_color():
     return "#" + r + g + b
 
 
-def generate_colors(base_color: str, n=4, harmony="complementary"):
+def generate_colors(base_color: str, n=10):
     """
-    Generate a list of colors based on a selected color harmony.
+    Generates a list of `n` colors equally distributed on the color wheel.
+
+    The function uses the lightness and saturation of the provided base color,
+    then rotates the hue in equal increments to generate a balanced palette.
 
     Parameters:
-        base_color (str): The starting color in hex format (e.g., "#db45f9").
         n (int): Number of colors to generate.
-        harmony (str): The type of harmony to use. Supported options:
-            - "complementary": Base color and its opposite on the color wheel.
-            - "compound": Base color with a split complement (two hues adjacent to the complement).
-            - "square": Four colors evenly spaced around the color wheel.
+        base_color (str): A hex color string (e.g., "#db45f9") used to determine
+            the saturation and lightness for the palette. The hues of the generated
+            colors are evenly spaced starting from the hue of the base color.
 
     Returns:
         list[str]: A list of hex color strings.
+
+    Example:
+        >>> palette = generate_equal_colors(n=5, base_color="#db45f9")
+        >>> print(palette)
+        ['#db45f9', '#c4f95d', '#6cf95d', '#5d9ef9', '#9d5df9']
     """
-
-    def generate_variations(light, count, delta=0.2):
-        """
-        Generate a list of `count` lightness values centered around the original lightness `light`,
-        spread by ±delta (clamped between 0 and 1).
-        """
-        l_min = max(0, light - delta)
-        l_max = min(1, light + delta)
-        if count == 1:
-            return [light]
-        step = (l_max - l_min) / (count - 1)
-        return [l_min + i * step for i in range(count)]
-
-    def distribute_counts(total, groups):
-        """
-        Evenly distribute `total` items into `groups` buckets.
-        Returns a list of counts for each group.
-        """
-        base = total // groups
-        remainder = total % groups
-        return [base + 1 if i < remainder else base for i in range(groups)]
-
     # Convert the base color to an RGB tuple (0-255)
     r, g, b = hex_to_rgb(base_color)
-    # Normalize RGB to 0-1 for colorsys
+    # Normalize RGB to 0-1 for colorsys functions.
     r_norm, g_norm, b_norm = r / 255.0, g / 255.0, b / 255.0
     # Convert RGB to HLS (Hue, Lightness, Saturation)
-    h, l, s = colorsys.rgb_to_hls(r_norm, g_norm, b_norm)
+    base_hue, light, sat = colorsys.rgb_to_hls(r_norm, g_norm, b_norm)
 
-    harmony = harmony.lower()
-    if harmony == "complementary":
-        hues = [h, (h + 0.5) % 1]
-    elif harmony == "compound":
-        # Compound (split-complementary) uses the base hue and two hues adjacent to its complement.
-        offset = 0.08  # This offset can be adjusted for taste.
-        hues = [h, (h + 0.5 - offset) % 1, (h + 0.5 + offset) % 1]
-    elif harmony == "square":
-        # Square harmony: Four colors evenly spaced around the color wheel.
-        hues = [h, (h + 0.25) % 1, (h + 0.5) % 1, (h + 0.75) % 1]
-    else:
-        raise ValueError(f"Unsupported harmony type: {harmony}")
-
-    num_groups = len(hues)
-    counts = distribute_counts(n, num_groups)
-
-    group_colors = []
-    for idx, hue in enumerate(hues):
-        count = counts[idx]
-        l_values = generate_variations(l, count)
-        group = []
-        for lv in l_values:
-            # Convert from HLS back to RGB (normalized to 0-1)
-            r_new, g_new, b_new = colorsys.hls_to_rgb(hue, lv, s)
-            # Scale to 0-255 and round using math_round
-            rgb_int = (
-                math_round(r_new * 255),
-                math_round(g_new * 255),
-                math_round(b_new * 255),
-            )
-            group.append(rgb_to_hex(rgb_int))
-        group_colors.append(group)
-
-    # Interleave colors from each group to form a balanced palette.
     palette = []
-    max_len = max(len(group) for group in group_colors)
-    for i in range(max_len):
-        for group in group_colors:
-            if i < len(group):
-                palette.append(group[i])
-
-    return palette[:n]
+    for i in range(n):
+        # Evenly space hues on the color wheel.
+        new_hue = (base_hue + i / n) % 1.0
+        # Convert HLS back to RGB (normalized values)
+        r_new, g_new, b_new = colorsys.hls_to_rgb(new_hue, light, sat)
+        # Scale back to 0-255 and convert to a hex color string.
+        rgb_int = (
+            math_round(r_new * 255),
+            math_round(g_new * 255),
+            math_round(b_new * 255),
+        )
+        palette.append(rgb_to_hex(rgb_int))
+    return palette
