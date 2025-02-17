@@ -35,13 +35,13 @@ For complete documentation, tutorials, and API references, please visit [pyDream
 
 This example showcases a sophisticated, multidimensional SVG visualization that displays supplier quality performance metrics. In this visualization, data dimensions such as defect occurrences, defect quantity, and spend are combined to provide an insightful overview of supplier performance. The visualization uses color, shape, and layout to encode multiple measures, allowing users to quickly identify strengths and weaknesses across suppliers.
 
-![supplier quality performance](docs/assets/readme/readme_demo_01.svg)
+![supplier quality performance](https://raw.githubusercontent.com/marepilc/pydreamplet/794fa89bf4d11f270c9f08dbd9ab20b50444203c/docs/assets/readme/readme_demo_01.svg)
 
 ### Creative Coding
 
 This example uses pyDreamplet to create an engaging animated visualization featuring a series of circles. The animation leverages dynamic properties like stroke color and radius, which are mapped using linear and color scales. Each circle’s position and size are animated over time, creating a pulsating, rotating effect that results in a visually striking pattern.
 
-![creative coding](docs/getting_started/assets/getting_started_img_02.svg)
+![creative coding](https://raw.githubusercontent.com/marepilc/pydreamplet/794fa89bf4d11f270c9f08dbd9ab20b50444203c/docs/getting_started/assets/getting_started_img_02.svg)
 
 ## Usage example
 
@@ -101,8 +101,7 @@ svg.display()  # in jupyter notebook
 svg.save("waffle_chart.svg")
 ```
 
-![waffle chart](docs/blog/posts/assets/waffle_chart/waffle_chart.svg)
-
+![waffle chart](https://raw.githubusercontent.com/marepilc/pydreamplet/794fa89bf4d11f270c9f08dbd9ab20b50444203c/docs/blog/posts/assets/waffle_chart/waffle_chart.svg)
 ## Contributing
 
 I welcome contributions from the community! Whether you have ideas for new features, bug fixes, or improvements to the documentation, your **input is invaluable**.
