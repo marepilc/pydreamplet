@@ -1,8 +1,17 @@
 # pyDreamplet
 
-low level library for SVG image generation. Perfect for data visualization with Python.
+**pyDreamplet** is a low-level library for SVG image generation — **perfect for creating beautiful data visualizations with Python**. Its intuitive API lets you build complex, scalable SVG graphics effortlessly, making it an ideal choice for projects ranging from simple charts to intricate visualizations.
+
+## Features
+
+- **Lightweight & Flexible:** Generate SVG images with minimal overhead.
+- **Easy Integration:** Works seamlessly in Jupyter notebooks, scripts, or web applications.
+- **Customizable:** Set any attribute on your SVG elements using simple keyword arguments.
+- **No Heavy Dependencies:** Designed to work with just Python’s standard library (plus Pillow and IPython for additional features).
 
 ## Installation
+
+Install pyDreamplet using your preferred package manager:
 
 With poetry:
 
@@ -18,10 +27,25 @@ pip install pydreamplet
 
 ## Documentation
 
-[https://marepilc.github.io/pydreamplet/](https://marepilc.github.io/pydreamplet/)
+For complete documentation, tutorials, and API references, please visit [pyDreampled documentation](https://marepilc.github.io/pydreamplet/)
+
+## Examples
+
+### Multidimensional Visualization of Supplier Quality Performance
+
+This example showcases a sophisticated, multidimensional SVG visualization that displays supplier quality performance metrics. In this visualization, data dimensions such as defect occurrences, defect quantity, and spend are combined to provide an insightful overview of supplier performance. The visualization uses color, shape, and layout to encode multiple measures, allowing users to quickly identify strengths and weaknesses across suppliers.
+
+![supplier quality performance](docs/assets/readme/readme_demo_01.svg)
+
+### Creative Coding
+
+This example uses pyDreamplet to create an engaging animated visualization featuring a series of circles. The animation leverages dynamic properties like stroke color and radius, which are mapped using linear and color scales. Each circle’s position and size are animated over time, creating a pulsating, rotating effect that results in a visually striking pattern.
+
+![creative coding](docs\getting_started\assets\getting_started_img_02.svg)
 
 ## Usage example
 
+Here's a quick example of how to create a waffle chart using pyDreamplet:
 
 ```python
 import pydreamplet as dp
@@ -76,3 +100,17 @@ svg = waffle_chart(data)
 svg.display()  # in jupyter notebook
 svg.save("waffle_chart.svg")
 ```
+
+![waffle chart](docs\blog\posts\assets\waffle_chart\waffle_chart.svg)
+
+## Contributing
+
+I welcome contributions from the community! Whether you have ideas for new features, bug fixes, or improvements to the documentation, your **input is invaluable**.
+
+- **Open an Issue:** Found a bug or have a suggestion? Open an issue on GitHub.
+- **Submit a Pull Request:** Improve the code or documentation? I’d love to review your PR.
+- **Join the Discussion:** Get involved in discussions and help shape the future of **pyDreamplet**.
+
+## License
+
+This project is licensed under the MIT License.
