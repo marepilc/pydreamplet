@@ -18,6 +18,7 @@ nav:
       - reference/core/animate.md
       - reference/core/circle.md
       - reference/core/ellipse.md
+      - reference/core/polygon.md
       - reference/core/line.md
       - reference/core/path.md
       - reference/core/rect.md

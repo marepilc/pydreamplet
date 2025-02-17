@@ -4,7 +4,7 @@ The `Animate` class represents an SVG animation element. It allows you to animat
 
 !!! info
 
-    This class inherites from [**`SvgElement`**](svgelement.md).
+    This class inherits from [**`SvgElement`**](svgelement.md).
 
 ## <span class=class></span>`pydreamplet.core.Animate`
 

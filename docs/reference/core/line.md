@@ -4,7 +4,7 @@ The `Line` class represents an SVG line element. It allows setting start and end
 
 !!! info
 
-    This class inherites from [**`SvgElement`**](svgelement.md).
+    This class inherits from [**`SvgElement`**](svgelement.md).
 
 ## <span class=class></span>`pydreamplet.core.Line`
 
