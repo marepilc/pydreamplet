@@ -41,7 +41,7 @@ This example showcases a sophisticated, multidimensional SVG visualization that 
 
 This example uses pyDreamplet to create an engaging animated visualization featuring a series of circles. The animation leverages dynamic properties like stroke color and radius, which are mapped using linear and color scales. Each circle’s position and size are animated over time, creating a pulsating, rotating effect that results in a visually striking pattern.
 
-![creative coding](docs\getting_started\assets\getting_started_img_02.svg)
+![creative coding](docs/getting_started/assets/getting_started_img_02.svg)
 
 ## Usage example
 
@@ -101,7 +101,7 @@ svg.display()  # in jupyter notebook
 svg.save("waffle_chart.svg")
 ```
 
-![waffle chart](docs\blog\posts\assets\waffle_chart\waffle_chart.svg)
+![waffle chart](docs/blog/posts/assets/waffle_chart/waffle_chart.svg)
 
 ## Contributing
 
