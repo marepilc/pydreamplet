@@ -138,32 +138,26 @@ print(random_color())  # Output: e.g., "#3a5fcd"
 ```py
 generate_colors(
     base_color: str,
-    n: int = 4,
-    harmony: str = "complementary"
+    n: int = 10
 ) -> list[str]
 ```
 
-Generates a list of colors based on a selected color harmony. The function takes a base hex color and produces a palette of n colors by applying a specific harmony rule. It supports the following harmonies:
+Generates a list of colors equally distributed on the color wheel. The function uses the hue of the provided base color as a starting point and preserves its lightness and saturation, then rotates the hue in equal increments to produce a balanced palette of `n` colors.
 
-- `complementary:` Uses the base color and its direct opposite on the color wheel.
-- `compound:` Uses the base color along with two hues adjacent to its complement (a split-complementary scheme).
-- `square:` Produces four colors evenly spaced around the color wheel.
-- 
 <span class="param">**Parameters**</span>
 
-- `base_color` *(str)*: The starting color in hex format (e.g., "#db45f9").
+- `base_color` *(str)*: The starting color in hex format (e.g., "#db45f9"). This color provides the lightness and saturation for the generated palette.
 - `n` *(int)*: The total number of colors to generate.
-- `harmony` *(str)*: The color harmony to apply. Supported options are `"complementary"`, `"compound"`, and `"square"`.
-- 
+
 <span class="returns">**Returns**</span>
 
 - *(list[str])*: A list of hex color strings representing the generated color palette.
 
 ```py
-# Example: Generate a complementary palette of 4 colors.
-palette = generate_colors(base_color="#db45f9", n=4, harmony="complementary")
+# Example: Generate an equally distributed palette of 10 colors.
+palette = generate_colors(base_color="#db45f9", n=10)
 print(palette)
-# Example output: ['#db45f9', '#f945db', ...]
+# Example output: ['#db45f9', '#c4f95d', '#6cf95d', '#5d9ef9', ...]
 ```
 
-This function leverages color space conversions and lightness variations to create balanced palettes that adhere to the selected harmony.
+This function leverages color space conversions (RGB ↔ HLS) to evenly distribute hues, ensuring that the generated colors are well balanced while maintaining the original color's lightness and saturation.

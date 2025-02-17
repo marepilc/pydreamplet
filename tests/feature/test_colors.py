@@ -1,3 +1,4 @@
+import colorsys
 import re
 
 import pytest
@@ -119,27 +120,47 @@ def test_random_color():
 
 
 # === Tests for generate_colors ===
-def test_generate_colors_complementary():
-    palette = generate_colors(base_color="#db45f9", n=10, harmony="complementary")
+def test_generate_colors_length():
+    palette = generate_colors(n=10, base_color="#db45f9")
     assert len(palette) == 10
+
+
+def test_generate_colors_valid_hex():
+    palette = generate_colors(n=10, base_color="#db45f9")
     for color in palette:
+        # Each color should match the 6-digit hex color format.
         assert re.match(r"^#[0-9a-fA-F]{6}$", color)
 
 
-def test_generate_colors_compound():
-    palette = generate_colors(base_color="#db45f9", n=10, harmony="compound")
-    assert len(palette) == 10
+def test_generate_colors_single():
+    palette = generate_colors(n=1, base_color="#db45f9")
+    # When only one color is requested, it should match the base color.
+    # (The conversion should preserve the base hue, lightness, and saturation.)
+    assert palette[0].lower() == "#db45f9"
+
+
+def test_generate_colors_equal_spacing():
+    """
+    Test that the hues of the generated colors are approximately equally spaced.
+    """
+    n = 5
+    palette = generate_colors(n=n, base_color="#db45f9")
+    hues = []
     for color in palette:
-        assert re.match(r"^#[0-9a-fA-F]{6}$", color)
+        # Convert hex to RGB, then normalize to 0-1.
+        r, g, b = hex_to_rgb(color)
+        r_norm, g_norm, b_norm = r / 255.0, g / 255.0, b / 255.0
+        h, l, s = colorsys.rgb_to_hls(r_norm, g_norm, b_norm)
+        hues.append(h)
 
+    # Compute circular differences between consecutive hues.
+    differences = []
+    for i in range(len(hues)):
+        next_i = (i + 1) % len(hues)
+        diff = (hues[next_i] - hues[i]) % 1.0
+        differences.append(diff)
 
-def test_generate_colors_square():
-    palette = generate_colors(base_color="#db45f9", n=10, harmony="square")
-    assert len(palette) == 10
-    for color in palette:
-        assert re.match(r"^#[0-9a-fA-F]{6}$", color)
-
-
-def test_generate_colors_invalid_harmony():
-    with pytest.raises(ValueError):
-        generate_colors(base_color="#db45f9", n=10, harmony="unknown")
+    expected_diff = 1 / n
+    for diff in differences:
+        # Allow a small tolerance for rounding effects.
+        assert abs(diff - expected_diff) < 0.05
