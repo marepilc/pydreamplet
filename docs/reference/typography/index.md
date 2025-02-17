@@ -50,7 +50,7 @@ TypographyMeasurer(dpi: float = 72.0, font_path: str | None = None)
 measurer = TypographyMeasurer(dpi=96)
 ```
 
-### <span class="meth"></span>measure_t`ext
+### <span class="meth"></span>`measure_text`
 
 ```py
 measure_text(

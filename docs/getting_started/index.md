@@ -76,8 +76,8 @@ We define the total number of circles (`circles_count`) and set the minimum and 
 circles_count = 35
 max_radius = 250
 min_radius = 5
-r_scale = LinearScale((0, circles_count), (min_radius, max_radius))
-color_scale = ColorScale((0, circles_count), ("#000000", "#FF0000"))
+r_scale = LinearScale((0, circles_count - 1), (min_radius, max_radius))
+color_scale = ColorScale((0, circles_count - 1), ("#000000", "#FF0000"))
 ```
 
 We start from a point on the right of an imaginary circle (at the maximum radius) and then loop over the total number of circles. For each iteration:
