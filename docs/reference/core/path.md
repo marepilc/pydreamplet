@@ -4,7 +4,7 @@ The `Path` class represents an SVG path element. It allows you to set the path d
 
 !!! info
 
-    This class inherites from [**`SvgElement`**](svgelement.md).
+    This class inherits from [**`SvgElement`**](svgelement.md).
 
 ## <span class=class></span>`pydreamplet.core.Path`
 

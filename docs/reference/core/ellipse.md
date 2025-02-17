@@ -4,7 +4,7 @@ The `Ellipse` class represents an SVG ellipse element. It supports setting the c
 
 !!! info
 
-    This class inherites from [**`SvgElement`**](svgelement.md).
+    This class inherits from [**`SvgElement`**](svgelement.md).
 
 ## <span class=class></span>`pydreamplet.core.Ellipse`
 

@@ -4,7 +4,7 @@ The `SVG` class represents the root SVG element. It manages the viewbox, provide
 
 !!! info
 
-    This class inherites from [**`SvgElement`**](svgelement.md).
+    This class inherits from [**`SvgElement`**](svgelement.md).
 
 ## <span class=class></span>`pydreamplet.core.SVG`
 
@@ -21,7 +21,22 @@ Initializes a new SVG element with the specified viewbox. The viewbox can be pro
 
 ```py
 svg = SVG(800, 600)
-print(svg)  # Outputs the SVG XML.
+print(svg)  # <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 600" width="800px" height="600px" />
+```
+
+You can change the default values of width and height passing `**kwargs`.
+
+```py
+svg = SVG(800, 600, width="400px", height="300px")
+print(svg)  # <svg xmlns="http://www.w3.org/2000/svg" width="400px" height="300px" viewBox="0 0 800 600" />
+```
+
+It does not need to be done during initialization. You can set any attribute of [SvgElement](svgelement.md) using `**kwargs`.
+
+```py
+svg = dp.SVG(300, 300)
+svg.width = "600px"
+svg.height = "600px"
 ```
 
 ### <span class="meth"></span>`from_element`

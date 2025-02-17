@@ -4,7 +4,7 @@ The TextOnPath class represents an SVG text element that follows a path. It wrap
 
 !!! info
 
-    This class inherites from [**`SvgElement`**](svgelement.md).
+    This class inherits from [**`SvgElement`**](svgelement.md).
 
 ## <span class=class></span>`pydreamplet.core.TextOnPath`
 

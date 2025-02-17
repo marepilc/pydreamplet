@@ -4,7 +4,7 @@ The `Circle` class represents an SVG circle element. It supports setting the cen
 
 !!! info
 
-    This class inherites from [**`SvgElement`**](svgelement.md).
+    This class inherits from [**`SvgElement`**](svgelement.md).
 
 ### <span class=class></span>`pydreamplet.core.Circle`
 

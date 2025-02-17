@@ -4,7 +4,7 @@ The `Rect` class represents an SVG rectangle element. It supports setting the po
 
 !!! info
 
-    This class inherites from [**`SvgElement`**](svgelement.md).
+    This class inherits from [**`SvgElement`**](svgelement.md).
 
 ## <span class=class></span>`pydreamplet.core.Rect`
 
