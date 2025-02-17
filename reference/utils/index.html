@@ -609,11 +609,55 @@
   
   
     <li class="md-nav__item">
+      <a href="../core/polygon/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Polygon
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../core/line/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Line
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core/polyline/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Polyline
     
   </span>
   
@@ -1857,7 +1901,7 @@
 <div class="language-py highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nb">print</span><span class="p">(</span><span class="n">degrees</span><span class="p">(</span><span class="mf">3.141592653589793</span><span class="p">))</span>  <span class="c1"># Output: 180.0</span>
 </span></code></pre></div>
 <h2 id="calculate_ticks"><span class="func"></span><code>calculate_ticks</code></h2>
-<div class="language-py highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">calculate_ticks</span><span class="p">(</span><span class="n">min_val</span><span class="p">,</span> <span class="n">max_val</span><span class="p">,</span> <span class="n">num_ticks</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+<div class="language-py highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">calculate_ticks</span><span class="p">(</span><span class="n">min_val</span><span class="p">,</span> <span class="n">max_val</span><span class="p">,</span> <span class="n">num_ticks</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">below_max</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
 </span></code></pre></div>
 <p>Generates a list of rounded tick values between <code>min_val</code> and <code>max_val</code>. The number of ticks is approximately equal to <code>num_ticks</code>.</p>
 <p><span class="param"><strong>Parameters</strong></span></p>
@@ -1865,6 +1909,7 @@
 <li><code>min_val</code> <em>(float)</em>: The minimum value.</li>
 <li><code>max_val</code> <em>(float)</em>: The maximum value.</li>
 <li><code>num_ticks</code> <em>(int, optional)</em>: The desired number of tick values (default: 5).</li>
+<li><code>below_max</code> <em>(bool)</em>: If set to <code>True</code> last tick is always below <code>max_val</code>. Default: <code>False</code></li>
 </ul>
 <p><span class="returns"><strong>Returns</strong></span></p>
 <p><em>(list[int])</em>: A list of rounded tick values.</p>

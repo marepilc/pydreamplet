@@ -710,11 +710,55 @@
   
   
     <li class="md-nav__item">
+      <a href="../polygon/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Polygon
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
       <a href="../line/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Line
+    
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../polyline/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Polyline
     
   </span>
   
@@ -1820,7 +1864,7 @@
 <p>The <code>SVG</code> class represents the root SVG element. It manages the viewbox, provides properties for dimensions, and includes methods for displaying and saving the SVG.</p>
 <div class="admonition info">
 <p class="admonition-title">Info</p>
-<p>This class inherites from <a href="../svgelement/"><strong><code>SvgElement</code></strong></a>.</p>
+<p>This class inherits from <a href="../svgelement/"><strong><code>SvgElement</code></strong></a>.</p>
 </div>
 <h2 id="pydreampletcoresvg"><span class=class></span><code>pydreamplet.core.SVG</code></h2>
 <div class="language-py highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">SVG</span><span class="p">(</span><span class="o">*</span><span class="n">viewbox</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
@@ -1832,14 +1876,23 @@
 <li><code>**kwargs</code>: Additional attributes for the SVG element.</li>
 </ul>
 <div class="language-py highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="n">svg</span> <span class="o">=</span> <span class="n">SVG</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">)</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">svg</span><span class="p">)</span>  <span class="c1"># Outputs the SVG XML.</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">svg</span><span class="p">)</span>  <span class="c1"># &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; viewBox=&quot;0 0 800 600&quot; width=&quot;800px&quot; height=&quot;600px&quot; /&gt;</span>
+</span></code></pre></div>
+<p>You can change the default values of width and height passing <code>**kwargs</code>.</p>
+<div class="language-py highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">svg</span> <span class="o">=</span> <span class="n">SVG</span><span class="p">(</span><span class="mi">800</span><span class="p">,</span> <span class="mi">600</span><span class="p">,</span> <span class="n">width</span><span class="o">=</span><span class="s2">&quot;400px&quot;</span><span class="p">,</span> <span class="n">height</span><span class="o">=</span><span class="s2">&quot;300px&quot;</span><span class="p">)</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nb">print</span><span class="p">(</span><span class="n">svg</span><span class="p">)</span>  <span class="c1"># &lt;svg xmlns=&quot;http://www.w3.org/2000/svg&quot; width=&quot;400px&quot; height=&quot;300px&quot; viewBox=&quot;0 0 800 600&quot; /&gt;</span>
+</span></code></pre></div>
+<p>It does not need to be done during initialization. You can set any attribute of <a href="../svgelement/">SvgElement</a> using <code>**kwargs</code>.</p>
+<div class="language-py highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">svg</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">SVG</span><span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="n">svg</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="s2">&quot;600px&quot;</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">svg</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="s2">&quot;600px&quot;</span>
 </span></code></pre></div>
 <h3 id="from_element"><span class="meth"></span><code>from_element</code></h3>
-<div class="language-py highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="n">SVG</span><span class="o">.</span><span class="n">from_element</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">)</span>
+<div class="language-py highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="n">SVG</span><span class="o">.</span><span class="n">from_element</span><span class="p">(</span><span class="n">element</span><span class="p">:</span> <span class="n">ET</span><span class="o">.</span><span class="n">Element</span><span class="p">)</span>
 </span></code></pre></div>
 <p>Creates an SVG instance from an ElementTree element.</p>
 <h3 id="from_file"><span class="meth"></span><code>from_file</code></h3>
-<div class="language-py highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="n">SVG</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span>
+<div class="language-py highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">SVG</span><span class="o">.</span><span class="n">from_file</span><span class="p">(</span><span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span>
 </span></code></pre></div>
 <p>Creates an SVG instance by parsing an SVG file.</p>
 <h3 id="w-and-h"><span class="prop"></span><code>w</code> and <code>h</code></h3>
@@ -1848,21 +1901,21 @@
 <p class="admonition-title">Warning</p>
 <p>Remember, based on <code>viewBox</code>. Do not confuse these properties with <code>width</code> and <code>height</code> attributes of the SVG element.</p>
 </div>
-<div class="language-py highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pydreamplet</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dp</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">svg</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">SVG</span><span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="n">svg</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="s2">&quot;600px&quot;</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="n">svg</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="s2">&quot;600px&quot;</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;svg viewBox is </span><span class="si">{</span><span class="n">svg</span><span class="o">.</span><span class="n">viewBox</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># Outputs svg viewBox is 0 0 300 300</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;svg.w is </span><span class="si">{</span><span class="n">svg</span><span class="o">.</span><span class="n">w</span><span class="si">}</span><span class="s2">, svg.h is </span><span class="si">{</span><span class="n">svg</span><span class="o">.</span><span class="n">h</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># Outputs svg.w is 300, svg.h is 300</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;svg.width is </span><span class="si">{</span><span class="n">svg</span><span class="o">.</span><span class="n">width</span><span class="si">}</span><span class="s2">, svg.height is </span><span class="si">{</span><span class="n">svg</span><span class="o">.</span><span class="n">height</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># Outputs svg.width is 600px, svg.height is 600px</span>
+<div class="language-py highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">pydreamplet</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">dp</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">svg</span> <span class="o">=</span> <span class="n">dp</span><span class="o">.</span><span class="n">SVG</span><span class="p">(</span><span class="mi">300</span><span class="p">,</span> <span class="mi">300</span><span class="p">)</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">svg</span><span class="o">.</span><span class="n">width</span> <span class="o">=</span> <span class="s2">&quot;600px&quot;</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="n">svg</span><span class="o">.</span><span class="n">height</span> <span class="o">=</span> <span class="s2">&quot;600px&quot;</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;svg viewBox is </span><span class="si">{</span><span class="n">svg</span><span class="o">.</span><span class="n">viewBox</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># Outputs svg viewBox is 0 0 300 300</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;svg.w is </span><span class="si">{</span><span class="n">svg</span><span class="o">.</span><span class="n">w</span><span class="si">}</span><span class="s2">, svg.h is </span><span class="si">{</span><span class="n">svg</span><span class="o">.</span><span class="n">h</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># Outputs svg.w is 300, svg.h is 300</span>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;svg.width is </span><span class="si">{</span><span class="n">svg</span><span class="o">.</span><span class="n">width</span><span class="si">}</span><span class="s2">, svg.height is </span><span class="si">{</span><span class="n">svg</span><span class="o">.</span><span class="n">height</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># Outputs svg.width is 600px, svg.height is 600px</span>
 </span></code></pre></div>
 <h3 id="display"><span class="meth"></span><code>display</code></h3>
-<div class="language-py highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<div class="language-py highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="n">display</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </span></code></pre></div>
 <p>Displays the SVG in an IPython environment.</p>
 <h3 id="save"><span class="meth"></span><code>save</code></h3>
-<div class="language-py highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
+<div class="language-py highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="n">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">filename</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span>
 </span></code></pre></div>
 <p>Saves the SVG to a file.</p>
 
