@@ -111,3 +111,55 @@ Raises `ValueError`: If min_val is not less than max_val.
 ticks = calculate_ticks(0, 100, num_ticks=5)
 print(ticks)  # Example output: [0, 20, 40, 60, 80, 100]
 ```
+
+## <span class="func"></span>`pie_angles`
+
+```py
+pie_angles(values, start_angle=0)
+```
+Calculates the start and end angles (in degrees) for each pie slice based on their proportional values. The function divides the full circle (360°) among the slices in proportion to their values.
+
+<span class="param">**Parameters**</span>
+
+- `values` *(list[int | float])*: A list of numerical values representing the sizes of each pie slice.
+- `start_angle` *(int | float, optional)*: The starting angle (in degrees) for the first slice (default: 0).
+
+<span class="returns">**Returns**</span>
+
+*(list[tuple[float, float]])*: A list of tuples where each tuple contains the start and end angles for a slice.
+
+Raises `ZeroDivisionError`: If the sum of `values` is zero.
+
+```py
+angles = pie_angles([1, 2, 3])
+print(angles)  
+# [(0, 60.0), (60.0, 180.0), (180.0, 360.0)]
+```
+
+```py title="Usage example"
+import pydreamplet as dp
+from pydreamplet.shapes import ring
+from pydreamplet.utils import pie_angles
+from pydreamplet.colors import generate_colors
+
+data = [25, 34, 18, 72]
+
+svg = dp.SVG(400, 400)
+g = dp.G(pos=dp.Vector(svg.w / 2, svg.h / 2))
+svg.append(g)
+
+segments = pie_angles(sorted(data, reverse=True), -90)
+colors = generate_colors("#db45f9", len(segments))
+
+for i, segment in enumerate(segments):
+    g.append(dp.Path(
+        d=ring(0, 0, inner_radius=50, outer_radius=150, start_angle=segment[0], end_angle=segment[1]),
+        fill=colors[i]
+    ))
+
+svg.display()
+```
+<figure class="light-dark-bg" markdown="span">
+  ![Result](assets/pie_chart.svg)
+  <figcaption>Result</figcaption>
+</figure>

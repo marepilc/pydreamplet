@@ -57,3 +57,22 @@ def calculate_ticks(min_val, max_val, num_ticks=5, below_max=False):
         ticks = [tick for tick in ticks if tick <= max_val]
 
     return ticks
+
+
+def pie_angles(
+    values: list[int | float], start_angle: int | float = 0
+) -> list[tuple[float, float]]:
+    """
+    Calculate start and end angles for each pie slice.
+
+    :param values: List of values for each slice.
+    :param start_angle: Starting angle for the first slice.
+    :return: List of tuples containing start and end angles for each slice.
+    """
+    total = sum(values)
+    angles = []
+    for value in values:
+        end_angle = start_angle + (value / total) * 360
+        angles.append((start_angle, end_angle))
+        start_angle = end_angle
+    return angles
