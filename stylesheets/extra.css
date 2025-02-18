@@ -14,6 +14,7 @@
   padding: 0.25rem;
   margin-right: 0.5rem;
   font-family: "Roboto Mono", monospace;
+  font-size: small;
 }
 .class::before {
   content: "class";
@@ -24,6 +25,7 @@
   padding: 0.25rem;
   margin-right: 0.5rem;
   font-family: "Roboto Mono", monospace;
+  font-size: small;
 }
 .attr::before {
   content: "attr";
@@ -34,6 +36,7 @@
   padding: 0.25rem;
   margin-right: 0.5rem;
   font-family: "Roboto Mono", monospace;
+  font-size: small;
 }
 .meth::before {
   content: "meth";
@@ -44,6 +47,7 @@
   padding: 0.25rem;
   margin-right: 0.5rem;
   font-family: "Roboto Mono", monospace;
+  font-size: small;
 }
 .func::before {
   content: "func";
@@ -54,6 +58,7 @@
   padding: 0.25rem;
   margin-right: 0.5rem;
   font-family: "Roboto Mono", monospace;
+  font-size: small;
 }
 .prop::before {
   content: "prop";
@@ -65,14 +70,8 @@
   padding: 0.25rem;
   margin-right: 0.5rem;
   font-family: "Roboto Mono", monospace;
+  font-size: small;
 }
-
-/* @media (prefers-color-scheme: light) {
-  img {
-    background-color: white;
-    color: black;
-  }
-} */
 
 .light-dark-bg > img {
   background-color: var(--custom-background);
