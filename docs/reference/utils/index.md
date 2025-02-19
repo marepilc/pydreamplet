@@ -57,7 +57,7 @@ Converts an angle from degrees to radians.
 <span class="param">**Parameters**</span>
 
 - `degrees` *(float)*: Angle in degrees.
-- 
+
 <span class="returns">**Returns**</span>
 
 *(float)*: Angle in radians.

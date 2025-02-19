@@ -55,7 +55,7 @@ class BandScale:
 
     def __init__(
         self,
-        domain: list[str],
+        domain: list[any],
         output_range: tuple[float, float],
         padding: float = 0.1,
         outer_padding: float | None = None,
@@ -77,7 +77,7 @@ class BandScale:
         # Step size includes the band width and the padding between bands.
         self.step = self._band_width * (1 + self._padding)
 
-    def map(self, value: str) -> float:
+    def map(self, value: any) -> float:
         """
         Maps a value from the domain to the start position of its band in the output range.
         Raises a ValueError if the value is not found in the domain.
@@ -95,11 +95,11 @@ class BandScale:
         return self._band_width
 
     @property
-    def domain(self) -> list[str]:
+    def domain(self) -> list[any]:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: list[str]):
+    def domain(self, new_domain: list[any]):
         self._domain = new_domain
         self._calculate_band_properties()
 
@@ -138,7 +138,7 @@ class PointScale:
     """
 
     def __init__(
-        self, domain: list[str], output_range: tuple[float, float], padding: float = 0.5
+        self, domain: list[any], output_range: tuple[float, float], padding: float = 0.5
     ):
         self._domain = domain
         self._output_range = output_range
@@ -153,7 +153,7 @@ class PointScale:
         n = len(self._domain)
         self._step = (r1 - r0) / (n - 1 + 2 * self._padding)
 
-    def map(self, value: str) -> float | None:
+    def map(self, value: any) -> float | None:
         """
         Maps a categorical value to a point in the output range.
         Returns None if the value is not in the domain.
@@ -165,11 +165,11 @@ class PointScale:
         return self._output_range[0] + self._step * (index + self._padding)
 
     @property
-    def domain(self) -> list[str]:
+    def domain(self) -> list[any]:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: list[str]):
+    def domain(self, new_domain: list[any]):
         self._domain = new_domain
         self._calculate_step()
 
@@ -199,7 +199,7 @@ class OrdinalScale:
     assign each domain value one of those colors in order (wrapping around if needed).
     """
 
-    def __init__(self, domain: list[str], output_range: list):
+    def __init__(self, domain: list[any], output_range: list):
         if not output_range:
             raise ValueError("Output range must contain at least one value")
         self._domain = domain
@@ -212,16 +212,16 @@ class OrdinalScale:
             for i, d in enumerate(self._domain)
         }
 
-    def map(self, value: str) -> object:
+    def map(self, value: any) -> object:
         """Returns the mapped output value for the given domain value."""
         return self._mapping.get(value)
 
     @property
-    def domain(self) -> list[str]:
+    def domain(self) -> list[any]:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: list[str]):
+    def domain(self, new_domain: list[any]):
         self._domain = new_domain
         self._generate_mapping()
 
