@@ -60,3 +60,11 @@ def test_attribute_normalization():
     rect = dp.Text("test", x=5, y=5, font_size=12, fill="green")
     assert "font-size" in rect.element.attrib
     assert rect.element.attrib["font-size"] == "12"
+
+
+def test_append_multiple_elements():
+    svg = dp.SVG(300, 300)
+    rect1 = dp.Rect(x=10, y=10, width=20, height=20)
+    rect2 = dp.Rect(x=50, y=50, width=20, height=20)
+    svg.append(rect1, rect2)
+    assert len(list(svg.find_all("rect"))) == 2

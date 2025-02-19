@@ -62,13 +62,14 @@ class SvgElement:
                 self.element.set(attr_key, str(value))
         return self
 
-    def append(self, child):
-        if hasattr(child, "element"):
-            self.element.append(child.element)
-            # Track the parent on the child.
-            child._parent = self
-        else:
-            self.element.append(child)
+    def append(self, *children):
+        for child in children:
+            if hasattr(child, "element"):
+                self.element.append(child.element)
+                # Track the parent on the child.
+                child._parent = self
+            else:
+                self.element.append(child)
         return self
 
     def remove(self, child):

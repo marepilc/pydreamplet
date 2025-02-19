@@ -64,10 +64,10 @@ print(drop_shadow)  # <feDropShadow xmlns="http://www.w3.org/2000/svg" id="shado
 ### <span class="meth"></span>`append`
 
 ```py
-append(self, child) -> SvgElement
+append(self, *children) -> SvgElement
 ```
 
-Appends a child element to the current element. If the child has an element attribute, it uses that.
+Appends a child element to the current element. Returns self, allowing method chaining. 
 
 ### <span class="meth"></span>`remove`
 
