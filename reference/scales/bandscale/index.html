@@ -1860,7 +1860,7 @@
 <p>The <code>BandScale</code> class maps categorical values (strings) to evenly spaced positions within the output range. It allows configuration of inner padding and outer padding.</p>
 <h2 id="pydreampletscalesbandscale"><span class=class></span><code>pydreamplet.scales.BandScale</code></h2>
 <div class="language-py highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">BandScale</span><span class="p">(</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">domain</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">],</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">domain</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">output_range</span><span class="p">:</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">padding</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">0.1</span><span class="p">,</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">outer_padding</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
@@ -1868,7 +1868,7 @@
 </span></code></pre></div>
 <p><span class="param"><strong>Parameters</strong></span></p>
 <ul>
-<li><code>domain</code> <em>(list[str])</em>: A list of categorical values.</li>
+<li><code>domain</code> <em>(list[Any])</em>: A list of categorical values.</li>
 <li><code>output_range</code> <em>(tuple[float, float])</em>: The numeric output range.</li>
 <li><code>padding</code> <em>(float, optional)</em>: The inner padding between bands (default: 0.1).</li>
 <li><code>outer_padding</code> <em>(float, optional)</em>: The outer padding; defaults to the inner padding if not provided.</li>
@@ -1878,7 +1878,7 @@
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nb">print</span><span class="p">(</span><span class="n">band</span><span class="o">.</span><span class="n">bandwidth</span><span class="p">)</span>  <span class="c1"># Width of each band</span>
 </span></code></pre></div>
 <h3 id="map"><span class="meth"></span><code>map</code></h3>
-<div class="language-py highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">map</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span>
+<div class="language-py highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">map</span><span class="p">(</span><span class="n">value</span><span class="p">:</span> <span class="n">Any</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span>
 </span></code></pre></div>
 <p>Returns the starting position of the band for the given categorical value.</p>
 <h3 id="bandwidth"><span class="prop"></span><code>bandwidth</code></h3>
