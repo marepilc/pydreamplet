@@ -1,4 +1,5 @@
 import math
+from typing import Any
 
 from pydreamplet.colors import hex_to_rgb, rgb_to_hex
 
@@ -55,7 +56,7 @@ class BandScale:
 
     def __init__(
         self,
-        domain: list[any],
+        domain: list[Any],
         output_range: tuple[float, float],
         padding: float = 0.1,
         outer_padding: float | None = None,
@@ -95,11 +96,11 @@ class BandScale:
         return self._band_width
 
     @property
-    def domain(self) -> list[any]:
+    def domain(self) -> list[Any]:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: list[any]):
+    def domain(self, new_domain: list[Any]):
         self._domain = new_domain
         self._calculate_band_properties()
 
@@ -138,7 +139,7 @@ class PointScale:
     """
 
     def __init__(
-        self, domain: list[any], output_range: tuple[float, float], padding: float = 0.5
+        self, domain: list[Any], output_range: tuple[float, float], padding: float = 0.5
     ):
         self._domain = domain
         self._output_range = output_range
@@ -165,11 +166,11 @@ class PointScale:
         return self._output_range[0] + self._step * (index + self._padding)
 
     @property
-    def domain(self) -> list[any]:
+    def domain(self) -> list[Any]:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: list[any]):
+    def domain(self, new_domain: list[Any]):
         self._domain = new_domain
         self._calculate_step()
 
@@ -199,7 +200,7 @@ class OrdinalScale:
     assign each domain value one of those colors in order (wrapping around if needed).
     """
 
-    def __init__(self, domain: list[any], output_range: list):
+    def __init__(self, domain: list[Any], output_range: list):
         if not output_range:
             raise ValueError("Output range must contain at least one value")
         self._domain = domain
@@ -217,11 +218,11 @@ class OrdinalScale:
         return self._mapping.get(value)
 
     @property
-    def domain(self) -> list[any]:
+    def domain(self) -> list[Any]:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: list[any]):
+    def domain(self, new_domain: list[Any]):
         self._domain = new_domain
         self._generate_mapping()
 

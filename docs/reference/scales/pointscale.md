@@ -6,7 +6,7 @@ The `PointScale` class maps categorical values to discrete points within the out
 
 ```py
 PointScale(
-    domain: list[any],
+    domain: list[Any],
     output_range: tuple[float, float],
     padding: float = 0.5
 )
@@ -14,7 +14,7 @@ PointScale(
 
 <span class="param">**Parameters**</span>
 
-- `domain` *(list[any])*: A list of categorical values.
+- `domain` *(list[Any])*: A list of categorical values.
 - `output_range` *(tuple[float, float])*: The numeric output range.
 - `padding` *(float, optional)*: The amount of padding on each end (default: 0.5).
 
@@ -26,7 +26,7 @@ print(point.map("Y"))  # Outputs the point corresponding to "Y"
 ### <span class="meth"></span>`map`
 
 ```py
-map(value: any) -> float | None
+map(value: Any) -> float | None
 ```
 
 Maps a categorical value to a discrete point; returns None if the value is not in the domain.

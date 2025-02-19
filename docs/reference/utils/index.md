@@ -163,3 +163,39 @@ svg.display()
   ![Result](assets/pie_chart.svg)
   <figcaption>Result</figcaption>
 </figure>
+
+## <span class="func"></span>`sample_uniform`
+
+```py
+sample_uniform(my_list, n, precedence="first")
+```
+
+Selects uniformly spaced indices from a list based on the total number of items, the desired number of selections, and an optional anchoring (precedence) parameter. The function returns a tuple of indices chosen from the list such that they are as evenly distributed as possible.
+
+<span class="param">**Parameters**</span>
+
+- `my_list` *(list[Any])*: A list containing elements of any type.
+- `n` *(int)*: The number of indices to select from the list.
+- `precedence` *(str | None, optional)*: Determines which end of the list is anchored during sampling. Use `"first"` (default) to always include the first element, `"last"` to always include the last element, or `None` for an unanchored, balanced selection.
+
+<span class="returns">**Returns**</span>
+
+*(tuple[int])*: A tuple of indices representing the uniformly spaced positions within the list.
+
+Raises `ValueError`: If precedence is not `"first"`, `"last"`, or `None`.
+
+```py
+# Examples:
+
+# With "first" precedence (anchoring the first element):
+indices = sample_uniform(["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"], n=4, precedence="first")
+print(indices)  # Expected output: (0, 3, 6, 9)
+
+# With "last" precedence (anchoring the last element):
+indices = sample_uniform(["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"], n=3, precedence="last")
+print(indices)  # Expected output: (1, 5, 9)
+
+# With no precedence (balanced selection):
+indices = sample_uniform(["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"], n=4, precedence=None)
+print(indices)  # Expected output: (1, 3, 7, 10)
+```

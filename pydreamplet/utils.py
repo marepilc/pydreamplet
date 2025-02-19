@@ -76,3 +76,48 @@ def pie_angles(
         angles.append((start_angle, end_angle))
         start_angle = end_angle
     return angles
+
+
+def pure_linspace(start, stop, num):
+    if num == 1:
+        return [stop]
+    step = (stop - start) / (num - 1)
+    return [start + step * i for i in range(num)]
+
+
+def sample_uniform(my_list, n, precedence="first"):
+    L = len(my_list)
+    if n <= 1:
+        # if only one item is needed, return an anchor based on precedence.
+        if precedence == "last":
+            return (L - 1,)
+        elif precedence is None:
+            return (L // 2,)
+        else:
+            return (0,)
+
+    # For "first" and "last" we use the idea of fixed endpoints.
+    if precedence == "first":
+        # always include the first item (index 0) and then use a constant step.
+        step = (L - 1) // (n - 1)
+        return tuple(0 + i * step for i in range(n))
+
+    elif precedence == "last":
+        # always include the last item and work backwards.
+        step = (L - 1) // (n - 1)
+        # compute indices in reverse then sort
+        return tuple(sorted(L - 1 - i * step for i in range(n)))
+
+    elif precedence is None:
+        # When neither end is anchored, split the list into n buckets and choose
+        # an index from each bucket. Compute the indices using pure Python.
+        idx = [floor(x) for x in pure_linspace(0, L - 1, n)]
+        # Adjust endpoints inward if possible.
+        if idx[0] == 0 and L > n:
+            idx[0] = 1
+        if idx[-1] == L - 1 and L > n:
+            idx[-1] = L - 2
+        return tuple(idx)
+
+    else:
+        raise ValueError("precedence must be 'first', 'last', or None")

@@ -1,6 +1,7 @@
 import math
 import re
 import xml.etree.ElementTree as ET
+from typing import Any
 
 from IPython.display import SVG as IPythonSVG
 from IPython.display import display
@@ -453,7 +454,7 @@ class Animate(SvgElement):
                 self._values = kwargs.pop("values")
                 self.attrs({"values": ";".join([str(v) for v in self._values])})
             else:
-                self._values: list[any] = []
+                self._values: list[Any] = []
         if "dur" not in kwargs:
             kwargs["dur"] = "2s"
         self.attrs(
