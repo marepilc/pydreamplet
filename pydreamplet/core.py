@@ -1,6 +1,7 @@
 import math
 import re
 import xml.etree.ElementTree as ET
+from typing import Any
 
 from IPython.display import SVG as IPythonSVG
 from IPython.display import display
@@ -61,13 +62,14 @@ class SvgElement:
                 self.element.set(attr_key, str(value))
         return self
 
-    def append(self, child):
-        if hasattr(child, "element"):
-            self.element.append(child.element)
-            # Track the parent on the child.
-            child._parent = self
-        else:
-            self.element.append(child)
+    def append(self, *children):
+        for child in children:
+            if hasattr(child, "element"):
+                self.element.append(child.element)
+                # Track the parent on the child.
+                child._parent = self
+            else:
+                self.element.append(child)
         return self
 
     def remove(self, child):
@@ -453,7 +455,7 @@ class Animate(SvgElement):
                 self._values = kwargs.pop("values")
                 self.attrs({"values": ";".join([str(v) for v in self._values])})
             else:
-                self._values: list[any] = []
+                self._values: list[Any] = []
         if "dur" not in kwargs:
             kwargs["dur"] = "2s"
         self.attrs(

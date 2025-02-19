@@ -76,3 +76,127 @@ def pie_angles(
         angles.append((start_angle, end_angle))
         start_angle = end_angle
     return angles
+
+
+def pure_linspace(start, stop, num):
+    if num == 1:
+        return [stop]
+    step = (stop - start) / (num - 1)
+    return [start + step * i for i in range(num)]
+
+
+def sample_uniform(my_list, n, precedence="first"):
+    L = len(my_list)
+    if n <= 1:
+        # if only one item is needed, return an anchor based on precedence.
+        if precedence == "last":
+            return (L - 1,)
+        elif precedence is None:
+            return (L // 2,)
+        else:
+            return (0,)
+
+    # For "first" and "last" we use the idea of fixed endpoints.
+    if precedence == "first":
+        # always include the first item (index 0) and then use a constant step.
+        step = (L - 1) // (n - 1)
+        return tuple(0 + i * step for i in range(n))
+
+    elif precedence == "last":
+        # always include the last item and work backwards.
+        step = (L - 1) // (n - 1)
+        # compute indices in reverse then sort
+        return tuple(sorted(L - 1 - i * step for i in range(n)))
+
+    elif precedence is None:
+        # When neither end is anchored, split the list into n buckets and choose
+        # an index from each bucket. Compute the indices using pure Python.
+        idx = [floor(x) for x in pure_linspace(0, L - 1, n)]
+        # Adjust endpoints inward if possible.
+        if idx[0] == 0 and L > n:
+            idx[0] = 1
+        if idx[-1] == L - 1 and L > n:
+            idx[-1] = L - 2
+        return tuple(idx)
+
+    else:
+        raise ValueError("precedence must be 'first', 'last', or None")
+
+
+def force_distance(values, distance):
+    """
+    Given a list of numeric values (ideally sorted) and a band size,
+    adjust the positions so that each label (with width=band) centered
+    at the new position [x - band/2, x + band/2] does not overlap its neighbors.
+
+    Each label i must lie within [v[i] - band/2, v[i] + band/2].
+    The function finds positions x[i] with the constraint:
+         x[i+1] - x[i] >= band,
+    while keeping x[i] as close as possible to the original v[i].
+
+    The algorithm works by rewriting x[i] = y[i] + i*band, so that the
+    non-overlap condition becomes y[i+1] >= y[i]. Then for each i the allowed
+    y values are:
+         [v[i] - band/2 - i*band,  v[i] + band/2 - i*band].
+    A pooling algorithm is used to adjust the targets:
+         target[i] = v[i] - i*band.
+
+    Example:
+        input_values = [2, 6, 7, 8, 10, 16, 18]
+        band_fit(input_values, band=2)  # returns [2, 5, 7, 9, 11, 16, 18]
+    """
+    n = len(values)
+    half = distance / 2.0
+
+    # Compute target values and allowed intervals for the "y" variables.
+    target = [v - i * distance for i, v in enumerate(values)]
+    lower = [v - half - i * distance for i, v in enumerate(values)]
+    upper = [v + half - i * distance for i, v in enumerate(values)]
+
+    # We'll create "pools" of indices that must share the same y value.
+    # Each pool is a dict with keys:
+    #   'sum'   : sum of target values in the pool
+    #   'count' : number of points in the pool
+    #   'low'   : the maximum (tightest) lower bound among points in the pool
+    #   'high'  : the minimum upper bound among points in the pool
+    #   'value' : the pooled value (initially the average, then clipped to [low, high])
+    pools = []
+
+    for i in range(n):
+        # Start a new pool with just the i-th element.
+        pool = {
+            "sum": target[i],
+            "count": 1,
+            "low": lower[i],
+            "high": upper[i],
+            "value": target[i],  # initial ideal
+        }
+        # If the previous pool has a value greater than this one (violating monotonicity),
+        # merge them and update the pooled value by averaging, but then clip it to the intersection
+        # of the allowed intervals.
+        while pools and pools[-1]["value"] > pool["value"]:
+            prev = pools.pop()
+            merged_low = max(prev["low"], pool["low"])
+            merged_high = min(prev["high"], pool["high"])
+            merged_sum = prev["sum"] + pool["sum"]
+            merged_count = prev["count"] + pool["count"]
+            new_value = merged_sum / merged_count
+            # Clip the new pooled value to the merged allowed interval.
+            new_value = max(merged_low, min(merged_high, new_value))
+            pool = {
+                "sum": merged_sum,
+                "count": merged_count,
+                "low": merged_low,
+                "high": merged_high,
+                "value": new_value,
+            }
+        pools.append(pool)
+
+    # Expand the pools into a full list of y values.
+    y = []
+    for pool in pools:
+        y.extend([pool["value"]] * pool["count"])
+
+    # Recover the final x positions.
+    x = [y_val + i * distance for i, y_val in enumerate(y)]
+    return x
