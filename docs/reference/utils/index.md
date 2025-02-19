@@ -185,8 +185,6 @@ Selects uniformly spaced indices from a list based on the total number of items,
 Raises `ValueError`: If precedence is not `"first"`, `"last"`, or `None`.
 
 ```py
-# Examples:
-
 # With "first" precedence (anchoring the first element):
 indices = sample_uniform(["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"], n=4, precedence="first")
 print(indices)  # Expected output: (0, 3, 6, 9)
@@ -199,3 +197,28 @@ print(indices)  # Expected output: (1, 5, 9)
 indices = sample_uniform(["a", "b", "c", "d", "e", "f", "g", "h", "i", "j", "k", "l"], n=4, precedence=None)
 print(indices)  # Expected output: (1, 3, 7, 10)
 ```
+
+## <span class="func"></span>`force_distance`
+
+```py
+force_distance(values, distance)
+```
+
+Adjusts a sorted list of numeric label positions so that the spacing between adjacent labels is at least the specified distance. The function enforces that each adjusted label remains within ±distance/2 of its original value, while keeping the new positions as close as possible to the input values.
+
+<span class="param">**Parameters**</span>
+
+- `values` *(list[float])*: A sorted list of original numeric label positions.
+- `distance` *(float)*: The minimum required distance between adjacent labels. Each label can shift within the interval `[v - distance/2, v + distance/2]` relative to its original position.
+
+<span class="returns">**Returns**</span>
+
+*(list[float])*: A list of adjusted label positions that meet the minimum spacing requirement.
+
+```py
+input_values = [2, 6, 7, 8, 10, 16, 18]
+adjusted_positions = force_distance(input_values, distance=2)
+print(adjusted_positions)  # Expected output: [2, 5, 7, 9, 11, 16, 18]
+```
+
+Internally, the function reformulates each position as `x[i] = y[i] + i * distance`, reducing the spacing constraint to requiring that the sequence `y` is non-decreasing. A pooling algorithm is then applied to adjust the values while keeping each within its allowed interval.
