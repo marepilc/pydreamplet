@@ -117,6 +117,7 @@ print(ticks)  # Example output: [0, 20, 40, 60, 80, 100]
 ```py
 pie_angles(values, start_angle=0)
 ```
+
 Calculates the start and end angles (in degrees) for each pie slice based on their proportional values. The function divides the full circle (360°) among the slices in proportion to their values.
 
 <span class="param">**Parameters**</span>
@@ -159,6 +160,7 @@ for i, segment in enumerate(segments):
 
 svg.display()
 ```
+
 <figure class="light-dark-bg" markdown="span">
   ![Result](assets/pie_chart.svg)
   <figcaption>Result</figcaption>
@@ -174,7 +176,7 @@ Selects uniformly spaced indices from a list based on the total number of items,
 
 <span class="param">**Parameters**</span>
 
-- `my_list` *(list[Any])*: A list containing elements of any type.
+- `input_list` *(list[Any])*: A list containing elements of any type.
 - `n` *(int)*: The number of indices to select from the list.
 - `precedence` *(str | None, optional)*: Determines which end of the list is anchored during sampling. Use `"first"` (default) to always include the first element, `"last"` to always include the last element, or `None` for an unanchored, balanced selection.
 

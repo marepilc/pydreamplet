@@ -749,6 +749,10 @@ class Text(SvgElement):
             pos = kwargs.pop("pos")
             self.element.set("x", str(pos.x))
             self.element.set("y", str(pos.y))
+        if "v_space" in kwargs:
+            self._v_space = kwargs.pop("v_space")
+        else:
+            self._v_space = None
         self._raw_text = initial_text
         if initial_text:
             self.content = initial_text
@@ -790,6 +794,8 @@ class Text(SvgElement):
                         dy_val = float(self.element.attrib.get("font-size", 16))
                     except ValueError:
                         dy_val = 16
+                    if self._v_space is not None:
+                        dy_val = self._v_space
                     tspan.set("dy", str(dy_val))
                 tspan.text = line
                 self.element.append(tspan)

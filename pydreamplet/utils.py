@@ -1,5 +1,6 @@
 from math import ceil, floor, log10
 from math import pi as PI
+from typing import Any
 
 
 def math_round(x):
@@ -85,8 +86,8 @@ def pure_linspace(start, stop, num):
     return [start + step * i for i in range(num)]
 
 
-def sample_uniform(my_list, n, precedence="first"):
-    L = len(my_list)
+def sample_uniform(input_list: list[Any], n: int, precedence="first"):
+    L = len(input_list)
     if n <= 1:
         # if only one item is needed, return an anchor based on precedence.
         if precedence == "last":
@@ -123,7 +124,7 @@ def sample_uniform(my_list, n, precedence="first"):
         raise ValueError("precedence must be 'first', 'last', or None")
 
 
-def force_distance(values, distance):
+def force_distance(values: list[float], distance: float) -> list[float]:
     """
     Given a list of numeric values (ideally sorted) and a band size,
     adjust the positions so that each label (with width=band) centered
