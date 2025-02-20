@@ -17,14 +17,30 @@ Initializes a new text element with optional initial content. If pos is provided
 <span class="param">**Parameters**</span>
 
 - `initial_text` *(str, optional)*: The initial text content.
-- `**kwargs`: Additional attributes for the text element, including pos (a Vector).
+- `**kwargs`: Additional attributes for the text element, including pos (a [`Vector`](../math/vector.md)) and `v_space` which controls the vertical space between lines.
 
 ```py
-text_elem = Text("Hello, World!", pos=Vector(50, 50), fill="black")
+from pydreamplet import SVG, Text, Vector
+
+svg = SVG(300, 200).append(
+    Text(
+        "Hello,\nWorld!",
+        pos=Vector(60, 80),
+        v_space=84,
+        font_size=64,
+        fill="#1b313b"
+    )
+)
 ```
 
+<figure class="light-dark-bg" markdown="span">
+  ![Result](assets/multiline_text_example.svg)
+  <figcaption>Result</figcaption>
+</figure>
+
 ### <span class="prop"></span>`pos`
-**Getter:** Returns the text position as a Vector.
+
+**Getter:** Returns the text position as a [`Vector`](../math/vector.md).
 
 **Setter:** Updates the text position.
 
