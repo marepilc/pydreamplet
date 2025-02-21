@@ -255,7 +255,7 @@ class SVG(SvgElement):
         display(IPythonSVG(self.to_string()))
 
     def save(self, filename):
-        with open(filename, "w") as f:
+        with open(filename, "w", encoding="utf-8") as f:
             f.write(self.to_string())
 
 
