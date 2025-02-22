@@ -16,8 +16,11 @@ Initializes a new text element with optional initial content. If pos is provided
 
 <span class="param">**Parameters**</span>
 
-- `initial_text` *(str, optional)*: The initial text content.
-- `**kwargs`: Additional attributes for the text element, including pos (a [`Vector`](../math/vector.md)) and `v_space` which controls the vertical space between lines.
+- `initial_text` _(str, optional)_: The initial text content.
+- `**kwargs`: Additional attributes for the text element. Common keyword arguments include:
+    - `pos` *(Vector)*: Specifies the text position.
+    - `v_space` *(number, optional)*: Controls the vertical space between lines for multiline text.
+    - `font_size` *(str, optional)*: Specifies the font size. The provided value should include a unit (e.g. `"10.5pt"`, `"18px"`, etc.). If no unit is provided, `"px"` is appended by default. The getter returns only the numeric portion as a float.
 
 ```py
 from pydreamplet import SVG, Text, Vector

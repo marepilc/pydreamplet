@@ -1,5 +1,5 @@
 import math
-from typing import Sequence
+from typing import Sequence, cast
 
 
 def star(
@@ -80,7 +80,7 @@ def cardinal_spline(
     points: list[float] | list[tuple[float, float]],
     tension: float = 0.0,
     closed: bool = False,
-):
+) -> str:
     """
     Generate an SVG path 'd' string for a cardinal spline
     through the given points, with adjustable 'tension'.
@@ -93,8 +93,7 @@ def cardinal_spline(
     Parameters
     ----------
     points : list
-        Either a flat list [x0, y0, x1, y1, ...] or
-        a list of (x, y) pairs [(x0,y0), (x1,y1), ...].
+        Either a flat list [x0, y0, x1, y1, ...] or a list of (x, y) pairs.
     tension : float
         A number in [0..1]. 0 => looser, 1 => no curvature.
     closed : bool
@@ -105,17 +104,20 @@ def cardinal_spline(
     str
         An SVG path 'd' string, e.g. "M x0,y0 C c1x,c1y c2x,c2y x1,y1 ..."
     """
-    # 1) Convert 'points' to a list of (x, y) pairs if it's flat
-    xy = []
+    # Normalize the input to a list of (float, float) pairs.
+    xy: list[tuple[float, float]] = []
     if not points:
         return ""  # nothing to draw
-    if isinstance(points[0], (int, float)) and len(points) % 2 == 0:
-        # Flat list [x0, y0, x1, y1, ...]
-        for i in range(0, len(points), 2):
-            xy.append((points[i], points[i + 1]))
-    elif isinstance(points[0], (tuple, list)) and len(points[0]) == 2:
-        # Already a list of (x, y) pairs
-        xy = points
+
+    first = points[0]
+    if isinstance(first, (int, float)) and len(points) % 2 == 0:
+        # We're in the flat-list branch.
+        flat_points = cast(list[float], points)
+        for i in range(0, len(flat_points), 2):
+            xy.append((float(flat_points[i]), float(flat_points[i + 1])))
+    elif isinstance(first, (tuple, list)) and len(first) == 2:
+        # Input is already a list of (x, y) pairs.
+        xy = [(float(x), float(y)) for x, y in cast(list[tuple[float, float]], points)]
     else:
         raise ValueError(
             "points must be either flat [x0, y0, ...] or a list of (x, y) pairs"
@@ -125,79 +127,39 @@ def cardinal_spline(
     if n == 0:
         return ""
     if n == 1:
-        # Just a single point => Move there, no lines
+        # Single point: just move there.
         return f"M {xy[0][0]},{xy[0][1]}"
     if n == 2 and not closed:
-        # Just two points => a straight line
+        # Two points: draw a straight line.
         return f"M {xy[0][0]},{xy[0][1]} L {xy[1][0]},{xy[1][1]}"
 
-    # 2) 'k' is the factor that controls how "long" the tangents are
-    #    D3 uses k = (1 - tension) / 6 for its cardinal spline
+    # k is the factor controlling the tangent lengths.
+    # D3 uses k = (1 - tension) / 6 for its cardinal spline.
     k = (1 - tension) / 6
 
-    # We'll build up an SVG path in parts
-    d_parts = []
-
+    d_parts: list[str] = []
     if closed:
-        # -----------------------------
-        #   CLOSED CARDINAL SPLINE
-        # -----------------------------
-        # For a closed curve, we can "wrap around" so that:
-        #   - The final control points reference the first points
-        #   - The first control points reference the last points
-        #
-        # One simple trick is to pad with 2 points at each end:
-        #   e.g. [p_{n-2}, p_{n-1}, p0, p1, ..., p_{n-1}, p0, p1]
-        # But a more direct approach is:
-        #   - Start with "M x0,y0"
-        #   - Then for i in [0..n-1], let p[i+1], p[i+2] wrap around mod n
-        #   - Each segment is "C c1x,c1y c2x,c2y x_{i+1},y_{i+1}"
-        #   - Finally "Z" to close
-        #
-        # For clarity, we'll just do modular indexing.
-
-        # Move to the first point
+        # CLOSED CARDINAL SPLINE
         d_parts.append(f"M {xy[0][0]},{xy[0][1]}")
-
         for i in range(n):
             p0 = xy[(i - 1) % n]  # previous
             p1 = xy[i % n]  # current
             p2 = xy[(i + 1) % n]  # next
             p3 = xy[(i + 2) % n]  # next-next
 
-            # Control point 1
+            # Compute control points.
             c1x = p1[0] + (p2[0] - p0[0]) * k
             c1y = p1[1] + (p2[1] - p0[1]) * k
-            # Control point 2
             c2x = p2[0] - (p3[0] - p1[0]) * k
             c2y = p2[1] - (p3[1] - p1[1]) * k
 
-            # Cubic Bezier to p2
             d_parts.append(f"C {c1x},{c1y} {c2x},{c2y} {p2[0]},{p2[1]}")
-
-        # Close the path
         d_parts.append("Z")
-
     else:
-        # -----------------------------
-        #   OPEN CARDINAL SPLINE
-        # -----------------------------
-        # A common technique: "pad" the start and end so each real
-        # point has neighbors for tangents. D3 does something similar
-        # internally for the open cardinal.
-        #
-        # We'll define an extended array:
-        #   e = [p0, p0] + [p1..p_{n-2}] + [p_{n-1}, p_{n-1}]
-        # Then each segment i in [1..n-1] uses p0..p3 => e[i-1..i+2].
-
-        # Build extended
-        e = [xy[0]] + xy + [xy[-1]]  # length = n+2
-        # Start path at the first real point
+        # OPEN CARDINAL SPLINE
+        # Create an extended list by duplicating the endpoints.
+        e = [xy[0]] + xy + [xy[-1]]
         d_parts.append(f"M {e[1][0]},{e[1][1]}")
-
-        # We'll have (n-1) segments from i=1..(n-1)
-        # Each segment goes from e[i] to e[i+1]
-        # with tangents referencing e[i-1], e[i+2].
         for i in range(1, n):
             p0 = e[i - 1]
             p1 = e[i]
@@ -206,13 +168,11 @@ def cardinal_spline(
 
             c1x = p1[0] + (p2[0] - p0[0]) * k
             c1y = p1[1] + (p2[1] - p0[1]) * k
-
             c2x = p2[0] - (p3[0] - p1[0]) * k
             c2y = p2[1] - (p3[1] - p1[1]) * k
 
             d_parts.append(f"C {c1x},{c1y} {c2x},{c2y} {p2[0]},{p2[1]}")
 
-    # Combine everything into a single path string
     return " ".join(d_parts)
 
 

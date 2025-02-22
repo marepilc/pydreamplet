@@ -78,7 +78,7 @@ class BandScale:
         # Step size includes the band width and the padding between bands.
         self.step = self._band_width * (1 + self._padding)
 
-    def map(self, value: any) -> float:
+    def map(self, value: Any) -> float:
         """
         Maps a value from the domain to the start position of its band in the output range.
         Raises a ValueError if the value is not found in the domain.
@@ -154,7 +154,7 @@ class PointScale:
         n = len(self._domain)
         self._step = (r1 - r0) / (n - 1 + 2 * self._padding)
 
-    def map(self, value: any) -> float | None:
+    def map(self, value: Any) -> float | None:
         """
         Maps a categorical value to a point in the output range.
         Returns None if the value is not in the domain.
@@ -213,7 +213,7 @@ class OrdinalScale:
             for i, d in enumerate(self._domain)
         }
 
-    def map(self, value: any) -> object:
+    def map(self, value: Any) -> object:
         """Returns the mapped output value for the given domain value."""
         return self._mapping.get(value)
 
