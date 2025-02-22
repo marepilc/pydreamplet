@@ -77,11 +77,13 @@ class SvgElement:
             self.element.remove(child)
         return self
 
-    def to_string(self):
+    def to_string(self, pretty_print: bool = True) -> str:
+        if pretty_print:
+            ET.indent(self.element)
         return ET.tostring(self.element, encoding="unicode")
 
     def __str__(self):
-        return self.to_string()
+        return self.to_string(pretty_print=False)
 
     def __getattr__(self, name):
         attr_name = name.replace("_", "-")

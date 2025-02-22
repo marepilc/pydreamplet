@@ -67,7 +67,7 @@ print(drop_shadow)  # <feDropShadow xmlns="http://www.w3.org/2000/svg" id="shado
 append(self, *children) -> SvgElement
 ```
 
-Appends a child element to the current element. Returns self, allowing method chaining. 
+Appends a child element to the current element. Returns self, allowing method chaining.
 
 ### <span class="meth"></span>`remove`
 
@@ -96,10 +96,10 @@ print(svg)
 ### <span class="meth"></span>`to_string`
 
 ```py
-to_string(self) -> str
+to_string(self, pretty_print: bool = True) -> str
 ```
 
-Returns the SVG element as a string.
+Returns the SVG element as a string. If pretty_print is set to `True`, the output is formatted with indentation for improved readability (using Python’s built-in `ET.indent` available from Python 3.9 onward).
 
 ### <span class="meth"></span>`find` and `find_all`
 
