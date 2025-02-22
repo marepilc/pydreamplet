@@ -29,8 +29,19 @@ Initializes a new line with specified start (x1, y1) and end (x2, y2) coordinate
 - `**kwargs`: Additional attributes for the line.
 
 ```py
-line = Line(0, 0, 100, 0, stroke="black")
+from pydreamplet import SVG, Line
+
+svg = SVG(200, 200)
+svg.append(
+    Line(x1=10, y1=190, x2=190, y2=10, stroke="#a00344", stroke_width=5)
+)
 ```
+
+<figure class="light-dark-bg" markdown="span">
+  ![Result](assets/line_example.svg)
+  <figcaption>Result</figcaption>
+</figure>
+
 ### <span class="prop"></span>`x1`, `y1`, `x2`, `y2`
 
 **Getters and Setters:** Retrieve or update the line's coordinates.

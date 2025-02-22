@@ -16,15 +16,23 @@ Initializes a new ellipse. If `pos` is provided, it sets the center coordinates.
 
 <span class="param">**Parameters**</span>
 
-- `**kwargs`: Attributes for the ellipse, including `pos` (a Vector) and other properties (e.g., `rx`, `ry`).
+- `**kwargs`: Attributes for the ellipse, including `pos` (a [`Vector`](../math/vector.md)) and other properties (e.g., `rx`, `ry`).
 
 ```py
-ellipse = Ellipse(pos=Vector(100, 80), rx=40, ry=20, fill="green")
+from pydreamplet import SVG, Ellipse, Vector
+
+svg = SVG(200, 200)
+svg.append(Ellipse(pos=Vector(100, 100), rx=60, ry=40, fill="#a00344"))
 ```
+
+<figure class="light-dark-bg" markdown="span">
+  ![Result](assets/ellipse_example.svg)
+  <figcaption>Result</figcaption>
+</figure>
 
 ### <span class="prop"></span>`pos`
 
-**Getter:** Returns the center of the ellipse as a Vector.
+**Getter:** Returns the center of the ellipse as a [`Vector`](../math/vector.md).
 
 **Setter:** Updates the center coordinates.
 

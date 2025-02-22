@@ -23,8 +23,16 @@ Initializes a new polygon with the specified vertices. The points must be provid
 - `**kwargs`: Additional attributes for the polygon element.
 
 ```py
-polygon = Polygon([0, 0, 50, 50, 100, 0], fill="none", stroke="black")
+from pydreamplet import SVG, Polygon
+
+svg = SVG(200, 200)
+svg.append(Polygon([10, 10, 100, 180, 150, 50], fill="#a00344"))
 ```
+
+<figure class="light-dark-bg" markdown="span">
+  ![Result](assets/polygon_example.svg)
+  <figcaption>Result</figcaption>
+</figure>
 
 ### <span class="prop"></span>`points`
 

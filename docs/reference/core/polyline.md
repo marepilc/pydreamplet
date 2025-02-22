@@ -23,8 +23,18 @@ Initializes a new polyline with the specified vertices. The points must be provi
 - `**kwargs`: Additional attributes for the polyline element.
 
 ```py
-polyline = Polyline([0, 0, 50, 50, 100, 0], fill="none", stroke="black")
+from pydreamplet import SVG, Polyline
+
+svg = SVG(200, 200)
+svg.append(
+    Polyline([10, 10, 100, 180, 150, 50], stroke="#a00344", fill="none", stroke_width=5)
+)
 ```
+
+<figure class="light-dark-bg" markdown="span">
+  ![Result](assets/polyline_example.svg)
+  <figcaption>Result</figcaption>
+</figure>
 
 ### <span class="prop"></span>`points`
 

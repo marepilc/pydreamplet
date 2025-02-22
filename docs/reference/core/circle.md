@@ -16,11 +16,19 @@ Initializes a new circle. If pos is provided in kwargs, it sets the circle's cen
 
 <span class="param">**Parameters**</span>
 
-- `**kwargs`: Attributes for the circle, including pos (a Vector) and other SVG properties (e.g., r for radius).
+- `**kwargs`: Attributes for the circle, including pos (a [`Vector`](../math/vector.md)) and other SVG properties (e.g., r for radius).
 
 ```py
-circle = Circle(pos=Vector(50, 50), r=25, fill="blue")
+from pydreamplet import SVG, Circle
+
+svg = SVG(200, 200)
+svg.append(Circle(cx=100, cy=100, r=50, fill="#a00344"))
 ```
+
+<figure class="light-dark-bg" markdown="span">
+  ![Result](assets/circle_example.svg)
+  <figcaption>Result</figcaption>
+</figure>
 
 ### <span class="prop"></span>`pos`
 
