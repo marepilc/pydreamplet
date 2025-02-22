@@ -89,6 +89,42 @@ print(f"svg.w is {svg.w}, svg.h is {svg.h}")  # Outputs svg.w is 300, svg.h is 3
 print(f"svg.width is {svg.width}, svg.height is {svg.height}")  # Outputs svg.width is 600px, svg.height is 600px
 ```
 
+### <span class="meth"></span>`style`
+
+```py
+def style(
+    self, file_path: str, overwrite: bool = True, minify: bool = True
+) -> None
+```
+
+Adds a `<style>` element to the SVG using CSS content loaded from an external file. When `overwrite` is set to `True`, any existing `<style>` elements are removed and the new one is inserted as the first child. When `minify` is `True`, the CSS content is minified before insertion.
+
+=== "Usage example"
+
+    ```py
+    from pydreamplet import SVG, Circle
+
+    svg = SVG(200, 200)
+    svg.append(Circle(cx=100, cy=100, r=50))
+
+    svg.style("my_style.css")
+    ```
+
+=== "my_style.css"
+
+    ```css
+    circle {
+      fill: rgb(160, 3, 68);
+      stroke: #000;
+      stroke-width: 20px;
+    }
+    ```
+
+<figure class="light-dark-bg" markdown="span">
+  ![Result](assets/svg_style_example.svg)
+  <figcaption>Result</figcaption>
+</figure>
+
 ### <span class="meth"></span>`display`
 
 ```py

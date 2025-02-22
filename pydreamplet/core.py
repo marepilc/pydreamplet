@@ -244,6 +244,44 @@ class SVG(SvgElement):
         viewbox = [int(v) for v in self.element.get("viewBox").split(" ")]
         return viewbox[3]
 
+    def style(
+        self, file_path: str, overwrite: bool = True, minify: bool = True
+    ) -> None:
+        """
+        Add a <style> element to the SVG from an external CSS file.
+
+        If overwrite is True, any existing <style> elements are removed and the new one
+        is inserted as the first element of the SVG. Otherwise, the style element is appended.
+
+        If minify is True, the CSS content is minified before insertion.
+        """
+        with open(file_path, "r", encoding="utf-8") as f:
+            css_content = f.read()
+
+        if minify:
+
+            def minify_css(css: str) -> str:
+                # Remove CSS comments.
+                css = re.sub(r"/\*.*?\*/", "", css, flags=re.DOTALL)
+                # Remove extra whitespace around symbols.
+                css = re.sub(r"\s*([\{\};:,\>])\s*", r"\1", css)
+                # Collapse multiple spaces into one.
+                css = re.sub(r"\s+", " ", css)
+                return css.strip()
+
+            css_content = minify_css(css_content)
+
+        style_elem = SvgElement("style")
+        style_elem.element.text = css_content
+
+        if overwrite:
+            for child in list(self.element):
+                if child.tag == qname("style"):
+                    self.element.remove(child)
+            self.element.insert(0, style_elem.element)
+        else:
+            self.append(style_elem)
+
     def display(self):
         display(IPythonSVG(self.to_string()))
 
