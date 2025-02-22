@@ -1,6 +1,14 @@
 from math import ceil, floor, log10
 from math import pi as PI
-from typing import Any
+from typing import Any, TypedDict
+
+
+class Pool(TypedDict):
+    sum: float
+    count: int
+    low: float
+    high: float
+    value: float
 
 
 def math_round(x):
@@ -124,6 +132,18 @@ def sample_uniform(input_list: list[Any], n: int, precedence="first"):
         raise ValueError("precedence must be 'first', 'last', or None")
 
 
+def create_pool(
+    sum_val: float, count: int, low_val: float, high_val: float, value_val: float
+) -> Pool:
+    return {
+        "sum": sum_val,
+        "count": count,
+        "low": low_val,
+        "high": high_val,
+        "value": value_val,
+    }
+
+
 def force_distance(values: list[float], distance: float) -> list[float]:
     """
     Given a list of numeric values (ideally sorted) and a band size,
@@ -161,17 +181,11 @@ def force_distance(values: list[float], distance: float) -> list[float]:
     #   'low'   : the maximum (tightest) lower bound among points in the pool
     #   'high'  : the minimum upper bound among points in the pool
     #   'value' : the pooled value (initially the average, then clipped to [low, high])
-    pools = []
+    pools: list[Pool] = []
 
     for i in range(n):
         # Start a new pool with just the i-th element.
-        pool = {
-            "sum": target[i],
-            "count": 1,
-            "low": lower[i],
-            "high": upper[i],
-            "value": target[i],  # initial ideal
-        }
+        pool: Pool = create_pool(target[i], 1, lower[i], upper[i], target[i])
         # If the previous pool has a value greater than this one (violating monotonicity),
         # merge them and update the pooled value by averaging, but then clip it to the intersection
         # of the allowed intervals.

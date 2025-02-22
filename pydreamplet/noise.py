@@ -1,5 +1,6 @@
 import math
 import random
+from typing import Optional
 
 
 # ────────────────────────────────────────────────────────────
@@ -79,10 +80,10 @@ class Noise:
 # Handles permutation generation, seeding, and helper functions.
 # ────────────────────────────────────────────────────────────
 class NoiseBase:
-    def __init__(self, seed: int = None):
+    def __init__(self, seed: Optional[int] = None):
         self.permutation = self._generate_permutation(seed)
 
-    def _generate_permutation(self, seed: int = None):
+    def _generate_permutation(self, seed: Optional[int] = None):
         p = list(range(256))
         # Choose a seeded random function if a seed is provided.
         rnd = self._seeded_random(seed) if seed is not None else random.random
@@ -114,7 +115,7 @@ class NoiseBase:
 # Produces values in roughly [-1, 1] (when amplitude is 1)
 # ────────────────────────────────────────────────────────────
 class SimplexNoise(NoiseBase):
-    def __init__(self, seed: int = None):
+    def __init__(self, seed: Optional[int] = None):
         super().__init__(seed)
         # For 1D, the gradient can be either 1 or -1.
         self.grad3 = [1, -1]
@@ -153,7 +154,7 @@ class SimplexNoise(NoiseBase):
 # Produces values in roughly [-1, 1] (when amplitude is 1)
 # ────────────────────────────────────────────────────────────
 class SimplexNoise2D(NoiseBase):
-    def __init__(self, seed: int = None):
+    def __init__(self, seed: Optional[int] = None):
         super().__init__(seed)
         self.grad3 = [
             [1, 1],
@@ -238,7 +239,7 @@ class SimplexNoise2D(NoiseBase):
 # Produces values in roughly [-1, 1] (when amplitude is 1)
 # ────────────────────────────────────────────────────────────
 class SimplexNoise3D(NoiseBase):
-    def __init__(self, seed: int = None):
+    def __init__(self, seed: Optional[int] = None):
         super().__init__(seed)
         self.grad3 = [
             [1, 1, 0],

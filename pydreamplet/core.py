@@ -1,7 +1,7 @@
 import math
 import re
 import xml.etree.ElementTree as ET
-from typing import Any
+from typing import Any, Optional
 
 from IPython.display import SVG as IPythonSVG
 from IPython.display import display
@@ -16,12 +16,8 @@ def qname(tag):
     return f"{{{SVG_NS}}}{tag}"
 
 
-# -----------------------------------------------------------------------------
-# Base SVG element with a registry so that find/find_all wrap elements with the
-# appropriate specialized class.
-# -----------------------------------------------------------------------------
 class SvgElement:
-    _class_registry = {}
+    _class_registry: dict[str, Any] = {}
 
     @classmethod
     def register(cls, tag: str, subclass: type) -> None:
@@ -129,23 +125,23 @@ class SvgElement:
         return (SvgElement.from_element(el) for el in found_list)
 
 
-# -----------------------------------------------------------------------------
-# Transformable mixin used ONLY for group (<g>) elements.
-# This version always outputs transforms in fixed order:
-# translate, then rotate, then scale.
-# -----------------------------------------------------------------------------
-# -----------------------------------------------------------------------------
-# Transformable mixin used ONLY for group (<g>) elements.
-# This version always outputs transforms in the fixed order:
-#   1. rotate
-#   2. translate
-#   3. scale
-# -----------------------------------------------------------------------------
 class Transformable:
+    """
+    Mixin for applying transforms to an SVG element.
+    The fixed order of operations is:
+      1. rotate
+      2. translate
+      3. scale
+
+    Note: Classes using this mixin must provide an `element` attribute.
+    """
+
+    element: ET.Element
+
     def __init__(
         self,
-        pos: Vector = None,
-        scale: Vector = None,
+        pos: Optional[Vector] = None,
+        scale: Optional[Vector] = None,
         angle: float = 0,
         *args,
         **kwargs,
@@ -196,9 +192,6 @@ class Transformable:
         self._update_transform()
 
 
-# -----------------------------------------------------------------------------
-# The root SVG element.
-# -----------------------------------------------------------------------------
 class SVG(SvgElement):
     @classmethod
     def from_element(cls, element: ET.Element):
@@ -259,16 +252,24 @@ class SVG(SvgElement):
             f.write(self.to_string())
 
 
-# -----------------------------------------------------------------------------
-# Group element <g> uses Transformable to control its translation, rotation, and scaling.
-# -----------------------------------------------------------------------------
 class G(Transformable, SvgElement):
+    """
+    Group (<g>) element that combines Transformable behavior with SvgElement.
+
+    Unlike the fixed order in Transformable (rotate, then translate, then scale),
+    this class applies transforms based on the `order` attribute.
+    By default, `order` is "trs", meaning:
+      - translate
+      - rotate
+      - scale
+    """
+
     def __init__(
         self,
-        pos: Vector = None,
-        scale: Vector = None,
+        pos: Optional[Vector] = None,
+        scale: Optional[Vector] = None,
         angle: float = 0,
-        pivot: Vector = None,
+        pivot: Optional[Vector] = None,
         order: str = "trs",
         **kwargs,
     ):
@@ -399,7 +400,7 @@ class G(Transformable, SvgElement):
         instance.element = element
         transform = element.get("transform", "")
         pos = Vector(0, 0)
-        angle = 0
+        angle: float = 0
         scale = Vector(1, 1)
         pivot = Vector(0, 0)
         m_rotate = re.search(r"rotate\(([^)]+)\)", transform)
@@ -440,27 +441,21 @@ class G(Transformable, SvgElement):
         return instance
 
 
-# -----------------------------------------------------------------------------
-# Animate element.
-# -----------------------------------------------------------------------------
 class Animate(SvgElement):
     def __init__(self, attr: str, **kwargs):
+        repeat_count = kwargs.pop("repeatCount", "indefinite")
+        values_arg = kwargs.pop("values", None)
+        dur = kwargs.pop("dur", "2s")
         super().__init__("animate", **kwargs)
-        if "repeatCount" in kwargs:
-            self._repeat_count: int | str = kwargs.pop("repeatCount")
-        else:
-            self._repeat_count: int | str = "indefinite"
-        if "values" in kwargs:
-            if isinstance(kwargs["values"], list):
-                self._values = kwargs.pop("values")
-                self.attrs({"values": ";".join([str(v) for v in self._values])})
-            else:
-                self._values: list[Any] = []
-        if "dur" not in kwargs:
-            kwargs["dur"] = "2s"
+        self._repeat_count: int | str = repeat_count
+        self._values: list[Any] = []
+        if isinstance(values_arg, list):
+            self._values = values_arg
+            self.attrs({"values": ";".join(str(v) for v in self._values)})
+        kwargs.setdefault("dur", "2s")
         self.attrs(
             {
-                "dur": kwargs.pop("dur"),
+                "dur": dur,
                 "attributeType": "XML",
                 "attributeName": attr,
                 "repeatCount": self._repeat_count,
@@ -486,9 +481,6 @@ class Animate(SvgElement):
         self.attrs({"values": ";".join([str(v) for v in value])})
 
 
-# -----------------------------------------------------------------------------
-# Shape and text elements (do not use transform); their position is controlled by native attributes.
-# -----------------------------------------------------------------------------
 class Circle(SvgElement):
     def __init__(self, **kwargs):
         super().__init__("circle", **kwargs)
