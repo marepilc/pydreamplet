@@ -57,7 +57,7 @@ theme:
   font: 
     text: "Roboto"
     code: "Roboto Mono"
-  logo: "assets/nav_logo.png"
+  logo: "assets/nav_logo.svg"
   favicon: "assets/favicon.ico"
   icon:
     repo: material/github
@@ -65,7 +65,7 @@ theme:
   features:
     - navigation.instant
     - navigation.tracking
-    # - navigation.expand
+    - navigation.expand
     - content.code.copy
     - search.suggest
   palette:
