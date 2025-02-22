@@ -1,6 +1,7 @@
 import math
 import re
 import xml.etree.ElementTree as ET
+from copy import deepcopy
 from typing import Any, Optional
 
 from IPython.display import SVG as IPythonSVG
@@ -79,7 +80,9 @@ class SvgElement:
 
     def to_string(self, pretty_print: bool = True) -> str:
         if pretty_print:
-            ET.indent(self.element)
+            element_copy = deepcopy(self.element)
+            ET.indent(element_copy)
+            return ET.tostring(element_copy, encoding="unicode")
         return ET.tostring(self.element, encoding="unicode")
 
     def __str__(self):
