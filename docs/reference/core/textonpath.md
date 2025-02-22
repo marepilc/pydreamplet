@@ -25,9 +25,11 @@ Initializes a new text-on-path element with optional initial content and a refer
 - `path` *(str, optional)*: The path identifier (e.g., an href value) to bind the text to.
 - `text_path_args` *(dict, optional)*: Additional attributes for the `<textPath>` element.
 - `**kwargs`: Additional attributes for the text element.
+
 ```py
 text_on_path = TextOnPath("Curved Text", path="#myPath", fill="blue")
 ```
+
 ### <span class="prop"></span>`content`
 
 `Getter:` Returns the text content rendered on the path.

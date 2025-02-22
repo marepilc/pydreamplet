@@ -53,6 +53,21 @@ Creates an SVG instance from an ElementTree element.
 SVG.from_file(filename: str)
 ```
 
+```py title="Usage example"
+from importlib.resources import files
+from pydreamplet import SVG, resources
+
+svg = SVG.from_file(files(resources) / "hummingbird.svg").attrs(
+    {"width": 96, "height": 84}
+)
+svg.find("path").fill = "darkgreen"
+```
+
+<figure class="light-dark-bg" markdown="span">
+  ![Result](assets/svg_from_file_example.svg)
+  <figcaption>Result</figcaption>
+</figure>
+
 Creates an SVG instance by parsing an SVG file.
 
 ### <span class="prop"></span>`w` and `h`
@@ -62,7 +77,6 @@ Creates an SVG instance by parsing an SVG file.
 !!! warning
 
     Remember, based on `viewBox`. Do not confuse these properties with `width` and `height` attributes of the SVG element.
-
 
 ```py
 import pydreamplet as dp
