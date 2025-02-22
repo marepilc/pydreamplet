@@ -834,6 +834,28 @@ class Text(SvgElement):
         else:
             self.element.text = new_text
 
+    @property
+    def font_size(self) -> float:
+        """
+        Returns the numeric part of the font-size attribute.
+        """
+        fs = self.element.get("font-size", "16px")
+        match = re.match(r"([0-9]+(?:\.[0-9]+)?)", fs)
+        if match:
+            return float(match.group(1))
+        return 16.0
+
+    @font_size.setter
+    def font_size(self, value: str) -> None:
+        """
+        Sets the font-size attribute. If no unit is present in the provided value,
+        "px" is appended.
+        """
+        # If no alphabetical characters (units) are present, default to px.
+        if not re.search(r"[a-zA-Z]", value):
+            value = f"{value}px"
+        self.element.set("font-size", value)
+
 
 class TextOnPath(SvgElement):
     def __init__(self, initial_text="", path_id="", text_path_args=None, **kwargs):
@@ -857,6 +879,27 @@ class TextOnPath(SvgElement):
     @content.setter
     def content(self, new_text: str):
         self.text_path.element.text = new_text
+
+    @property
+    def font_size(self) -> float:
+        """
+        Returns the numeric part of the font-size attribute.
+        """
+        fs = self.element.get("font-size", "16px")
+        match = re.match(r"([0-9]+(?:\.[0-9]+)?)", fs)
+        if match:
+            return float(match.group(1))
+        return 16.0
+
+    @font_size.setter
+    def font_size(self, value: str) -> None:
+        """
+        Sets the font-size attribute on the text element. If no unit is provided,
+        "px" is used as default.
+        """
+        if not re.search(r"[a-zA-Z]", value):
+            value = f"{value}px"
+        self.element.set("font-size", value)
 
 
 # -----------------------------------------------------------------------------
