@@ -224,13 +224,16 @@ class SVG(SvgElement):
         super().__init__("svg", **kwargs)
         if len(viewbox) == 4:
             vb = f"{viewbox[0]} {viewbox[1]} {viewbox[2]} {viewbox[3]}"
+            if "width" not in kwargs:
+                kwargs["width"] = f"{viewbox[2]}px"
+            if "height" not in kwargs:
+                kwargs["height"] = f"{viewbox[3]}px"
         else:
             vb = f"0 0 {viewbox[0]} {viewbox[1]}"
-
-        if "width" not in kwargs:
-            kwargs["width"] = f"{viewbox[0]}px"
-        if "height" not in kwargs:
-            kwargs["height"] = f"{viewbox[1]}px"
+            if "width" not in kwargs:
+                kwargs["width"] = f"{viewbox[0]}px"
+            if "height" not in kwargs:
+                kwargs["height"] = f"{viewbox[1]}px"
         self.attrs(
             {
                 "viewBox": vb,
@@ -290,9 +293,9 @@ class SVG(SvgElement):
     def display(self):
         display(IPythonSVG(self.to_string()))
 
-    def save(self, filename):
+    def save(self, filename, pretty_print=False):
         with open(filename, "w", encoding="utf-8") as f:
-            f.write(self.to_string())
+            f.write(self.to_string(pretty_print=pretty_print))
 
 
 class G(Transformable, SvgElement):
