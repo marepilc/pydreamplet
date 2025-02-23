@@ -1,4 +1,4 @@
-# Getting Started with pyDreamplet
+# Installation and quick intro
 
 pyDreamplet is a Python library designed for creating stunning SVG visualizations effortlessly. This guide covers installation, basic usage, and pointers for exploring additional features to help create captivating visual art with code.
 
@@ -42,7 +42,7 @@ svg.save("example.svg")
 This will create such a image
 
 <figure markdown="span">
-  ![Image title](assets/getting_started_img_01.svg){ width="300" }
+  ![Example](assets/getting_started_img_01.svg){ width="300" }
   <figcaption>Output of the code above</figcaption>
 </figure>
 

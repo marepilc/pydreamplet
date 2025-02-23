@@ -48,7 +48,13 @@ class SvgElement:
 
     @staticmethod
     def normalize_attrs(attrs):
-        return {k.replace("_", "-"): str(v) for k, v in attrs.items()}
+        new_attrs = {}
+        for k, v in attrs.items():
+            if k == "class_name":
+                new_attrs["class"] = str(v)
+            else:
+                new_attrs[k.replace("_", "-")] = str(v)
+        return new_attrs
 
     def attrs(self, attributes):
         for key, value in attributes.items():
@@ -89,6 +95,12 @@ class SvgElement:
         return self.to_string(pretty_print=False)
 
     def __getattr__(self, name):
+        if name == "class_name":
+            if "class" in self.element.attrib:
+                return self.element.attrib["class"]
+            raise AttributeError(
+                f"{type(self).__name__!r} object has no attribute 'class_name'"
+            )
         attr_name = name.replace("_", "-")
         if attr_name in self.element.attrib:
             val = self.element.attrib[attr_name]
@@ -104,6 +116,15 @@ class SvgElement:
         )
 
     def __setattr__(self, name, value):
+        # Map "class_name" to the SVG "class" attribute.
+        if name == "class_name":
+            attr_name = "class"
+            if value is None:
+                self.element.attrib.pop(attr_name, None)
+            else:
+                self.element.set(attr_name, str(value))
+            return
+
         if name == "element" or name.startswith("_") or hasattr(type(self), name):
             object.__setattr__(self, name, value)
         else:
@@ -113,20 +134,24 @@ class SvgElement:
             else:
                 self.element.set(attr_name, str(value))
 
-    def find(self, tag, nested=False):
-        if nested:
-            found = self.element.find(".//" + qname(tag))
-        else:
-            found = self.element.find(qname(tag))
+    def find(self, tag, nested=False, id=None):
+        # Build the XPath for the tag.
+        xpath = ".//" + qname(tag) if nested else qname(tag)
+        # If an id is provided, add an attribute filter.
+        if id is not None:
+            xpath += f"[@id='{id}']"
+        found = self.element.find(xpath)
         if found is not None:
             return SvgElement.from_element(found)
         return None
 
-    def find_all(self, tag, nested=False):
-        if nested:
-            found_list = self.element.findall(".//" + qname(tag))
-        else:
-            found_list = self.element.findall(qname(tag))
+    def find_all(self, tag, nested=False, class_name=None):
+        # Build the XPath for the tag.
+        xpath = ".//" + qname(tag) if nested else qname(tag)
+        # If a class is provided, add an attribute filter.
+        if class_name is not None:
+            xpath += f"[@class='{class_name}']"
+        found_list = self.element.findall(xpath)
         return (SvgElement.from_element(el) for el in found_list)
 
 
