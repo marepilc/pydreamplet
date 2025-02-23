@@ -31,7 +31,6 @@ svg.append(Polygon([10, 10, 100, 180, 150, 50], fill="#a00344"))
 
 <figure class="light-dark-bg" markdown="span">
   ![Result](assets/polygon_example.svg)
-  <figcaption>Result</figcaption>
 </figure>
 
 ### <span class="prop"></span>`points`

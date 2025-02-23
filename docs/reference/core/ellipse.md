@@ -27,7 +27,6 @@ svg.append(Ellipse(pos=Vector(100, 100), rx=60, ry=40, fill="#a00344"))
 
 <figure class="light-dark-bg" markdown="span">
   ![Result](assets/ellipse_example.svg)
-  <figcaption>Result</figcaption>
 </figure>
 
 ### <span class="prop"></span>`pos`

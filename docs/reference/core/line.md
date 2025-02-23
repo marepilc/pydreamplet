@@ -39,7 +39,6 @@ svg.append(
 
 <figure class="light-dark-bg" markdown="span">
   ![Result](assets/line_example.svg)
-  <figcaption>Result</figcaption>
 </figure>
 
 ### <span class="prop"></span>`x1`, `y1`, `x2`, `y2`

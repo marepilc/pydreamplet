@@ -19,8 +19,23 @@ Initializes a new rectangle. If pos is provided, it sets the top-left corner.
 - `**kwargs`: Attributes for the rectangle, including `pos` (a [`Vector`](../math/vector.md)) and other properties (e.g., `width`, `height`).
  
 ```py
-rect = Rect(pos=Vector(10, 10), width=100, height=50, fill="red")
+from pydreamplet import SVG, Rect, Vector
+
+svg = SVG(200, 200)
+svg.append(
+    Rect(
+        pos=Vector(50, 50),
+        width=100,
+        height=100,
+        fill="#a00344",
+    )
+)
 ```
+
+<figure class="light-dark-bg" markdown="span">
+  ![Example](assets/rect_example.svg)
+</figure>
+
 ### <span class="prop"></span>`pos`
 
 **Getter**: Returns the position (top-left corner) as a [`Vector`](../math/vector.md).

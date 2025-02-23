@@ -27,7 +27,6 @@ svg.append(Circle(cx=100, cy=100, r=50, fill="#a00344"))
 
 <figure class="light-dark-bg" markdown="span">
   ![Result](assets/circle_example.svg)
-  <figcaption>Result</figcaption>
 </figure>
 
 ### <span class="prop"></span>`pos`

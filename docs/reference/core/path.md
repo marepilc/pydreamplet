@@ -20,8 +20,21 @@ Initializes a new path with an optional d attribute containing path commands.
 - `**kwargs`: Additional attributes for the path element.
 
 ```py
-path = Path(d="M10 20 L110 20 L110 70 L10 70 Z", fill="none", stroke="black")
+from pydreamplet import SVG, Path
+from pydreamplet.shapes import star
+
+svg = SVG(200, 200)
+svg.append(
+    Path(
+        d=star(svg.w / 2, svg.h / 2, inner_radius=30, outer_radius=80, angle=-18),
+        fill="#a00344",
+    )
+)
 ```
+
+<figure class="light-dark-bg" markdown="span">
+  ![Example](assets/path_example.svg)
+</figure>
 
 ### <span class="prop"></span>`d`
 
