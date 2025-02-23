@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="100%" height="100%" viewBox="0 0 10 10" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xml:space="preserve" xmlns:serif="http://www.serif.com/" style="fill-rule:evenodd;clip-rule:evenodd;stroke-linejoin:round;stroke-miterlimit:2;">
+    <rect x="0" y="0" width="10" height="10" fill="#FFFFFF" stroke="#9d9d9d" />
+    <rect id="CROSS" x="0" y="0" width="10" height="10" style="fill:none;"/>
+    <g id="CROSS1" serif:id="CROSS">
+        <path d="M1.667,3.333L3.333,1.667L5,3.333L6.667,1.667L8.333,3.333L6.667,5L8.333,6.667L6.667,8.333L5,6.667L3.333,8.333L1.667,6.667L3.333,5L1.667,3.333Z"/>
+    </g>
+</svg>
