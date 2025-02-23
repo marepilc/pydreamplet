@@ -33,7 +33,6 @@ svg.append(
 
 <figure class="light-dark-bg" markdown="span">
   ![Result](assets/polyline_example.svg)
-  <figcaption>Result</figcaption>
 </figure>
 
 ### <span class="prop"></span>`points`

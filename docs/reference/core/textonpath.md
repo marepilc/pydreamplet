@@ -66,5 +66,4 @@ svg.display()
 
 <figure class="light-dark-bg" markdown="span">
   ![Result](assets/textonpath_example.svg)
-  <figcaption>Result</figcaption>
 </figure>

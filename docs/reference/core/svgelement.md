@@ -81,7 +81,7 @@ Removes a child element from the current element. If the child was wrapped, it r
 svg = SVG(800, 600, width="400px", height="300px")
 g1 = G()
 g2 = G()
-svg.append(g1).append(g2)
+svg.append(g1, g2)
 g1.append(Circle())
 g2.append(Rect())
 
@@ -104,8 +104,11 @@ Returns the SVG element as a string. If pretty_print is set to `True`, the outpu
 ### <span class="meth"></span>`find` and `find_all`
 
 ```py
-find(self, tag: str, nested: bool = False)
-find_all(self, tag: str, nested: bool = False)
+find(self, tag: str, nested: bool = False, id: Optional[str] = None)
+find_all(self, tag: str, nested: bool = False, class_name: Optional[str] = None)
 ```
 
-Searches for child elements by tag. If nested is True, the search is recursive.
+Searches for child elements by tag. If `nested` is `True`, the search is recursive.
+
+For `find`, if an `id` is provided, only the element with that matching id will be returned.
+For `find_all`, if a `class_name` is provided, only elements with that matching class attribute will be returned.

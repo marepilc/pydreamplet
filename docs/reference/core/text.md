@@ -38,7 +38,6 @@ svg = SVG(300, 200).append(
 
 <figure class="light-dark-bg" markdown="span">
   ![Result](assets/multiline_text_example.svg)
-  <figcaption>Result</figcaption>
 </figure>
 
 ### <span class="prop"></span>`pos`
