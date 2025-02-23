@@ -146,7 +146,7 @@ def create_pool(
 
 def force_distance(values: list[float], distance: float) -> list[float]:
     """
-    Given a list of numeric values (ideally sorted) and a band size,
+    Given an unsorted list of numeric values and a band size,
     adjust the positions so that each label (with width=band) centered
     at the new position [x - band/2, x + band/2] does not overlap its neighbors.
 
@@ -162,33 +162,31 @@ def force_distance(values: list[float], distance: float) -> list[float]:
     A pooling algorithm is used to adjust the targets:
          target[i] = v[i] - i*band.
 
-    Example:
-        input_values = [2, 6, 7, 8, 10, 16, 18]
-        band_fit(input_values, band=2)  # returns [2, 5, 7, 9, 11, 16, 18]
+    The input list is unsorted; it is sorted internally before computing,
+    and then the result is returned in the original order.
     """
-    n = len(values)
+    # Create array of pairs (original_index, value) and sort by value
+    indexed_values = list(enumerate(values))
+    sorted_pairs = sorted(indexed_values, key=lambda x: x[1])
+    sorted_values = [v for _, v in sorted_pairs]
+    n = len(sorted_values)
     half = distance / 2.0
 
     # Compute target values and allowed intervals for the "y" variables.
-    target = [v - i * distance for i, v in enumerate(values)]
-    lower = [v - half - i * distance for i, v in enumerate(values)]
-    upper = [v + half - i * distance for i, v in enumerate(values)]
+    target = [v - i * distance for i, v in enumerate(sorted_values)]
+    lower = [v - half - i * distance for i, v in enumerate(sorted_values)]
+    upper = [v + half - i * distance for i, v in enumerate(sorted_values)]
 
-    # We'll create "pools" of indices that must share the same y value.
-    # Each pool is a dict with keys:
-    #   'sum'   : sum of target values in the pool
-    #   'count' : number of points in the pool
-    #   'low'   : the maximum (tightest) lower bound among points in the pool
-    #   'high'  : the minimum upper bound among points in the pool
-    #   'value' : the pooled value (initially the average, then clipped to [low, high])
+    # Create pools of indices that must share the same y value.
     pools: list[Pool] = []
-
     for i in range(n):
-        # Start a new pool with just the i-th element.
-        pool: Pool = create_pool(target[i], 1, lower[i], upper[i], target[i])
-        # If the previous pool has a value greater than this one (violating monotonicity),
-        # merge them and update the pooled value by averaging, but then clip it to the intersection
-        # of the allowed intervals.
+        pool: Pool = {
+            "sum": target[i],
+            "count": 1,
+            "low": lower[i],
+            "high": upper[i],
+            "value": target[i],
+        }
         while pools and pools[-1]["value"] > pool["value"]:
             prev = pools.pop()
             merged_low = max(prev["low"], pool["low"])
@@ -208,10 +206,16 @@ def force_distance(values: list[float], distance: float) -> list[float]:
         pools.append(pool)
 
     # Expand the pools into a full list of y values.
-    y = []
+    y: list[float] = []
     for pool in pools:
+        # Mypy now knows pool["count"] is an int.
         y.extend([pool["value"]] * pool["count"])
 
-    # Recover the final x positions.
-    x = [y_val + i * distance for i, y_val in enumerate(y)]
-    return x
+    # Compute the final x positions for the sorted order.
+    x_sorted = [y_val + i * distance for i, y_val in enumerate(y)]
+
+    # Map the computed positions back to the original order.
+    result = [0.0] * n
+    for sorted_index, (orig_index, _) in enumerate(sorted_pairs):
+        result[orig_index] = x_sorted[sorted_index]
+    return result

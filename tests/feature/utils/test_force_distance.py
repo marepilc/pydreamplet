@@ -71,3 +71,20 @@ def test_force_distance_close_values():
     expected = [0.05, 2.05]
     result = force_distance(input_values, distance=2)
     assert result == pytest.approx(expected, rel=1e-3)
+
+
+def test_force_distance_unsorted():
+    """
+    Tests force_distance with an unsorted list to verify that the function
+    correctly handles unsorted inputs by sorting internally and returning
+    the results in the original order.
+
+    Input:
+         [16, 2, 18, 10, 7, 8, 6] with distance=2.
+    Expected output:
+         [16, 2, 18, 11, 7, 9, 5]
+    """
+    input_values = [16, 2, 18, 10, 7, 8, 6]
+    expected = [16, 2, 18, 11, 7, 9, 5]
+    result = force_distance(input_values, distance=2)
+    assert result == pytest.approx(expected)

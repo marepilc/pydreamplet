@@ -206,7 +206,7 @@ print(indices)  # Expected output: (1, 3, 7, 10)
 force_distance(values, distance)
 ```
 
-Adjusts a sorted list of numeric label positions so that the spacing between adjacent labels is at least the specified distance. The function enforces that each adjusted label remains within ±distance/2 of its original value, while keeping the new positions as close as possible to the input values.
+Adjusts an unsorted list of numeric label positions so that the spacing between adjacent labels is at least the specified distance. The function ensures that each adjusted label remains within ±distance/2 of its original value while keeping the new positions as close as possible to the input values. Internally, the input list is sorted for processing, and the computed positions are then re-mapped to match the original order.
 
 <span class="param">**Parameters**</span>
 
@@ -215,7 +215,7 @@ Adjusts a sorted list of numeric label positions so that the spacing between adj
 
 <span class="returns">**Returns**</span>
 
-*(list[float])*: A list of adjusted label positions that meet the minimum spacing requirement.
+*(list[float])*: A list of adjusted label positions that meet the minimum spacing requirement, returned in the same order as the input list.
 
 ```py
 input_values = [2, 6, 7, 8, 10, 16, 18]
@@ -223,4 +223,4 @@ adjusted_positions = force_distance(input_values, distance=2)
 print(adjusted_positions)  # Expected output: [2, 5, 7, 9, 11, 16, 18]
 ```
 
-Internally, the function reformulates each position as `x[i] = y[i] + i * distance`, reducing the spacing constraint to requiring that the sequence `y` is non-decreasing. A pooling algorithm is then applied to adjust the values while keeping each within its allowed interval.
+Internally, the function reformulates each position as `x[i] = y[i] + i * distance`, which reduces the spacing constraint to requiring that the sequence `y` is non-decreasing. A pooling algorithm is then applied to adjust the values while ensuring each remains within its allowed interval.
