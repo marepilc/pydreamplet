@@ -38,6 +38,8 @@ nav:
       - reference/noise/simplex3D.md
     - Colors:
       - reference/colors/index.md
+    - Markers:
+      - reference/markers/index.md
     - Scales:
       - reference/scales/linearscale.md
       - reference/scales/bandscale.md
