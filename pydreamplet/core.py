@@ -75,13 +75,14 @@ class SvgElement:
                 self.element.append(child)
         return self
 
-    def remove(self, child):
-        if hasattr(child, "element"):
-            self.element.remove(child.element)
-            if hasattr(child, "_parent"):
-                del child._parent
-        else:
-            self.element.remove(child)
+    def remove(self, *children):
+        for child in children:
+            if hasattr(child, "element"):
+                self.element.remove(child.element)
+                if hasattr(child, "_parent"):
+                    del child._parent
+            else:
+                self.element.remove(child)
         return self
 
     def to_string(self, pretty_print: bool = True) -> str:

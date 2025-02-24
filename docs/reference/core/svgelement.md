@@ -67,15 +67,15 @@ print(drop_shadow)  # <feDropShadow xmlns="http://www.w3.org/2000/svg" id="shado
 append(self, *children) -> SvgElement
 ```
 
-Appends a child element to the current element. Returns self, allowing method chaining.
+Appends aone or more child elements to the current element. Returns self, allowing method chaining.
 
 ### <span class="meth"></span>`remove`
 
 ```py
-remove(self, child) -> SvgElement
+remove(self, *children) -> SvgElement
 ```
 
-Removes a child element from the current element. If the child was wrapped, it removes its underlying element.
+Removes one or more child elements from the current element. If a child was wrapped, it removes its underlying element.
 
 ```py
 svg = SVG(800, 600, width="400px", height="300px")
