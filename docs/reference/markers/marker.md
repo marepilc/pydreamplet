@@ -23,7 +23,7 @@ Initializes a new marker. The marker is defined by a path string `d` and dimensi
 - `**kwargs`: Additional attributes for the marker element. Supported overrides include:
     - `refX`: The x-coordinate for the marker’s reference point (default: `"5"`).
     - `refY`: The y-coordinate for the marker’s reference point (default: `"5"`).
-    - `orient`: The orientation of the marker (default: `"auto-start-reverse"`).
+    - `orient`: The orientation of the marker (default: `"0"`).
     - `fill`: Fill color for the marker’s path (default: `"#000000"`).
     - `stroke`: Stroke color for the marker’s path (default: `"none"`).
     - `stroke-width`: Stroke width for the marker’s path (default: `"1"`).
@@ -36,7 +36,9 @@ svg = SVG(400, 150)
 
 svg.append(SvgElement("defs"))
 
-marker = Marker("arrow-head", ARROW, 16, 16, fill="magenta")
+marker = Marker(
+    "arrow-head", ARROW, 16, 16, fill="magenta", orient="auto-start-reverse"
+)
 svg.find("defs").append(marker)
 
 polyline = Polyline(
