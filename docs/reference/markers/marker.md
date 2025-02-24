@@ -17,13 +17,13 @@ Initializes a new marker. The marker is defined by a path string `d` and dimensi
 <span class="param">**Parameters**</span>
 
 - `id` *(str)*: A unique identifier for the marker.
-- `d` *(str)*: A string representing the SVG path data that defines the shape of the marker.
+- `d` *(str)*: A string representing the SVG path data that defines the shape of the marker. There are [predefined markers](predefined_markers.md) you can use, or you can create your own.
 - `width` *(Real)*: The width of the marker viewport.
 - `height` *(Real)*: The height of the marker viewport.
 - `**kwargs`: Additional attributes for the marker element. Supported overrides include:
     - `refX`: The x-coordinate for the marker’s reference point (default: `"5"`).
     - `refY`: The y-coordinate for the marker’s reference point (default: `"5"`).
-    - `orient`: The orientation of the marker (default: `"auto-start-reverse"`).
+    - `orient`: The orientation of the marker (default: `"0"`).
     - `fill`: Fill color for the marker’s path (default: `"#000000"`).
     - `stroke`: Stroke color for the marker’s path (default: `"none"`).
     - `stroke-width`: Stroke width for the marker’s path (default: `"1"`).
@@ -36,7 +36,9 @@ svg = SVG(400, 150)
 
 svg.append(SvgElement("defs"))
 
-marker = Marker("arrow-head", ARROW, 16, 16, fill="magenta")
+marker = Marker(
+    "arrow-head", ARROW, 16, 16, fill="magenta", orient="auto-start-reverse"
+)
 svg.find("defs").append(marker)
 
 polyline = Polyline(
@@ -49,9 +51,7 @@ polyline.marker_start = marker.id_ref
 svg.append(polyline)
 ```
 
-<figure class="light-dark-bg" markdown="span">
-  ![Example](assets/polyline_with_marker.svg)
-</figure>
+![Example](assets/polyline_with_marker.svg){.img-light-dark-bg}
 
 ### <span class="prop"></span>`d`
 
@@ -100,66 +100,3 @@ marker.stroke_width = 2
 ### <span class="prop"></span>`id_ref`
 
 **Getter:** Returns a URL reference string for the marker (e.g., `"url(#arrow)"`), which can be used to reference the marker within other SVG elements.
-
-## Predefined Markers
-
-### `ARROW`
-
-  ![Example](assets/ARROW.svg){width="32"}
-
-### `ARROW_BASIC`
-
-  ![Example](assets/ARROW_BASIC.svg){width="32"}
-
-### `ARROW_CONCAVE`
-
-  ![Example](assets/ARROW_CONCAVE.svg){width="32"}
-
-
-### `ARROW_CONVEX`
-
-  ![Example](assets/ARROW_CONVEX.svg){width="32"}
-
-### `ARROW_SIMPLE`
-
-  ![Example](assets/ARROW_SIMPLE.svg){width="32"}
-
-### `CROSS`
-
-  ![Example](assets/CROSS.svg){width="32"}
-
-### `DIAMOND`
-
-  ![Example](assets/DIAMOND.svg){width="32"}
-
-### `DOT`
-
-  ![Example](assets/DOT.svg){width="32"}
-
-### `SQUARE`
-
-  ![Example](assets/SQUARE.svg){width="32"}
-
-### `TICK_TOP`
-
-  ![Example](assets/TICK_TOP.svg){width="32"}
-
-### `TICK_BOTTOM`
-
-  ![Example](assets/TICK_BOTTOM.svg){width="32"}
-
-### `TICK_LEFT`
-
-  ![Example](assets/TICK_LEFT.svg){width="32"}
-
-### `TICK_RIGHT`
-
-  ![Example](assets/TICK_RIGHT.svg){width="32"}
-
-### `TICK_HORIZONTAL`
-
-  ![Example](assets/TICK_HORIZONTAL.svg){width="32"}
-
-### `TICK_VERTICAL`
-
-  ![Example](assets/TICK_VERTICAL.svg){width="32"}

@@ -37,9 +37,7 @@ svg.append(
 )
 ```
 
-<figure class="light-dark-bg" markdown="span">
-  ![Result](assets/line_example.svg)
-</figure>
+![Result](assets/line_example.svg){.img-light-dark-bg}
 
 ### <span class="prop"></span>`x1`, `y1`, `x2`, `y2`
 

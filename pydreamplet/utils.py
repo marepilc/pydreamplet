@@ -33,7 +33,7 @@ def degrees(radians):
     return radians * 180 / PI
 
 
-def calculate_ticks(min_val, max_val, num_ticks=5, below_max=False):
+def calculate_ticks(min_val, max_val, num_ticks=5, below_max=True):
     """
     Generate rounded tick values between min_val and max_val.
 

@@ -36,9 +36,7 @@ svg = SVG(300, 200).append(
 )
 ```
 
-<figure class="light-dark-bg" markdown="span">
-  ![Result](assets/multiline_text_example.svg)
-</figure>
+![Result](assets/multiline_text_example.svg){.img-light-dark-bg}
 
 ### <span class="prop"></span>`pos`
 

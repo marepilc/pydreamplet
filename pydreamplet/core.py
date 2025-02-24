@@ -75,13 +75,14 @@ class SvgElement:
                 self.element.append(child)
         return self
 
-    def remove(self, child):
-        if hasattr(child, "element"):
-            self.element.remove(child.element)
-            if hasattr(child, "_parent"):
-                del child._parent
-        else:
-            self.element.remove(child)
+    def remove(self, *children):
+        for child in children:
+            if hasattr(child, "element"):
+                self.element.remove(child.element)
+                if hasattr(child, "_parent"):
+                    del child._parent
+            else:
+                self.element.remove(child)
         return self
 
     def to_string(self, pretty_print: bool = True) -> str:
@@ -153,6 +154,19 @@ class SvgElement:
             xpath += f"[@class='{class_name}']"
         found_list = self.element.findall(xpath)
         return (SvgElement.from_element(el) for el in found_list)
+
+    def copy(self):
+        """
+        Create a deep copy of this SvgElement.
+        The new copy has a deep-copied ElementTree element, so modifications
+        to the copy won't affect the original.
+        """
+        # Create a deep copy of the element.
+        new_element = deepcopy(self.element)
+        # Create a new instance without calling __init__
+        new_instance = self.__class__.__new__(self.__class__)
+        new_instance.element = new_element
+        return new_instance
 
 
 class Transformable:
@@ -670,7 +684,7 @@ class Path(SvgElement):
         return points
 
     @property
-    def width(self) -> float:
+    def w(self) -> float:
         points = self._get_coordinates()
         if not points:
             return 0
@@ -678,7 +692,7 @@ class Path(SvgElement):
         return max(xs) - min(xs)
 
     @property
-    def height(self) -> float:
+    def h(self) -> float:
         points = self._get_coordinates()
         if not points:
             return 0

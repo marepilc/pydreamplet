@@ -1,3 +1,7 @@
+---
+icon: material/tools
+---
+
 # Helper functions
 
 This module provides utility functions for various mathematical operations and unit conversions. It includes functions for rounding numbers using a round half up method, constraining values within a specified range, converting between degrees and radians, and generating rounded tick values for grid lines.
@@ -89,7 +93,7 @@ print(degrees(3.141592653589793))  # Output: 180.0
 ## <span class="func"></span>`calculate_ticks`
 
 ```py
-calculate_ticks(min_val, max_val, num_ticks=5, below_max=False)
+calculate_ticks(min_val, max_val, num_ticks=5, below_max=True)
 ```
 
 Generates a list of rounded tick values between `min_val` and `max_val`. The number of ticks is approximately equal to `num_ticks`.
@@ -99,7 +103,7 @@ Generates a list of rounded tick values between `min_val` and `max_val`. The num
 - `min_val` *(float)*: The minimum value.
 - `max_val` *(float)*: The maximum value.
 - `num_ticks` *(int, optional)*: The desired number of tick values (default: 5).
-- `below_max` *(bool)*: If set to `True` last tick is always below `max_val`. Default: `False`
+- `below_max` *(bool)*: If set to `True` last tick is always below `max_val`. Default: `True`
 
 <span class="returns">**Returns**</span>
 
@@ -161,10 +165,7 @@ for i, segment in enumerate(segments):
 svg.display()
 ```
 
-<figure class="light-dark-bg" markdown="span">
-  ![Result](assets/pie_chart.svg)
-  <figcaption>Result</figcaption>
-</figure>
+![Result](assets/pie_chart.svg){.img-light-dark-bg}
 
 ## <span class="func"></span>`sample_uniform`
 

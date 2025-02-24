@@ -1,3 +1,7 @@
+---
+icon: material/home
+---
+
 ![Logo](assets/pyDreamplet_logo.png)
 
 # The world of creative visualizations

@@ -35,7 +35,7 @@ class Marker(SvgElement):
             "viewBox": "0 0 10 10",
             "refX": kwargs.get("refX", "5"),
             "refY": kwargs.get("refY", "5"),
-            "orient": kwargs.get("orient", "auto-start-reverse"),
+            "orient": kwargs.get("orient", "0"),
         }
         path_defaults = {
             "fill": kwargs.get("fill", "#000000"),

@@ -32,9 +32,7 @@ svg.append(
 )
 ```
 
-<figure class="light-dark-bg" markdown="span">
-  ![Example](assets/path_example.svg)
-</figure>
+![Example](assets/path_example.svg){.img-light-dark-bg}
 
 ### <span class="prop"></span>`d`
 
@@ -47,11 +45,11 @@ print(path.d)
 path.d = "M0 0 L50 50"
 ```
 
-### <span class="prop"></span>`width`
+### <span class="prop"></span>`w`
 
 Returns the width of the path based on the extracted coordinates.
 
-### <span class="prop"></span>`height`
+### <span class="prop"></span>`h`
 
 Returns the height of the path based on the extracted coordinates.
 

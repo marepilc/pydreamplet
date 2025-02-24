@@ -11,7 +11,7 @@ def test_marker_default_attributes():
     assert marker.element.get("viewBox") == "0 0 10 10"
     assert marker.element.get("refX") == "5"
     assert marker.element.get("refY") == "5"
-    assert marker.element.get("orient") == "auto-start-reverse"
+    assert marker.element.get("orient") == "0"
 
     # Check that the marker has a child path element
     path = marker.find("path")

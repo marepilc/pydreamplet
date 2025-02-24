@@ -1,3 +1,7 @@
+---
+icon: material/post
+---
+
 # Data Visualization and Creative Coding Blog
 
 
