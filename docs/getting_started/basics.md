@@ -55,9 +55,7 @@ svg.append(circle)
 
 Both snippets create the following file:
 
-<figure class="light-dark-bg" markdown="span">
-  ![Example](assets/basics_img_01.svg)
-</figure>
+![Example](assets/basics_img_01.svg){.img-light-dark-bg}
 
 However:
 
@@ -90,9 +88,7 @@ circle.stroke_width = 5
 svg.append(circle)
 ```
 
-<figure class="light-dark-bg" markdown="span">
-  ![Example](assets/basics_img_02.svg)
-</figure>
+![Example](assets/basics_img_02.svg){.img-light-dark-bg}
 
 Notice that while the SVG specification uses hyphens in attribute names (e.g., `stroke-width`), the corresponding instance properties use underscores (e.g., `stroke_width`).
 
@@ -143,9 +139,7 @@ This creates the following SVG structure. Remember that `class` is a reserved wo
 </svg>
 ```
 
-<figure class="light-dark-bg" markdown="span">
-  ![Example](assets/basics_img_03.svg)
-</figure>
+![Example](assets/basics_img_03.svg){.img-light-dark-bg}
 
 Now we can change the properties of the odd circles.
 
@@ -156,9 +150,7 @@ for circle in odd:
     circle.stroke = "#000000"
 ```
 
-<figure class="light-dark-bg" markdown="span">
-  ![Example](assets/basics_img_04.svg)
-</figure>
+![Example](assets/basics_img_04.svg){.img-light-dark-bg}
 
 !!! warning
 
@@ -182,9 +174,7 @@ for circle in odd:
     </svg>
     ```
 
-    <figure class="light-dark-bg" markdown="span">
-        ![Example](assets/basics_img_05.svg)
-    </figure>
+    ![Example](assets/basics_img_05.svg){.img-light-dark-bg}
 
 
 Now, let's remove the middle circle.
@@ -194,6 +184,4 @@ middle = svg.find("circle", id="circle-3")
 svg.remove(middle)
 ```
 
-<figure class="light-dark-bg" markdown="span">
-  ![Example](assets/basics_img_06.svg)
-</figure>
+![Example](assets/basics_img_06.svg){.img-light-dark-bg}

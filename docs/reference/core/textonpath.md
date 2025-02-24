@@ -64,6 +64,4 @@ svg.append(path).append(text)
 svg.display()
 ```
 
-<figure class="light-dark-bg" markdown="span">
-  ![Result](assets/textonpath_example.svg)
-</figure>
+![Result](assets/textonpath_example.svg){.img-light-dark-bg}

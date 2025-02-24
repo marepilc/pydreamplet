@@ -63,10 +63,7 @@ svg = SVG.from_file(files(resources) / "hummingbird.svg").attrs(
 svg.find("path").fill = "darkgreen"
 ```
 
-<figure class="light-dark-bg" markdown="span">
-  ![Result](assets/svg_from_file_example.svg)
-  <figcaption>Result</figcaption>
-</figure>
+![Result](assets/svg_from_file_example.svg){.img-light-dark-bg}
 
 Creates an SVG instance by parsing an SVG file.
 
@@ -120,10 +117,7 @@ Adds a `<style>` element to the SVG using CSS content loaded from an external fi
     }
     ```
 
-<figure class="light-dark-bg" markdown="span">
-  ![Result](assets/svg_style_example.svg)
-  <figcaption>Result</figcaption>
-</figure>
+![Result](assets/svg_style_example.svg){.img-light-dark-bg}
 
 ### <span class="meth"></span>`display`
 

@@ -165,10 +165,7 @@ for i, segment in enumerate(segments):
 svg.display()
 ```
 
-<figure class="light-dark-bg" markdown="span">
-  ![Result](assets/pie_chart.svg)
-  <figcaption>Result</figcaption>
-</figure>
+![Result](assets/pie_chart.svg){.img-light-dark-bg}
 
 ## <span class="func"></span>`sample_uniform`
 

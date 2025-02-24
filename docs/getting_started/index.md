@@ -41,10 +41,7 @@ svg.save("example.svg")
 
 This will create such a image
 
-<figure markdown="span">
-  ![Example](assets/getting_started_img_01.svg){ width="300" }
-  <figcaption>Output of the code above</figcaption>
-</figure>
+![Example](assets/getting_started_img_01.svg){.img-light-dark-bg}
 
 
 pyDreamplet provides various functions to generate complex visuals, such as:
@@ -115,10 +112,7 @@ for i in range(circles_count):
 
 Finally, we can render the SVG. In environments like Jupyter Notebook, calling `svg.display()` will show the animated visualization directly in your notebook. Alternatively, you can save your art by calling `svg.save("circles.svg")`.
 
-<figure class="light-dark-bg" markdown="span">
-  ![Image title](assets/getting_started_img_02.svg)
-  <figcaption>Animated circles</figcaption>
-</figure>
+![Image title](assets/getting_started_img_02.svg){.img-light-dark-bg}
 
 For detailed information on all available functions and parameters, consult the API reference.
 

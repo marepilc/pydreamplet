@@ -32,9 +32,7 @@ svg.append(
 )
 ```
 
-<figure class="light-dark-bg" markdown="span">
-  ![Example](assets/path_example.svg)
-</figure>
+![Example](assets/path_example.svg){.img-light-dark-bg}
 
 ### <span class="prop"></span>`d`
 

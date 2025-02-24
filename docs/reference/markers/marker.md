@@ -49,9 +49,7 @@ polyline.marker_start = marker.id_ref
 svg.append(polyline)
 ```
 
-<figure class="light-dark-bg" markdown="span">
-  ![Example](assets/polyline_with_marker.svg)
-</figure>
+![Example](assets/polyline_with_marker.svg){.img-light-dark-bg}
 
 ### <span class="prop"></span>`d`
 
