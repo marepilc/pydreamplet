@@ -155,6 +155,19 @@ class SvgElement:
         found_list = self.element.findall(xpath)
         return (SvgElement.from_element(el) for el in found_list)
 
+    def copy(self):
+        """
+        Create a deep copy of this SvgElement.
+        The new copy has a deep-copied ElementTree element, so modifications
+        to the copy won't affect the original.
+        """
+        # Create a deep copy of the element.
+        new_element = deepcopy(self.element)
+        # Create a new instance without calling __init__
+        new_instance = self.__class__.__new__(self.__class__)
+        new_instance.element = new_element
+        return new_instance
+
 
 class Transformable:
     """

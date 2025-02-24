@@ -112,3 +112,21 @@ Searches for child elements by tag. If `nested` is `True`, the search is recursi
 
 For `find`, if an `id` is provided, only the element with that matching id will be returned.
 For `find_all`, if a `class_name` is provided, only elements with that matching class attribute will be returned.
+
+### <span class="meth"></span>`copy`
+
+```py
+copy(self) -> SvgElement
+```
+
+Creates and returns a deep copy of the current SVG element. The new instance is a complete duplicate with its own separate copy of the underlying ElementTree element (and its subtree). This ensures that subsequent modifications to the copy do not affect the original element.
+
+For example:
+
+```py
+original = SvgElement("rect", x=10, y=20, width=100, height=50)
+duplicate = original.copy()
+duplicate.x = 30  # This change will not affect the original element.
+```
+
+Using `copy()` is especially useful when you need to duplicate elements and then modify them independently in your SVG structure.

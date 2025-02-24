@@ -94,3 +94,16 @@ def test_remove_multiple_elements():
     no_needed_any_more = svg.find_all("rect")
     svg.remove(*no_needed_any_more)
     assert len(list(svg.find_all("rect"))) == 0
+
+
+def test_svg_element_copy():
+    original = dp.SvgElement("rect", x=10, y=20, width=100, height=50)
+    duplicate = original.copy()
+    duplicate.x = 30
+    assert original.x == 10
+    assert duplicate.x == 30
+    assert original.y == duplicate.y
+    assert original.width == duplicate.width
+    assert original.height == duplicate.height
+    assert original.element is not duplicate.element
+    assert original.element.attrib is not duplicate.element.attrib

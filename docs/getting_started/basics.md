@@ -57,7 +57,6 @@ Both snippets create the following file:
 
 <figure class="light-dark-bg" markdown="span">
   ![Example](assets/basics_img_01.svg)
-  <figcaption>Result</figcaption>
 </figure>
 
 However:
@@ -93,7 +92,6 @@ svg.append(circle)
 
 <figure class="light-dark-bg" markdown="span">
   ![Example](assets/basics_img_02.svg)
-  <figcaption>Result</figcaption>
 </figure>
 
 Notice that while the SVG specification uses hyphens in attribute names (e.g., `stroke-width`), the corresponding instance properties use underscores (e.g., `stroke_width`).
