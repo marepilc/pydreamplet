@@ -1,3 +1,7 @@
+---
+icon: material/shape-plus
+---
+
 # `d`-string generators
 
 This module provides functions to generate SVG path `d`-strings for various geometric shapes. These functions return strings suitable for use in the "d" attribute of SVG path elements.

@@ -1,3 +1,7 @@
+---
+icon: material/format-font
+---
+
 # Font utilities
 
 This module provides functions and classes for working with system fonts and measuring text dimensions. It includes a utility function to search for a system font file that matches a given font family and weight, as well as a class to measure the width and height of rendered text using the PIL library.

@@ -1,3 +1,7 @@
+---
+icon: material/shape
+---
+
 # Predefined Markers
 
 ### `ARROW`

@@ -69,6 +69,7 @@ theme:
   features:
     - navigation.instant
     - navigation.tracking
+    - navigation.indexes
     - navigation.expand
     - content.code.copy
     - search.suggest

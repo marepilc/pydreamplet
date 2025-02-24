@@ -1,3 +1,7 @@
+---
+icon: material/tools
+---
+
 # Helper functions
 
 This module provides utility functions for various mathematical operations and unit conversions. It includes functions for rounding numbers using a round half up method, constraining values within a specified range, converting between degrees and radians, and generating rounded tick values for grid lines.
