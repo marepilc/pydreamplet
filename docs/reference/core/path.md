@@ -47,11 +47,11 @@ print(path.d)
 path.d = "M0 0 L50 50"
 ```
 
-### <span class="prop"></span>`width`
+### <span class="prop"></span>`w`
 
 Returns the width of the path based on the extracted coordinates.
 
-### <span class="prop"></span>`height`
+### <span class="prop"></span>`h`
 
 Returns the height of the path based on the extracted coordinates.
 

@@ -684,7 +684,7 @@ class Path(SvgElement):
         return points
 
     @property
-    def width(self) -> float:
+    def w(self) -> float:
         points = self._get_coordinates()
         if not points:
             return 0
@@ -692,7 +692,7 @@ class Path(SvgElement):
         return max(xs) - min(xs)
 
     @property
-    def height(self) -> float:
+    def h(self) -> float:
         points = self._get_coordinates()
         if not points:
             return 0
