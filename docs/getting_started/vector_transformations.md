@@ -20,7 +20,7 @@ origin.append(
 
 ![Example](assets/vt_img_01.svg){.img-light-dark-bg}
 
-he SVG’s origin is at the top left, so much of the content is off-screen. To center it, you can transform the origin (`<g>` element) like so:
+The SVG’s origin is at the top left, so much of the content is off-screen. To center it, you can transform the origin (`<g>` element) like so:
 
 ```py
 origin.pos += Vector(svg.w / 2, svg.h / 2)
