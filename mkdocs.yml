@@ -10,6 +10,7 @@ nav:
     - getting_started/index.md
     - getting_started/basics.md
     - getting_started/vector_transformations.md
+    - getting_started/working_with_text.md
     - getting_started/tutorial.md
   - Reference:
     - Core:
