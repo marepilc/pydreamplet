@@ -1,4 +1,5 @@
 ---
+title: Waffle Chart
 authors:
     - marepilc
 date: 2025-02-11 

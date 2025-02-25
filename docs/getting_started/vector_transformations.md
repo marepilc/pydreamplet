@@ -90,7 +90,7 @@ g.order = "trs"  # demo only, because this is the default order
 scale = 5
 hummingbird_center = Vector(12, 10)
 
-# Set the pivot point for rotation and scaling.
+# Set the pivot point for rotation.
 # The pivot is adjusted by the scale factor because the transformations will scale the coordinate system.
 g.pivot = hummingbird_center * scale
 
