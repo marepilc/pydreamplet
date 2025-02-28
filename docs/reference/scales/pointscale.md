@@ -14,7 +14,7 @@ PointScale(
 
 <span class="param">**Parameters**</span>
 
-- `domain` *(list[Any])*: A list of categorical values.
+- `domain` *(list[Any])*: A list of categorical values (distinct).
 - `output_range` *(tuple[float, float])*: The numeric output range.
 - `padding` *(float, optional)*: The amount of padding on each end (default: 0.5).
 

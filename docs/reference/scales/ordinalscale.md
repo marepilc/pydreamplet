@@ -10,7 +10,7 @@ OrdinalScale(domain: list[Any], output_range: list)
 
 <span class="param">**Parameters**</span>
 
-- `domain` *(list[Any])*: A list of categorical values.
+- `domain` *(list[Any])*: A list of categorical values (distinct).
 - `output_range` *(list)*: A list of output values (e.g., colors) to map to, which are reused cyclically.
 
 ```py
