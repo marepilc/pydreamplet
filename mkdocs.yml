@@ -120,6 +120,7 @@ plugins:
   - blog
   - privacy:
       enabled: !ENV [CI, false]
+  # - meta
 extra:
   analytics:
     provider: google
