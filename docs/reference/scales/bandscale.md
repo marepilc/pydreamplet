@@ -16,7 +16,7 @@ BandScale(
 
 <span class="param">**Parameters**</span>
 
-- `domain` *(list[Any])*: A list of categorical values.
+- `domain` *(list[Any])*: A list of categorical values (distinct).
 - `output_range` *(tuple[float, float])*: The numeric output range.
 - `padding` *(float, optional)*: The inner padding between bands (default: 0.1).
 - `outer_padding` *(float, optional)*: The outer padding; defaults to the inner padding if not provided.

@@ -61,6 +61,8 @@ class BandScale:
         padding: float = 0.1,
         outer_padding: float | None = None,
     ):
+        if len(set(domain)) != len(domain):
+            raise ValueError("Domain values must be distinct")
         self._domain = domain
         self._output_range = output_range
         self._padding = padding
@@ -141,6 +143,8 @@ class PointScale:
     def __init__(
         self, domain: list[Any], output_range: tuple[float, float], padding: float = 0.5
     ):
+        if len(set(domain)) != len(domain):
+            raise ValueError("Domain values must be distinct")
         self._domain = domain
         self._output_range = output_range
         self._padding = padding
@@ -201,6 +205,8 @@ class OrdinalScale:
     """
 
     def __init__(self, domain: list[Any], output_range: list):
+        if len(set(domain)) != len(domain):
+            raise ValueError("Domain values must be distinct")
         if not output_range:
             raise ValueError("Output range must contain at least one value")
         self._domain = domain
@@ -245,6 +251,8 @@ class ColorScale:
     """
 
     def __init__(self, domain: tuple[float, float], output_range: tuple[str, str]):
+        if len(output_range) != 2:
+            raise ValueError("Output range must contain exactly two colors")
         self._domain = domain
         self._output_range = output_range
         d0, d1 = domain
