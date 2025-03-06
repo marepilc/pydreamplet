@@ -33,7 +33,9 @@ def degrees(radians):
     return radians * 180 / PI
 
 
-def calculate_ticks(min_val, max_val, num_ticks=5, below_max=True):
+def calculate_ticks(
+    min_val: int | float, max_val: int | float, num_ticks=5, below_max=True
+):
     """
     Generate rounded tick values between min_val and max_val.
 
@@ -69,25 +71,37 @@ def calculate_ticks(min_val, max_val, num_ticks=5, below_max=True):
 
 
 def pie_angles(
-    values: list[int | float], start_angle: int | float = 0
+    values: list[int | float],
+    start_angle: int | float = 0,
+    end_angle: int | float | None = None,
 ) -> list[tuple[float, float]]:
     """
     Calculate start and end angles for each pie slice.
 
     :param values: List of values for each slice.
     :param start_angle: Starting angle for the first slice.
+    :param end_angle: Ending angle for the last slice (if None, will be start_angle + 360).
     :return: List of tuples containing start and end angles for each slice.
     """
+    # If end_angle is not specified, make it start_angle + 360 for a full circle
+    if end_angle is None:
+        end_angle = start_angle + 360
+
     total = sum(values)
     angles = []
+    angle_span = end_angle - start_angle
+    current_angle = start_angle
+
     for value in values:
-        end_angle = start_angle + (value / total) * 360
-        angles.append((start_angle, end_angle))
-        start_angle = end_angle
+        slice_angle = (value / total) * angle_span
+        end_slice = current_angle + slice_angle
+        angles.append((current_angle, end_slice))
+        current_angle = end_slice
+
     return angles
 
 
-def pure_linspace(start, stop, num):
+def pure_linspace(start: int | float, stop: int | float, num: int) -> list[int | float]:
     if num == 1:
         return [stop]
     step = (stop - start) / (num - 1)
