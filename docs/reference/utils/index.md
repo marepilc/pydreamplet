@@ -119,15 +119,16 @@ print(ticks)  # Example output: [0, 20, 40, 60, 80, 100]
 ## <span class="func"></span>`pie_angles`
 
 ```py
-pie_angles(values, start_angle=0)
+pie_angles(values, start_angle=0, end_angle=360)
 ```
 
-Calculates the start and end angles (in degrees) for each pie slice based on their proportional values. The function divides the full circle (360°) among the slices in proportion to their values.
+Calculates the start and end angles (in degrees) for each pie slice based on their proportional values. The function divides the specified angle span among the slices in proportion to their values.
 
 <span class="param">**Parameters**</span>
 
 - `values` *(list[int | float])*: A list of numerical values representing the sizes of each pie slice.
 - `start_angle` *(int | float, optional)*: The starting angle (in degrees) for the first slice (default: 0).
+- `end_angle` *(int | float, optional)*: The ending angle (in degrees) for the last slice (default: 360).
 
 <span class="returns">**Returns**</span>
 
@@ -139,6 +140,11 @@ Raises `ZeroDivisionError`: If the sum of `values` is zero.
 angles = pie_angles([1, 2, 3])
 print(angles)  
 # [(0, 60.0), (60.0, 180.0), (180.0, 360.0)]
+
+# Creating a semicircle pie chart
+semi_angles = pie_angles([1, 2, 3], end_angle=180)
+print(semi_angles)
+# [(0, 30.0), (30.0, 90.0), (90.0, 180.0)]
 ```
 
 ```py title="Usage example"
