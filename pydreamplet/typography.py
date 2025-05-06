@@ -2,6 +2,7 @@ import os
 import platform
 
 from fontTools.ttLib import TTFont
+from fontTools.ttLib.tables._n_a_m_e import table__n_a_m_e
 from PIL import Image, ImageDraw, ImageFont
 
 
@@ -66,7 +67,8 @@ def get_system_font_path(
 
                 # Loop over all name records for a looser match.
                 family_matches = False
-                for record in font["name"].names:
+
+                for record in font["name"].names:  # type: ignore
                     try:
                         record_value = record.toUnicode().strip()
                     except Exception:

@@ -56,31 +56,48 @@ class Marker(SvgElement):
     @d.setter
     def d(self, value):
         self._d = value
-        self.find("path").d = value
+        path_element = self.find("path")
+        if path_element is not None:
+            path_element.d = value
 
     @property
     def fill(self):
-        return self.find("path").fill
+        path_element = self.find("path")
+        if path_element is not None:
+            return path_element.fill
+        return None
 
     @fill.setter
     def fill(self, value):
-        self.find("path").fill = value
+        path_element = self.find("path")
+        if path_element is not None:
+            path_element.fill = value
 
     @property
     def stroke(self):
-        return self.find("path").stroke
+        path_element = self.find("path")
+        if path_element is not None:
+            return path_element.stroke
+        return None
 
     @stroke.setter
     def stroke(self, value):
-        self.find("path").stroke = value
+        path_element = self.find("path")
+        if path_element is not None:
+            path_element.stroke = value
 
     @property
     def stroke_width(self):
-        return self.find("path").stroke_width
+        path_element = self.find("path")
+        if path_element is not None:
+            return path_element.stroke_width
+        return None
 
     @stroke_width.setter
     def stroke_width(self, value):
-        self.find("path").stroke_width = value
+        path_element = self.find("path")
+        if path_element is not None:
+            path_element.stroke_width = value
 
     @property
     def id_ref(self):

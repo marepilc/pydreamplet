@@ -19,6 +19,7 @@ def qname(tag):
 
 class SvgElement:
     _class_registry: dict[str, Any] = {}
+    element: ET.Element
 
     @classmethod
     def register(cls, tag: str, subclass: type) -> None:
@@ -251,28 +252,39 @@ class SVG(SvgElement):
     def from_file(cls, filename):
         tree = ET.parse(filename)
         root = tree.getroot()
-        instance = cls(tuple(map(int, root.get("viewBox").split())))
+        viewBox = root.get("viewBox", "0 0 100 100")
+        instance = cls(tuple(map(int, viewBox.split())))
         instance.element = root
         return instance
 
     def __init__(self, *viewbox, **kwargs):
+        # Convert tuple of args to a single sequence if needed
         if len(viewbox) == 1 and isinstance(viewbox[0], (tuple, list)):
-            viewbox = viewbox[0]
-        if len(viewbox) not in (2, 4):
-            raise ValueError("viewbox must be a tuple or list of 2 or 4 numbers")
-        super().__init__("svg", **kwargs)
-        if len(viewbox) == 4:
-            vb = f"{viewbox[0]} {viewbox[1]} {viewbox[2]} {viewbox[3]}"
-            if "width" not in kwargs:
-                kwargs["width"] = f"{viewbox[2]}px"
-            if "height" not in kwargs:
-                kwargs["height"] = f"{viewbox[3]}px"
+            viewbox_seq = viewbox[0]
         else:
-            vb = f"0 0 {viewbox[0]} {viewbox[1]}"
+            viewbox_seq = viewbox
+
+        # Validate dimensions
+        if len(viewbox_seq) not in (2, 4):
+            raise ValueError("viewbox must be a tuple or list of 2 or 4 numbers")
+
+        validated_viewbox: list[int | float] = list(viewbox_seq)
+
+        super().__init__("svg", **kwargs)
+
+        if len(validated_viewbox) == 4:
+            vb = f"{validated_viewbox[0]} {validated_viewbox[1]} {validated_viewbox[2]} {validated_viewbox[3]}"
             if "width" not in kwargs:
-                kwargs["width"] = f"{viewbox[0]}px"
+                kwargs["width"] = f"{validated_viewbox[2]}px"
             if "height" not in kwargs:
-                kwargs["height"] = f"{viewbox[1]}px"
+                kwargs["height"] = f"{validated_viewbox[3]}px"
+        else:
+            vb = f"0 0 {validated_viewbox[0]} {validated_viewbox[1]}"
+            if "width" not in kwargs:
+                kwargs["width"] = f"{validated_viewbox[0]}px"
+            if "height" not in kwargs:
+                kwargs["height"] = f"{validated_viewbox[1]}px"
+
         self.attrs(
             {
                 "viewBox": vb,
@@ -283,12 +295,14 @@ class SVG(SvgElement):
 
     @property
     def w(self):
-        viewbox = [int(v) for v in self.element.get("viewBox").split(" ")]
+        viewbox_str = self.element.get("viewBox", "0 0 0 0")
+        viewbox = [int(v) for v in viewbox_str.split(" ")]
         return viewbox[2]
 
     @property
     def h(self):
-        viewbox = [int(v) for v in self.element.get("viewBox").split(" ")]
+        viewbox_str = self.element.get("viewBox", "0 0 0 0")
+        viewbox = [int(v) for v in viewbox_str.split(" ")]
         return viewbox[3]
 
     def style(
@@ -383,11 +397,12 @@ class G(Transformable, SvgElement):
         self._order = value
         self._update_transform()
 
-    def remove(self, child):
-        super().remove(child)
+    def remove(self, *children):
+        super().remove(*children)
         if len(self.element) == 0 and hasattr(self, "_parent"):
-            parent = self._parent
-            parent.remove(self)
+            parent = getattr(self, "_parent")
+            if isinstance(parent, SvgElement):
+                parent.remove(self)
         return self
 
     def attrs(self, attributes):
@@ -712,7 +727,14 @@ class Path(SvgElement):
 
 
 class Line(SvgElement):
-    def __init__(self, x1=0, y1=0, x2=0, y2=0, **kwargs):
+    def __init__(
+        self,
+        x1: int | float = 0,
+        y1: int | float = 0,
+        x2: int | float = 0,
+        y2: int | float = 0,
+        **kwargs,
+    ):
         super().__init__("line", **kwargs)
         self.element.set("x1", str(x1))
         self.element.set("y1", str(y1))
@@ -903,6 +925,8 @@ class Text(SvgElement):
 
 
 class TextOnPath(SvgElement):
+    text_path: SvgElement
+
     def __init__(self, initial_text="", path_id="", text_path_args=None, **kwargs):
         super().__init__("text", **kwargs)
         object.__setattr__(self, "text_path", SvgElement("textPath"))

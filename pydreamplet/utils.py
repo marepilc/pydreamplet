@@ -53,6 +53,9 @@ def calculate_ticks(
     # Get order of magnitude
     magnitude = 10 ** floor(log10(raw_step))
 
+    # Initialize step before the loop
+    step = magnitude  # Default value
+
     # Choose the best "nice" step (1, 2, or 5 times a power of ten)
     for factor in [1, 2, 5, 10]:
         step = factor * magnitude

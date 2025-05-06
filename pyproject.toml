@@ -1,6 +1,6 @@
 [project]
 name = "pydreamplet"
-version = "1.1.4"
+version = "1.1.5"
 description = "A versatile Python toolkit for programmatically generating, manipulating, and assembling scalable vector graphics (SVG) images."
 authors = [{ name = "Marek Pilczuk", email = "user@mp76.pl" }]
 license = "MIT"

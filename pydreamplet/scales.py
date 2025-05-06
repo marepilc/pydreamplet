@@ -1,7 +1,10 @@
 import math
-from typing import Any
+from typing import Any, Iterable, List, Sequence, Tuple, TypeVar, Union
 
 from pydreamplet.colors import hex_to_rgb, rgb_to_hex
+
+NumericPair = Union[Tuple[float, float], List[float]]
+T = TypeVar("T")
 
 
 class LinearScale:
@@ -10,7 +13,7 @@ class LinearScale:
     to an output range.
     """
 
-    def __init__(self, domain: tuple[float, float], output_range: tuple[float, float]):
+    def __init__(self, domain: NumericPair, output_range: NumericPair):
         self._domain = domain
         self._output_range = output_range
         self._calculate_slope()
@@ -30,20 +33,20 @@ class LinearScale:
         return self._domain[0] + (value - self._output_range[0]) / self.slope
 
     @property
-    def domain(self) -> tuple[float, float]:
+    def domain(self) -> NumericPair:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: tuple[float, float]):
+    def domain(self, new_domain: NumericPair):
         self._domain = new_domain
         self._calculate_slope()
 
     @property
-    def output_range(self) -> tuple[float, float]:
+    def output_range(self) -> NumericPair:
         return self._output_range
 
     @output_range.setter
-    def output_range(self, new_output_range: tuple[float, float]):
+    def output_range(self, new_output_range: NumericPair):
         self._output_range = new_output_range
         self._calculate_slope()
 
@@ -56,14 +59,14 @@ class BandScale:
 
     def __init__(
         self,
-        domain: list[Any],
-        output_range: tuple[float, float],
+        domain: Union[List[Any], Tuple[Any, ...], Iterable[Any]],
+        output_range: NumericPair,
         padding: float = 0.1,
         outer_padding: float | None = None,
     ):
-        if len(set(domain)) != len(domain):
+        self._domain = list(domain)
+        if len(set(self._domain)) != len(self._domain):
             raise ValueError("Domain values must be distinct")
-        self._domain = domain
         self._output_range = output_range
         self._padding = padding
         self._outer_padding = outer_padding if outer_padding is not None else padding
@@ -75,9 +78,8 @@ class BandScale:
         total_padding = (num_bands - 1) * self._padding + 2 * self._outer_padding
         total_width = self._output_range[1] - self._output_range[0]
 
-        # Compute the band width considering the total padding.
         self._band_width = total_width / (num_bands + total_padding)
-        # Step size includes the band width and the padding between bands.
+
         self.step = self._band_width * (1 + self._padding)
 
     def map(self, value: Any) -> float:
@@ -102,16 +104,16 @@ class BandScale:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: list[Any]):
-        self._domain = new_domain
+    def domain(self, new_domain: Union[List[Any], Tuple[Any, ...], Iterable[Any]]):
+        self._domain = list(new_domain)
         self._calculate_band_properties()
 
     @property
-    def output_range(self) -> tuple[float, float]:
+    def output_range(self) -> NumericPair:
         return self._output_range
 
     @output_range.setter
-    def output_range(self, new_output_range: tuple[float, float]):
+    def output_range(self, new_output_range: NumericPair):
         self._output_range = new_output_range
         self._calculate_band_properties()
 
@@ -141,11 +143,14 @@ class PointScale:
     """
 
     def __init__(
-        self, domain: list[Any], output_range: tuple[float, float], padding: float = 0.5
+        self,
+        domain: Union[List[Any], Tuple[Any, ...], Iterable[Any]],
+        output_range: NumericPair,
+        padding: float = 0.5,
     ):
-        if len(set(domain)) != len(domain):
+        self._domain = list(domain)
+        if len(set(self._domain)) != len(self._domain):
             raise ValueError("Domain values must be distinct")
-        self._domain = domain
         self._output_range = output_range
         self._padding = padding
         self._calculate_step()
@@ -174,16 +179,16 @@ class PointScale:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: list[Any]):
-        self._domain = new_domain
+    def domain(self, new_domain: Union[List[Any], Tuple[Any, ...], Iterable[Any]]):
+        self._domain = list(new_domain)
         self._calculate_step()
 
     @property
-    def output_range(self) -> tuple[float, float]:
+    def output_range(self) -> NumericPair:
         return self._output_range
 
     @output_range.setter
-    def output_range(self, new_output_range: tuple[float, float]):
+    def output_range(self, new_output_range: NumericPair):
         self._output_range = new_output_range
         self._calculate_step()
 
@@ -204,13 +209,18 @@ class OrdinalScale:
     assign each domain value one of those colors in order (wrapping around if needed).
     """
 
-    def __init__(self, domain: list[Any], output_range: list):
-        if len(set(domain)) != len(domain):
+    def __init__(
+        self,
+        domain: Union[List[Any], Tuple[Any, ...], Iterable[Any]],
+        output_range: Union[List, Tuple, Sequence],
+    ):
+        self._domain = list(domain)
+        if len(set(self._domain)) != len(self._domain):
             raise ValueError("Domain values must be distinct")
-        if not output_range:
+
+        self._output_range = list(output_range)
+        if not self._output_range:
             raise ValueError("Output range must contain at least one value")
-        self._domain = domain
-        self._output_range = output_range
         self._generate_mapping()
 
     def _generate_mapping(self):
@@ -228,8 +238,8 @@ class OrdinalScale:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: list[Any]):
-        self._domain = new_domain
+    def domain(self, new_domain: Union[list[Any], tuple[Any, ...], Iterable[Any]]):
+        self._domain = list(new_domain)
         self._generate_mapping()
 
     @property
@@ -237,7 +247,8 @@ class OrdinalScale:
         return self._output_range
 
     @output_range.setter
-    def output_range(self, new_output_range: list):
+    def output_range(self, new_output_range: Union[List, Tuple, Sequence]):
+        new_output_range = list(new_output_range)
         if not new_output_range:
             raise ValueError("Output range must contain at least one value")
         self._output_range = new_output_range
@@ -250,7 +261,9 @@ class ColorScale:
     to an interpolated hex color between two provided hex color strings.
     """
 
-    def __init__(self, domain: tuple[float, float], output_range: tuple[str, str]):
+    def __init__(
+        self, domain: NumericPair, output_range: Union[Tuple[str, str], List[str]]
+    ):
         if len(output_range) != 2:
             raise ValueError("Output range must contain exactly two colors")
         self._domain = domain
@@ -267,7 +280,6 @@ class ColorScale:
         """Maps the input value to an interpolated hex color."""
         d0, d1 = self._domain
         t = (value - d0) / (d1 - d0)
-        # Clamp t to [0, 1]
         t = max(0, min(1, t))
         r = int(self._rgb_start[0] + t * (self._rgb_end[0] - self._rgb_start[0]))
         g = int(self._rgb_start[1] + t * (self._rgb_end[1] - self._rgb_start[1]))
@@ -275,19 +287,19 @@ class ColorScale:
         return rgb_to_hex((r, g, b))
 
     @property
-    def domain(self) -> tuple[float, float]:
+    def domain(self) -> NumericPair:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: tuple[float, float]):
+    def domain(self, new_domain: NumericPair):
         self._domain = new_domain
 
     @property
-    def output_range(self) -> tuple[str, str]:
+    def output_range(self) -> Union[Tuple[str, str], List[str]]:
         return self._output_range
 
     @output_range.setter
-    def output_range(self, new_output_range: tuple[str, str]):
+    def output_range(self, new_output_range: Union[tuple[str, str], list[str]]):
         if len(new_output_range) != 2:
             raise ValueError("Output range must contain exactly two colors")
         self._output_range = new_output_range
@@ -300,11 +312,11 @@ class ColorScale:
 class SquareScale:
     """
     Maps an input value (such as an area) to an output using a square-root transformation.
-    This is useful when a visual property (like a square’s side length) should be proportional
+    This is useful when a visual property (like a square's side length) should be proportional
     to the square root of the area.
     """
 
-    def __init__(self, domain: tuple[float, float], output_range: tuple[float, float]):
+    def __init__(self, domain: NumericPair, output_range: NumericPair):
         self._domain = domain
         self._output_range = output_range
         d0, d1 = domain
@@ -323,11 +335,11 @@ class SquareScale:
         ) * (r1 - r0)
 
     @property
-    def domain(self) -> tuple[float, float]:
+    def domain(self) -> NumericPair:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: tuple[float, float]):
+    def domain(self, new_domain: NumericPair):
         self._domain = new_domain
         d0, d1 = new_domain
         if d0 < 0 or d1 < 0:
@@ -338,11 +350,11 @@ class SquareScale:
             raise ValueError("Invalid domain: sqrt(d1) and sqrt(d0) cannot be equal")
 
     @property
-    def output_range(self) -> tuple[float, float]:
+    def output_range(self) -> NumericPair:
         return self._output_range
 
     @output_range.setter
-    def output_range(self, new_output_range: tuple[float, float]):
+    def output_range(self, new_output_range: NumericPair):
         self._output_range = new_output_range
 
 
@@ -355,7 +367,7 @@ class CircleScale:
         radius(v) = sqrt( ((v - vmin)/(vmax - vmin))*(rmax^2 - rmin^2) + rmin^2 )
     """
 
-    def __init__(self, domain: tuple[float, float], output_range: tuple[float, float]):
+    def __init__(self, domain: NumericPair, output_range: NumericPair):
         self._domain = domain
         self._output_range = output_range
         d0, d1 = domain
@@ -370,20 +382,20 @@ class CircleScale:
         return math.sqrt(r_squared)
 
     @property
-    def domain(self) -> tuple[float, float]:
+    def domain(self) -> NumericPair:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: tuple[float, float]):
+    def domain(self, new_domain: NumericPair):
         self._domain = new_domain
         d0, d1 = new_domain
         if d1 == d0:
             raise ValueError("Domain values must be distinct")
 
     @property
-    def output_range(self) -> tuple[float, float]:
+    def output_range(self) -> NumericPair:
         return self._output_range
 
     @output_range.setter
-    def output_range(self, new_output_range: tuple[float, float]):
+    def output_range(self, new_output_range: NumericPair):
         self._output_range = new_output_range
