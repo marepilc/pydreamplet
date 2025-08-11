@@ -13,10 +13,10 @@
 
 Install pyDreamplet using your preferred package manager:
 
-With poetry:
+With uv:
 
-```schell
-poetry add pydreamplet
+```shell
+uv add pydreamplet
 ```
 
 With pip:

@@ -4,10 +4,10 @@ pyDreamplet is a Python library designed for creating stunning SVG visualization
 
 ## Installation
 
-=== "poetry"
+=== "uv"
 
     ```shell
-    poetry add pydreamplet
+    uv add pydreamplet
     ```
 
 === "pip"
