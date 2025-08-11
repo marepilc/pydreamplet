@@ -1,3 +1,4 @@
+from collections.abc import Sequence
 from math import ceil, floor, log10
 from math import pi as PI
 from typing import Any, TypedDict
@@ -74,7 +75,7 @@ def calculate_ticks(
 
 
 def pie_angles(
-    values: list[int | float],
+    values: Sequence[int | float],
     start_angle: int | float = 0,
     end_angle: int | float | None = None,
 ) -> list[tuple[float, float]]:

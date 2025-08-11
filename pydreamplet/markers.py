@@ -1,4 +1,4 @@
-from numbers import Real
+from typing import Union
 
 from pydreamplet import Path, SvgElement
 
@@ -24,7 +24,14 @@ TICK_VERTICAL = "M4 2.5h2v5H4z"
 
 
 class Marker(SvgElement):
-    def __init__(self, id: str, d: str, width: Real, height: Real, **kwargs):
+    def __init__(
+        self,
+        id: str,
+        d: str,
+        width: Union[int, float],
+        height: Union[int, float],
+        **kwargs,
+    ):
         super().__init__("marker")
         self._id = id
         self._d = d
