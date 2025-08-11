@@ -27,6 +27,11 @@ packages = ["pydreamplet"]
 "pydreamplet/resources/world_map_iso2.svg" = "pydreamplet/resources/world_map_iso2.svg"
 "pydreamplet/resources/world_map_iso3.svg" = "pydreamplet/resources/world_map_iso3.svg"
 
+[dependency-groups]
+dev = [
+    "pytest>=8.4.1",
+]
+
 [project.optional-dependencies]
 dev = [
     "jupyter>=1.1.1",
