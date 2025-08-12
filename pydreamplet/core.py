@@ -136,6 +136,21 @@ class SvgElement:
             else:
                 self.element.set(attr_name, str(value))
 
+    def has_attr(self, name: str) -> bool:
+        """
+        Check if the element has the specified attribute.
+        
+        Args:
+            name: The attribute name (underscores will be converted to hyphens)
+        
+        Returns:
+            True if the attribute exists, False otherwise
+        """
+        if name == "class_name":
+            return "class" in self.element.attrib
+        attr_name = name.replace("_", "-")
+        return attr_name in self.element.attrib
+
     def find(self, tag, nested=False, id=None):
         # Build the XPath for the tag.
         xpath = ".//" + qname(tag) if nested else qname(tag)

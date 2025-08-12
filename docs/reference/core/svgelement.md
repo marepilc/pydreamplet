@@ -61,6 +61,33 @@ drop_shadow.attrs({
 print(drop_shadow)  # <feDropShadow xmlns="http://www.w3.org/2000/svg" id="shadow" dx="0.2" dy="0.4" stdDeviation="0.2" />
 ```
 
+### <span class="meth"></span>`has_attr`
+
+```py
+has_attr(self, name: str) -> bool
+```
+
+Checks if the element has the specified attribute. Attribute names with underscores are automatically converted to hyphens (e.g., `font_size` becomes `font-size`). The special attribute name `class_name` is mapped to the SVG `class` attribute.
+
+<span class="param">**Parameters**</span>
+
+- `name` *(str)*: The attribute name to check for.
+
+<span class="param">**Returns**</span>
+
+- `bool`: `True` if the attribute exists, `False` otherwise.
+
+```py
+rect = SvgElement("rect", fill="red", stroke_width="2")
+print(rect.has_attr("fill"))         # True
+print(rect.has_attr("stroke_width")) # True (checks for "stroke-width")
+print(rect.has_attr("opacity"))      # False
+
+# Special case for class attribute
+text = SvgElement("text", class_name="highlight")
+print(text.has_attr("class_name"))   # True
+```
+
 ### <span class="meth"></span>`append`
 
 ```py
