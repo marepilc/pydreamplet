@@ -107,3 +107,33 @@ def test_svg_element_copy():
     assert original.height == duplicate.height
     assert original.element is not duplicate.element
     assert original.element.attrib is not duplicate.element.attrib
+
+
+def test_has_attr():
+    # Test with regular attributes
+    rect = dp.Rect(x=10, y=20, width=100, height=50, fill="blue")
+    assert rect.has_attr("x") is True
+    assert rect.has_attr("y") is True
+    assert rect.has_attr("width") is True
+    assert rect.has_attr("height") is True
+    assert rect.has_attr("fill") is True
+    assert rect.has_attr("stroke") is False
+    
+    # Test underscore to hyphen conversion
+    text = dp.Text("hello", font_size="14px", stroke_width="2")
+    assert text.has_attr("font_size") is True
+    assert text.has_attr("stroke_width") is True
+    assert text.has_attr("font-size") is True  # Direct hyphen version should also work
+    assert text.has_attr("stroke-width") is True
+    assert text.has_attr("line_height") is False
+    
+    # Test special class_name attribute
+    circle = dp.Circle(r=5, class_name="highlight")
+    assert circle.has_attr("class_name") is True
+    assert circle.has_attr("r") is True
+    assert circle.has_attr("id") is False
+    
+    # Test with element without class_name
+    circle_no_class = dp.Circle(r=5)
+    assert circle_no_class.has_attr("class_name") is False
+    assert circle_no_class.has_attr("r") is True
