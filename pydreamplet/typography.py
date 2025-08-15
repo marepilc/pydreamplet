@@ -2,7 +2,7 @@ import os
 import platform
 
 from fontTools.ttLib import TTFont
-from PIL import Image, ImageDraw, ImageFont
+from PIL import ImageFont
 
 
 def get_system_font_path(
@@ -47,13 +47,24 @@ def get_system_font_path(
             "/usr/local/share/fonts",
         ]
 
+        # In WSL, also check Windows font directories
+        if os.path.exists("/mnt/c/Windows/Fonts"):
+            font_dirs.extend(
+                [
+                    "/mnt/c/Windows/Fonts",
+                    "/mnt/c/Users/"
+                    + os.environ.get("USER", "")
+                    + "/AppData/Local/Microsoft/Windows/Fonts",
+                ]
+            )
+
     # Consider both TTF and OTF files.
     extensions = (".ttf", ".otf")
 
     for font_dir in font_dirs:
         if not os.path.exists(font_dir):
             continue
-        for root, dirs, files in os.walk(font_dir):
+        for root, _, files in os.walk(font_dir):
             for file in files:
                 if not file.lower().endswith(extensions):
                     continue
@@ -105,6 +116,14 @@ class TypographyMeasurer:
         """
         self.dpi = dpi
         self.font_path = font_path
+        self._font_cache: dict[tuple[str, int], ImageFont.FreeTypeFont] = {}
+
+    def _get_font(self, font_path: str, pixel_size: int) -> ImageFont.FreeTypeFont:
+        """Get a cached font object or create a new one."""
+        cache_key = (font_path, pixel_size)
+        if cache_key not in self._font_cache:
+            self._font_cache[cache_key] = ImageFont.truetype(font_path, pixel_size)
+        return self._font_cache[cache_key]
 
     def measure_text(
         self,
@@ -116,6 +135,7 @@ class TypographyMeasurer:
         """
         Measure the width and height of the given text rendered in the specified font.
         Supports multiline text if newline characters are present.
+        Uses modern Pillow text measurement methods for better accuracy.
 
         Args:
             text: The text to measure.
@@ -142,20 +162,30 @@ class TypographyMeasurer:
             )
 
         # Convert point size to pixel size using DPI conversion.
-        pixel_size = font_size * self.dpi / 72.0
-        # ImageFont.truetype expects an integer size.
-        font = ImageFont.truetype(self.font_path, int(pixel_size))
+        pixel_size = int(font_size * self.dpi / 72.0)
+        font = self._get_font(self.font_path, pixel_size)
 
-        # Create a dummy image for measurement.
-        dummy_img = Image.new("RGB", (1000, 1000))
-        draw = ImageDraw.Draw(dummy_img)
-
-        # Use multiline_textbbox if there are newline characters.
+        # Use modern Pillow text measurement methods
         if "\n" in text:
-            bbox = draw.multiline_textbbox((0, 0), text, font=font)
-        else:
-            bbox = draw.textbbox((0, 0), text, font=font)
+            # For multiline text, calculate dimensions manually using font metrics
+            lines = text.split("\n")
+            max_width = 0.0
+            for line in lines:
+                line_width = font.getlength(line)
+                max_width = max(max_width, line_width)
 
-        width = bbox[2] - bbox[0]
-        height = bbox[3] - bbox[1]
-        return float(width), float(height)
+            # Calculate total height: number of lines * line height
+            ascent, descent = font.getmetrics()
+            line_height = ascent + descent
+            total_height = len(lines) * line_height
+
+            width = max_width
+            height = total_height
+        else:
+            # For single line text, use getlength for width and font metrics for height
+            width = font.getlength(text)
+            # Get height from font metrics for more accurate line height
+            ascent, descent = font.getmetrics()
+            height = ascent + descent
+
+        return (float(width), float(height))
