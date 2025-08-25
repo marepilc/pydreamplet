@@ -10,7 +10,7 @@ The `Polygon` class represents an SVG polygon element. It allows setting a list 
 
 ```py
 Polygon(
-    points: list[int | float],
+    points: list[Real],
     **kwargs
 )
 ```
@@ -19,7 +19,7 @@ Initializes a new polygon with the specified vertices. The points must be provid
 
 <span class="param">**Parameters**</span>
 
-- `points` *(list[int | float])*: A list of numbers representing the polygon's vertices, for example: `[x1, y1, x2, y2, x3, y3, ...]`.
+- `points` *(list[Real])*: A list of numbers representing the polygon's vertices, for example: `[x1, y1, x2, y2, x3, y3, ...]`.
 - `**kwargs`: Additional attributes for the polygon element.
 
 ```py

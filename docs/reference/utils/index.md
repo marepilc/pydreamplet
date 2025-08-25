@@ -100,20 +100,29 @@ Generates a list of rounded tick values between `min_val` and `max_val`. The num
 
 <span class="param">**Parameters**</span>
 
-- `min_val` *(float)*: The minimum value.
-- `max_val` *(float)*: The maximum value.
+- `min_val` *(Real)*: The minimum value.
+- `max_val` *(Real)*: The maximum value.
 - `num_ticks` *(int, optional)*: The desired number of tick values (default: 5).
 - `below_max` *(bool)*: If set to `True` last tick is always below `max_val`. Default: `True`
 
 <span class="returns">**Returns**</span>
 
-*(list[int])*: A list of rounded tick values.
+*(list[Real])*: A list of rounded tick values.
 
 Raises `ValueError`: If min_val is not less than max_val.
 
 ```py
+# Integer range
 ticks = calculate_ticks(0, 100, num_ticks=5)
-print(ticks)  # Example output: [0, 20, 40, 60, 80, 100]
+print(ticks)  # Output: [0, 20, 40, 60, 80, 100]
+
+# Decimal range (0 to 1)
+ticks = calculate_ticks(0, 1, num_ticks=5)
+print(ticks)  # Output: [0.0, 0.2, 0.4, 0.6, 0.8, 1.0]
+
+# Small decimal range
+ticks = calculate_ticks(0.1, 0.9, num_ticks=4)
+print(ticks)  # Output: [0.2, 0.4, 0.6, 0.8]
 ```
 
 ## <span class="func"></span>`pie_angles`
@@ -126,13 +135,13 @@ Calculates the start and end angles (in degrees) for each pie slice based on the
 
 <span class="param">**Parameters**</span>
 
-- `values` *(list[int | float])*: A list of numerical values representing the sizes of each pie slice.
-- `start_angle` *(int | float, optional)*: The starting angle (in degrees) for the first slice (default: 0).
-- `end_angle` *(int | float, optional)*: The ending angle (in degrees) for the last slice (default: 360).
+- `values` *(list[Real])*: A list of numerical values representing the sizes of each pie slice.
+- `start_angle` *(Real, optional)*: The starting angle (in degrees) for the first slice (default: 0).
+- `end_angle` *(Real, optional)*: The ending angle (in degrees) for the last slice (default: 360).
 
 <span class="returns">**Returns**</span>
 
-*(list[tuple[float, float]])*: A list of tuples where each tuple contains the start and end angles for a slice.
+*(list[tuple[Real, Real]])*: A list of tuples where each tuple contains the start and end angles for a slice.
 
 Raises `ZeroDivisionError`: If the sum of `values` is zero.
 

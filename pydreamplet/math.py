@@ -1,13 +1,19 @@
 import math
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pydreamplet.core import Real
+else:
+    Real = int | float
 
 
 class Vector:
-    def __init__(self, x: float, y: float):
+    def __init__(self, x: Real, y: Real):
         """Creates a new 2D vector."""
         self._x = x
         self._y = y
 
-    def set(self, x: float, y: float) -> None:
+    def set(self, x: Real, y: Real) -> None:
         """Changes the x and y coordinates."""
         self._x = x
         self._y = y
@@ -17,7 +23,7 @@ class Vector:
         return self._x
 
     @x.setter
-    def x(self, value: float) -> None:
+    def x(self, value: Real) -> None:
         self._x = value
 
     @property
@@ -25,7 +31,7 @@ class Vector:
         return self._y
 
     @y.setter
-    def y(self, value: float) -> None:
+    def y(self, value: Real) -> None:
         self._y = value
 
     @property
@@ -69,29 +75,29 @@ class Vector:
         return self
 
     # Operator overloading for scalar multiplication
-    def __mul__(self, scalar: float) -> "Vector":
-        if not isinstance(scalar, (int, float)):
+    def __mul__(self, scalar: Real) -> "Vector":
+        if not isinstance(scalar, (int, float)):  # Keep runtime check
             return NotImplemented
         return Vector(self._x * scalar, self._y * scalar)
 
-    def __rmul__(self, scalar: float) -> "Vector":
+    def __rmul__(self, scalar: Real) -> "Vector":
         return self.__mul__(scalar)
 
-    def __imul__(self, scalar: float) -> "Vector":
-        if not isinstance(scalar, (int, float)):
+    def __imul__(self, scalar: Real) -> "Vector":
+        if not isinstance(scalar, (int, float)):  # Keep runtime check
             return NotImplemented
         self._x *= scalar
         self._y *= scalar
         return self
 
     # Operator overloading for scalar division
-    def __truediv__(self, scalar: float) -> "Vector":
-        if not isinstance(scalar, (int, float)):
+    def __truediv__(self, scalar: Real) -> "Vector":
+        if not isinstance(scalar, (int, float)):  # Keep runtime check
             return NotImplemented
         return Vector(self._x / scalar, self._y / scalar)
 
-    def __itruediv__(self, scalar: float) -> "Vector":
-        if not isinstance(scalar, (int, float)):
+    def __itruediv__(self, scalar: Real) -> "Vector":
+        if not isinstance(scalar, (int, float)):  # Keep runtime check
             return NotImplemented
         self._x /= scalar
         self._y /= scalar
@@ -119,7 +125,7 @@ class Vector:
         return math.degrees(math.atan2(self._y, self._x))
 
     @direction.setter
-    def direction(self, angle_deg: float) -> None:
+    def direction(self, angle_deg: Real) -> None:
         """
         Sets the direction (angle in degrees) of the vector while preserving its magnitude.
         """
@@ -134,7 +140,7 @@ class Vector:
         return math.sqrt(self._x**2 + self._y**2)
 
     @magnitude.setter
-    def magnitude(self, new_magnitude: float) -> None:
+    def magnitude(self, new_magnitude: Real) -> None:
         """
         Sets the magnitude of the vector while preserving its direction.
         """
@@ -144,7 +150,7 @@ class Vector:
         self._x = math.cos(angle_rad) * new_magnitude
         self._y = math.sin(angle_rad) * new_magnitude
 
-    def limit(self, limit_scalar: float) -> None:
+    def limit(self, limit_scalar: Real) -> None:
         """
         Limits the vector's magnitude to the specified value.
         If the current magnitude exceeds the limit, the vector is scaled down.

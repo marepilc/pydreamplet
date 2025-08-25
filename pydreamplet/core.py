@@ -2,12 +2,14 @@ import math
 import re
 import xml.etree.ElementTree as ET
 from copy import deepcopy
-from typing import Any, Optional
+from typing import Any
 
 from IPython.display import SVG as IPythonSVG
 from IPython.display import display
 
 from pydreamplet.math import Vector
+
+type Real = int | float
 
 SVG_NS = "http://www.w3.org/2000/svg"
 ET.register_namespace("", SVG_NS)
@@ -139,10 +141,10 @@ class SvgElement:
     def has_attr(self, name: str) -> bool:
         """
         Check if the element has the specified attribute.
-        
+
         Args:
             name: The attribute name (underscores will be converted to hyphens)
-        
+
         Returns:
             True if the attribute exists, False otherwise
         """
@@ -200,8 +202,8 @@ class Transformable:
 
     def __init__(
         self,
-        pos: Optional[Vector] = None,
-        scale: Optional[Vector] = None,
+        pos: Vector | None = None,
+        scale: Vector | None = None,
         angle: float = 0,
         *args,
         **kwargs,
@@ -283,7 +285,7 @@ class SVG(SvgElement):
         if len(viewbox_seq) not in (2, 4):
             raise ValueError("viewbox must be a tuple or list of 2 or 4 numbers")
 
-        validated_viewbox: list[int | float] = list(viewbox_seq)
+        validated_viewbox: list[Real] = list(viewbox_seq)
 
         super().__init__("svg", **kwargs)
 
@@ -380,10 +382,10 @@ class G(Transformable, SvgElement):
 
     def __init__(
         self,
-        pos: Optional[Vector] = None,
-        scale: Optional[Vector] = None,
+        pos: Vector | None = None,
+        scale: Vector | None = None,
         angle: float = 0,
-        pivot: Optional[Vector] = None,
+        pivot: Vector | None = None,
         order: str = "trs",
         **kwargs,
     ):
@@ -744,10 +746,10 @@ class Path(SvgElement):
 class Line(SvgElement):
     def __init__(
         self,
-        x1: int | float = 0,
-        y1: int | float = 0,
-        x2: int | float = 0,
-        y2: int | float = 0,
+        x1: Real = 0,
+        y1: Real = 0,
+        x2: Real = 0,
+        y2: Real = 0,
         **kwargs,
     ):
         super().__init__("line", **kwargs)
@@ -805,17 +807,17 @@ class Line(SvgElement):
 
 
 class Polygon(SvgElement):
-    def __init__(self, points: list[int | float], **kwargs):
+    def __init__(self, points: list[Real], **kwargs):
         super().__init__("polygon", **kwargs)
         self._points = points
         self._update_element()
 
     @property
-    def points(self) -> list[int | float]:
+    def points(self) -> list[Real]:
         return self._points
 
     @points.setter
-    def points(self, value: list[int | float]) -> None:
+    def points(self, value: list[Real]) -> None:
         self._points = value
         self._update_element()
 
@@ -831,17 +833,17 @@ class Polygon(SvgElement):
 
 
 class Polyline(SvgElement):
-    def __init__(self, points: list[int | float], **kwargs):
+    def __init__(self, points: list[Real], **kwargs):
         super().__init__("polyline", **kwargs)
         self._points = points
         self._update_element()
 
     @property
-    def points(self) -> list[int | float]:
+    def points(self) -> list[Real]:
         return self._points
 
     @points.setter
-    def points(self, value: list[int | float]) -> None:
+    def points(self, value: list[Real]) -> None:
         self._points = value
         self._update_element()
 

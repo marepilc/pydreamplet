@@ -1,5 +1,5 @@
 version = 1
-revision = 2
+revision = 3
 requires-python = ">=3.12"
 resolution-markers = [
     "python_full_version >= '3.14'",
@@ -1277,7 +1277,7 @@ wheels = [
 
 [[package]]
 name = "pydreamplet"
-version = "1.1.8"
+version = "1.1.9"
 source = { editable = "." }
 dependencies = [
     { name = "fonttools" },
@@ -1286,7 +1286,7 @@ dependencies = [
     { name = "pillow" },
 ]
 
-[package.optional-dependencies]
+[package.dev-dependencies]
 dev = [
     { name = "jupyter" },
     { name = "mkdocs-material" },
@@ -1294,26 +1294,21 @@ dev = [
     { name = "ruff" },
 ]
 
-[package.dev-dependencies]
-dev = [
-    { name = "pytest" },
-]
-
 [package.metadata]
 requires-dist = [
     { name = "fonttools", specifier = ">=4.56.0,<5.0.0" },
     { name = "ipykernel", specifier = ">=6.30.1" },
     { name = "ipython", specifier = ">=8.32.0,<9.0.0" },
-    { name = "jupyter", marker = "extra == 'dev'", specifier = ">=1.1.1" },
-    { name = "mkdocs-material", marker = "extra == 'dev'", specifier = ">=9.6.4" },
     { name = "pillow", specifier = ">=11.1.0,<12.0.0" },
-    { name = "pytest", marker = "extra == 'dev'", specifier = ">=8.3.4" },
-    { name = "ruff", marker = "extra == 'dev'", specifier = ">=0.9.5" },
 ]
-provides-extras = ["dev"]
 
 [package.metadata.requires-dev]
-dev = [{ name = "pytest", specifier = ">=8.4.1" }]
+dev = [
+    { name = "jupyter", specifier = ">=1.1.1" },
+    { name = "mkdocs-material", specifier = ">=9.6.16" },
+    { name = "pytest", specifier = ">=8.4.1" },
+    { name = "ruff", specifier = ">=0.12.8" },
+]
 
 [[package]]
 name = "pygments"
