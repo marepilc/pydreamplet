@@ -3,6 +3,8 @@ from math import ceil, floor, log10
 from math import pi as PI
 from typing import Any, TypedDict
 
+from pydreamplet.core import Real
+
 
 class Pool(TypedDict):
     sum: float
@@ -35,7 +37,7 @@ def degrees(radians):
 
 
 def calculate_ticks(
-    min_val: int | float, max_val: int | float, num_ticks=5, below_max=True
+    min_val: Real, max_val: Real, num_ticks=5, below_max=True
 ):
     """
     Generate rounded tick values between min_val and max_val.
@@ -67,17 +69,26 @@ def calculate_ticks(
     start = ceil(min_val / step) * step
     end = ceil(max_val / step) * step  # Use ceil to ensure coverage
 
-    ticks = list(range(int(start), int(end) + int(step), int(step)))
+    # Generate ticks using floating point arithmetic to handle decimal ranges
+    ticks = []
+    current = start
+    while current <= end + step / 2:  # Add small tolerance for floating point precision
+        ticks.append(current)
+        current += step
+    
+    # Round to avoid floating point precision issues
+    ticks = [round(tick, 10) for tick in ticks]
+    
     if below_max:
-        ticks = [tick for tick in ticks if tick <= max_val]
+        ticks = [tick for tick in ticks if tick <= max_val + step / 1000]  # Small tolerance
 
     return ticks
 
 
 def pie_angles(
-    values: Sequence[int | float],
-    start_angle: int | float = 0,
-    end_angle: int | float | None = None,
+    values: Sequence[Real],
+    start_angle: Real = 0,
+    end_angle: Real | None = None,
 ) -> list[tuple[float, float]]:
     """
     Calculate start and end angles for each pie slice.
@@ -105,7 +116,7 @@ def pie_angles(
     return angles
 
 
-def pure_linspace(start: int | float, stop: int | float, num: int) -> list[int | float]:
+def pure_linspace(start: Real, stop: Real, num: int) -> list[Real]:
     if num == 1:
         return [stop]
     step = (stop - start) / (num - 1)

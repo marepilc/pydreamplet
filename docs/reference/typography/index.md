@@ -61,7 +61,7 @@ measure_text(
     text: str,
     font_family: str | None = None,
     weight: int | None = None,
-    font_size: float = 12.0
+    font_size: Real = 12.0
 ) -> tuple[float, float]
 ```
 
@@ -72,7 +72,7 @@ Measures the width and height (in pixels) of the provided text when rendered in 
 - `text` *(str)*: The text to measure.
 - `font_family` *(str | None, optional)*: The system font name (e.g., "Arial"). Required if no font_path is already set.
 - `weight` *(int | None, optional)*: Numeric weight (e.g., 400 for regular, 700 for bold). Required if no font_path is already set.
-- `font_size` *(float, optional)*: The desired font size in points (default: 12.0).
+- `font_size` *(Real, optional)*: The desired font size in points (default: 12.0).
 
 <span class="returns">**Returns**</span>
 

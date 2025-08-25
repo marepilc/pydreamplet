@@ -6,15 +6,15 @@ The `SquareScale` class maps an input value to an output using a square-root tra
 
 ```py
 SquareScale(
-    domain: tuple[float, float],
-    output_range: tuple[float, float]
+    domain: NumericPair,
+    output_range: NumericPair
 )
 ```
 
 <span class="param">**Parameters**</span>
 
-- `domain` *(tuple[float, float])*: The input domain (non-negative values).
-- `output_range` *(tuple[float, float])*: The target output range.
+- `domain` *(NumericPair)*: The input domain (non-negative values).
+- `output_range` *(NumericPair)*: The target output range.
 
 ```py
 square = SquareScale((0, 100), (0, 10))

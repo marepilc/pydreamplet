@@ -6,15 +6,15 @@ The `CircleScale` class maps an input value to a circle radius such that the cir
 
 ```py
 CircleScale(
-    domain: tuple[float, float],
-    output_range: tuple[float, float]
+    domain: NumericPair,
+    output_range: NumericPair
 )
 ```
 
 <span class="param">**Parameters**</span>
 
-- `domain` *(tuple[float, float])*: The numeric input domain.
-- `output_range` *(tuple[float, float])*: The desired radius range (rmin, rmax).
+- `domain` *(NumericPair)*: The numeric input domain.
+- `output_range` *(NumericPair)*: The desired radius range (rmin, rmax).
 
 ```py
 circle_scale = CircleScale((0, 100), (5, 20))

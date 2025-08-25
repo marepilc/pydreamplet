@@ -6,15 +6,15 @@ The `LinearScale` class maps a numeric value from a specified domain to an outpu
 
 ```py
 LinearScale(
-    domain: tuple[float, float],
-    output_range: tuple[float, float]
+    domain: NumericPair,
+    output_range: NumericPair
 )
 ```
 
 <span class="param">**Parameters**</span>
 
-- `domain` *(tuple[float, float])*: The input domain as a minimum and maximum value.
-- `output_range` *(tuple[float, float])*: The target output range.
+- `domain` *(NumericPair)*: The input domain as a minimum and maximum value.
+- `output_range` *(NumericPair)*: The target output range.
 
 ```py
 scale = LinearScale((0, 100), (0, 1))

@@ -7,7 +7,7 @@ The `BandScale` class maps categorical values (strings) to evenly spaced positio
 ```py
 BandScale(
     domain: list[Any],
-    output_range: tuple[float, float],
+    output_range: NumericPair,
     padding: float = 0.1,
     outer_padding: float | None = None
 )
@@ -17,7 +17,7 @@ BandScale(
 <span class="param">**Parameters**</span>
 
 - `domain` *(list[Any])*: A list of categorical values (distinct).
-- `output_range` *(tuple[float, float])*: The numeric output range.
+- `output_range` *(NumericPair)*: The numeric output range.
 - `padding` *(float, optional)*: The inner padding between bands (default: 0.1).
 - `outer_padding` *(float, optional)*: The outer padding; defaults to the inner padding if not provided.
 

@@ -1,9 +1,11 @@
 import math
-from typing import Any, Iterable, List, Sequence, Tuple, TypeVar, Union
+from typing import Any, Iterable, Sequence, TypeVar
+
+from pydreamplet.core import Real
 
 from pydreamplet.colors import hex_to_rgb, rgb_to_hex
 
-NumericPair = Union[Tuple[float, float], List[float]]
+type NumericPair = tuple[Real, Real] | list[Real]
 T = TypeVar("T")
 
 
@@ -59,7 +61,7 @@ class BandScale:
 
     def __init__(
         self,
-        domain: Union[List[Any], Tuple[Any, ...], Iterable[Any]],
+        domain: list[Any] | tuple[Any, ...] | Iterable[Any],
         output_range: NumericPair,
         padding: float = 0.1,
         outer_padding: float | None = None,
@@ -104,7 +106,7 @@ class BandScale:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: Union[List[Any], Tuple[Any, ...], Iterable[Any]]):
+    def domain(self, new_domain: list[Any] | tuple[Any, ...] | Iterable[Any]):
         self._domain = list(new_domain)
         self._calculate_band_properties()
 
@@ -144,7 +146,7 @@ class PointScale:
 
     def __init__(
         self,
-        domain: Union[List[Any], Tuple[Any, ...], Iterable[Any]],
+        domain: list[Any] | tuple[Any, ...] | Iterable[Any],
         output_range: NumericPair,
         padding: float = 0.5,
     ):
@@ -179,7 +181,7 @@ class PointScale:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: Union[List[Any], Tuple[Any, ...], Iterable[Any]]):
+    def domain(self, new_domain: list[Any] | tuple[Any, ...] | Iterable[Any]):
         self._domain = list(new_domain)
         self._calculate_step()
 
@@ -211,8 +213,8 @@ class OrdinalScale:
 
     def __init__(
         self,
-        domain: Union[List[Any], Tuple[Any, ...], Iterable[Any]],
-        output_range: Union[List, Tuple, Sequence],
+        domain: list[Any] | tuple[Any, ...] | Iterable[Any],
+        output_range: list | tuple | Sequence,
     ):
         self._domain = list(domain)
         if len(set(self._domain)) != len(self._domain):
@@ -238,7 +240,7 @@ class OrdinalScale:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: Union[list[Any], tuple[Any, ...], Iterable[Any]]):
+    def domain(self, new_domain: list[Any] | tuple[Any, ...] | Iterable[Any]):
         self._domain = list(new_domain)
         self._generate_mapping()
 
@@ -247,7 +249,7 @@ class OrdinalScale:
         return self._output_range
 
     @output_range.setter
-    def output_range(self, new_output_range: Union[List, Tuple, Sequence]):
+    def output_range(self, new_output_range: list | tuple | Sequence):
         new_output_range = list(new_output_range)
         if not new_output_range:
             raise ValueError("Output range must contain at least one value")
@@ -262,7 +264,7 @@ class ColorScale:
     """
 
     def __init__(
-        self, domain: NumericPair, output_range: Union[Tuple[str, str], List[str]]
+        self, domain: NumericPair, output_range: tuple[str, str] | list[str]
     ):
         if len(output_range) != 2:
             raise ValueError("Output range must contain exactly two colors")
@@ -295,11 +297,11 @@ class ColorScale:
         self._domain = new_domain
 
     @property
-    def output_range(self) -> Union[Tuple[str, str], List[str]]:
+    def output_range(self) -> tuple[str, str] | list[str]:
         return self._output_range
 
     @output_range.setter
-    def output_range(self, new_output_range: Union[tuple[str, str], list[str]]):
+    def output_range(self, new_output_range: tuple[str, str] | list[str]):
         if len(new_output_range) != 2:
             raise ValueError("Output range must contain exactly two colors")
         self._output_range = new_output_range

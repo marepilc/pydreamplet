@@ -131,8 +131,8 @@ Returns the SVG element as a string. If pretty_print is set to `True`, the outpu
 ### <span class="meth"></span>`find` and `find_all`
 
 ```py
-find(self, tag: str, nested: bool = False, id: Optional[str] = None)
-find_all(self, tag: str, nested: bool = False, class_name: Optional[str] = None)
+find(self, tag: str, nested: bool = False, id: str | None = None)
+find_all(self, tag: str, nested: bool = False, class_name: str | None = None)
 ```
 
 Searches for child elements by tag. If `nested` is `True`, the search is recursive.

@@ -70,7 +70,7 @@ print(d_str)
 
 ```py
 cardinal_spline(
-    points: list[float] | list[tuple[float, float]],
+    points: list[Real] | list[tuple[Real, Real]],
     tension: float = 0.0,
     closed: bool = False,
 ) -> str
@@ -80,7 +80,7 @@ Generates an SVG path `d` string for a cardinal spline that smoothly interpolate
 
 <span class="param">**Parameters**</span>
 
-- `points` *(list[float] | list[tuple[float, float]])*: A sequence of points. This can be a flat list in the form `[x0, y0, x1, y1, …]` or a list of `(x, y)` tuples.
+- `points` *(list[Real] | list[tuple[Real, Real]])*: A sequence of points. This can be a flat list in the form `[x0, y0, x1, y1, …]` or a list of `(x, y)` tuples.
 - `tension` *(float)*: A number between `0.0` and `1.0` that controls the curvature of the spline. Lower values yield a looser, more curved line; higher values produce a tighter, straighter line.
 - `closed` *(bool)*: Whether the spline should be closed (i.e. the last point connects back to the first).
 

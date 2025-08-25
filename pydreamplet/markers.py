@@ -1,6 +1,5 @@
-from typing import Union
-
 from pydreamplet import Path, SvgElement
+from pydreamplet.core import Real
 
 ARROW = "M2.499 5 L1.565 1.7 L8.435 5 L1.565 8.3 Z"
 ARROW_BASIC = "M0 1.91 10 5 0 8.09V1.91Z"
@@ -28,8 +27,8 @@ class Marker(SvgElement):
         self,
         id: str,
         d: str,
-        width: Union[int, float],
-        height: Union[int, float],
+        width: Real,
+        height: Real,
         **kwargs,
     ):
         super().__init__("marker")

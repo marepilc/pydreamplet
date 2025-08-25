@@ -6,14 +6,14 @@ The `ColorScale` class creates a color scale that maps a numeric value from a gi
 
 ```py
 ColorScale(
-    domain: tuple[float, float],
+    domain: NumericPair,
     output_range: tuple[str, str]
 )
 ```
 
 <span class="param">**Parameters**</span>
 
-- `domain` *(tuple[float, float])*: The numeric input domain.
+- `domain` *(NumericPair)*: The numeric input domain.
 - `output_range` *(tuple[str, str])*: A tuple of two hex color strings representing the start and end colors.
 
 ```py
