@@ -29,7 +29,7 @@ import pydreamplet as dp
 from pydreamplet.typography import TypographyMeasurer
 
 # 1. Create an SVG with specified width and height
-svg = dp.SVG(width=400, height=200)
+svg = dp.SVG(400, 200)
 
 # 2. Create a group (dp.G) positioned at the center of the canvas.
 #    We'll use this group to append our shapes and text so that
