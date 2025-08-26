@@ -4,6 +4,7 @@ The `LinearScale` class maps a numeric value from a specified domain to an outpu
 
 ## <span class=class></span>`pydreamplet.scales.LinearScale`
 
+<!--skip-->
 ```py
 LinearScale(
     domain: NumericPair,
@@ -17,6 +18,8 @@ LinearScale(
 - `output_range` *(NumericPair)*: The target output range.
 
 ```py
+from pydreamplet.scales import LinearScale
+
 scale = LinearScale((0, 100), (0, 1))
 print(scale.map(50))  # Output: 0.5
 print(scale.invert(0.75))  # Output: 75.0
@@ -24,6 +27,7 @@ print(scale.invert(0.75))  # Output: 75.0
 
 ### <span class="meth"></span>`map`
 
+<!--skip-->
 ```py
 map(value: float) -> float
 ```
@@ -32,6 +36,7 @@ Scales a value from the domain to the output range.
 
 ### <span class="meth"></span>`invert`
 
+<!--skip-->
 ```py
 invert(value: float) -> float
 ```

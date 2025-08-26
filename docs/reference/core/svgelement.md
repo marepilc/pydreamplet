@@ -4,6 +4,7 @@ The `SvgElement` class serves as the base for all SVG elements. It wraps an Elem
 
 ## <span class="class"></span>`pydreamplet.core.SVG`
 
+<!--skip-->
 ```py
 SvgElement (self, tag, **kwargs)
 ```
@@ -15,6 +16,7 @@ Initializes a new SVG element with the specified tag and attributes.
 - `tag` *(str)*: The SVG tag name.
 - `**kwargs`: Additional attributes for the element.
 
+<!--skip-->
 ```py
 elem = SvgElement("rect", fill="red")
 print(elem)  # Outputs the XML representation of the element.
@@ -22,6 +24,7 @@ print(elem)  # Outputs the XML representation of the element.
 
 ### <span class="meth"></span>`register`
 
+<!--skip-->
 ```py
 SvgElement.register(tag: str, subclass: type) -> None
 ```
@@ -30,12 +33,14 @@ Registers a specialized subclass for a given SVG tag. This is needed only for re
 
 ### <span class="meth"></span>`from_element`
 
+<!--skip-->
 ```py
 SvgElement.from_element(element: ET.Element)
 ```
 
 Creates an instance from an ElementTree element, using the registered subclass if available.
 
+<!--skip-->
 ```py
 import xml.etree.ElementTree as ET
 elem = ET.Element("rect")
@@ -44,12 +49,14 @@ svg_elem = SvgElement.from_element(elem)
 
 ### <span class="meth"></span>`attrs`
 
+<!--skip-->
 ```py
 attrs(self, attributes: dict) -> SvgElement
 ```
 
 Sets multiple attributes on the element.
 
+<!--skip-->
 ```py
 drop_shadow = SvgElement("feDropShadow")
 drop_shadow.attrs({
@@ -63,6 +70,7 @@ print(drop_shadow)  # <feDropShadow xmlns="http://www.w3.org/2000/svg" id="shado
 
 ### <span class="meth"></span>`has_attr`
 
+<!--skip-->
 ```py
 has_attr(self, name: str) -> bool
 ```
@@ -77,6 +85,8 @@ Checks if the element has the specified attribute. Attribute names with undersco
 
 - `bool`: `True` if the attribute exists, `False` otherwise.
 
+<!--skip-->
+<!--skip-->
 ```py
 rect = SvgElement("rect", fill="red", stroke_width="2")
 print(rect.has_attr("fill"))         # True
@@ -90,6 +100,7 @@ print(text.has_attr("class_name"))   # True
 
 ### <span class="meth"></span>`append`
 
+<!--skip-->
 ```py
 append(self, *children) -> SvgElement
 ```
@@ -98,12 +109,14 @@ Appends aone or more child elements to the current element. Returns self, allowi
 
 ### <span class="meth"></span>`remove`
 
+<!--skip-->
 ```py
 remove(self, *children) -> SvgElement
 ```
 
 Removes one or more child elements from the current element. If a child was wrapped, it removes its underlying element.
 
+<!--skip-->
 ```py
 svg = SVG(800, 600, width="400px", height="300px")
 g1 = G()
@@ -122,6 +135,7 @@ print(svg)
 
 ### <span class="meth"></span>`to_string`
 
+<!--skip-->
 ```py
 to_string(self, pretty_print: bool = True) -> str
 ```
@@ -130,6 +144,7 @@ Returns the SVG element as a string. If pretty_print is set to `True`, the outpu
 
 ### <span class="meth"></span>`find` and `find_all`
 
+<!--skip-->
 ```py
 find(self, tag: str, nested: bool = False, id: str | None = None)
 find_all(self, tag: str, nested: bool = False, class_name: str | None = None)
@@ -142,6 +157,7 @@ For `find_all`, if a `class_name` is provided, only elements with that matching 
 
 ### <span class="meth"></span>`copy`
 
+<!--skip-->
 ```py
 copy(self) -> SvgElement
 ```
@@ -150,6 +166,7 @@ Creates and returns a deep copy of the current SVG element. The new instance is 
 
 For example:
 
+<!--skip-->
 ```py
 original = SvgElement("rect", x=10, y=20, width=100, height=50)
 duplicate = original.copy()

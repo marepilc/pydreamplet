@@ -8,6 +8,9 @@ The `Polyline` class represents an SVG polyline element. It allows setting a lis
 
 ## <span class=class></span>`pydreamplet.core.Polyline`
 
+<!--skip-->
+<!--skip-->
+<!--skip-->
 ```py
 Polyline(
     points: list[Real],
@@ -22,6 +25,7 @@ Initializes a new polyline with the specified vertices. The points must be provi
 - `points` *(list[Real])*: A list of numbers representing the polyline's vertices, for example: `[x1, y1, x2, y2, x3, y3, ...]`.
 - `**kwargs`: Additional attributes for the polyline element.
 
+<!--skip-->
 ```py
 from pydreamplet import SVG, Polyline
 
@@ -37,6 +41,9 @@ svg.append(
 
 **Getters and Setters:** Retrieve or update the polyline's points. When setting new points, the list is automatically formatted into a string where each vertex is expressed as `"x,y"` and each pair is separated by a space.
 
+<!--skip-->
+<!--skip-->
+<!--skip-->
 ```py
 print(polyline.points)  # [0, 0, 50, 50, 100, 0]
 polyline.points = [0, 0, 0, 20, 20, 20, 20, 0]

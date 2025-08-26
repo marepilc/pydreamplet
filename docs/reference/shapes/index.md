@@ -8,6 +8,7 @@ This module provides functions to generate SVG path `d`-strings for various geom
 
 ## <span class="func"></span>`star`
 
+<!--skip-->
 ```py
 star(
     x: float = 0,
@@ -36,12 +37,15 @@ Returns a `d`-string for a star with `n` points. The star is centered at `(x, y)
 - *(str)*: A string suitable for the "d" attribute in an SVG path element.
 
 ```py
+from pydreamplet.shapes import star
+
 d_str = star(inner_radius=10, outer_radius=20)
 print(d_str)
 ```
 
 ## <span class="func"></span>`polyline`
 
+<!--skip-->
 ```py
 polyline(
     x_coords: Sequence[float],
@@ -62,12 +66,15 @@ Raises a `ValueError` if the lengths of `x_coords` and `y_coords` do not match.
 *(str)*: A string suitable for the "d" attribute in an SVG path element.
 
 ```py
+from pydreamplet.shapes import polyline
+
 d_str = polyline([0, 50, 100], [0, 100, 0])
 print(d_str)
 ```
 
 ## <span class="func"></span>`cardinal_spline`
 
+<!--skip-->
 ```py
 cardinal_spline(
     points: list[Real] | list[tuple[Real, Real]],
@@ -89,6 +96,8 @@ Generates an SVG path `d` string for a cardinal spline that smoothly interpolate
 *(str)*: A string suitable for the `d` attribute of an SVG `<path>` element.
 
 ```py
+from pydreamplet.shapes import cardinal_spline
+
 d_str = cardinal_spline(
     [50, 50, 100, 100, 150, 50, 200, 100, 250, 50, 300, 100, 350, 50],
     tension=0.5,
@@ -99,6 +108,7 @@ print(d_str)
 
 ## <span class="func"></span>`polygon`
 
+<!--skip-->
 ```py
 polygon(
     x: float,
@@ -124,12 +134,15 @@ Returns a `d`-string for a regular polygon with `n` sides. The polygon is center
 *(str)*: A string suitable for the d attribute of an SVG `<path>` element.
 
 ```py
+from pydreamplet.shapes import polygon
+
 d_str = polygon(200, 200, 100, 6)
 print(d_str)
 ```
 
 ## <span class="func"></span>`cross`
 
+<!--skip-->
 ```py
 cross(
     x: float = 0,
@@ -157,12 +170,15 @@ The cross is formed by combining a vertical rectangle and a horizontal rectangle
 *(str)*: A string suitable for the "d" attribute in an SVG path element.
 
 ```py
+from pydreamplet.shapes import cross
+
 d_str = cross(size=50, thickness=10, angle=45)
 print(d_str)
 ```
 
 ## <span class="func"></span>`arc`
 
+<!--skip-->
 ```py
 arc(
     x: float = 0,
@@ -190,12 +206,15 @@ The arc spans from `start_angle` to `end_angle` (in degrees). If the arc represe
 *(str)*: A string suitable for the "d" attribute in an SVG path element.
 
 ```py
+from pydreamplet.shapes import arc
+
 d_str = arc(radius=30, start_angle=0, end_angle=180)
 print(d_str)
 ```
 
 ## <span class="func"></span>`ring`
 
+<!--skip-->
 ```py
 ring(
     x: float = 0,
@@ -231,6 +250,8 @@ If `without_inner` is `True`, the inner arc is omitted and a single closed path 
 *(str)*: A string suitable for the "d" attribute in an SVG path element.
 
 ```py
+from pydreamplet.shapes import ring
+
 d_str = ring(inner_radius=20, outer_radius=40, start_angle=45, end_angle=315)
 print(d_str)
 ```

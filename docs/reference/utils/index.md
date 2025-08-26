@@ -8,6 +8,7 @@ This module provides utility functions for various mathematical operations and u
 
 ## <span class="func"></span>`math_round`
 
+<!--skip-->
 ```py
 math_round(x)
 ```
@@ -23,12 +24,15 @@ Rounds `x` to the nearest integer using the round half up method.
 *(int)*: The rounded integer.
 
 ```py
+from pydreamplet.utils import math_round
+
 print(math_round(3.4))  # Output: 3
 print(math_round(3.6))  # Output: 4
 ```
 
 ## <span class="func"></span>`constrain`
 
+<!--skip-->
 ```py
 constrain(value, min_val, max_val)
 ```
@@ -46,12 +50,15 @@ Constrains the given `value` between `min_val` and `max_val`.
 *(numeric)*: The constrained value.
 
 ```py
+from pydreamplet.utils import constrain
+
 print(constrain(10, 0, 5))  # Output: 5
 print(constrain(-3, 0, 5))  # Output: 0
 ```
 
 ## <span class="func"></span>`radians`
 
+<!--skip-->
 ```py
 radians(degrees)
 ```
@@ -67,11 +74,14 @@ Converts an angle from degrees to radians.
 *(float)*: Angle in radians.
 
 ```py
+from pydreamplet.utils import radians
+
 print(radians(180))  # Output: 3.141592653589793 (approximately)
 ```
 
 ## <span class="func"></span>`degrees`
 
+<!--skip-->
 ```py
 degrees(radians)
 ```
@@ -87,11 +97,14 @@ Converts an angle from radians to degrees.
 *(float)*: Angle in degrees.
 
 ```py
+from pydreamplet.utils import degrees
+
 print(degrees(3.141592653589793))  # Output: 180.0
 ```
 
 ## <span class="func"></span>`calculate_ticks`
 
+<!--skip-->
 ```py
 calculate_ticks(min_val, max_val, num_ticks=5, below_max=True)
 ```
@@ -112,6 +125,8 @@ Generates a list of rounded tick values between `min_val` and `max_val`. The num
 Raises `ValueError`: If min_val is not less than max_val.
 
 ```py
+from pydreamplet.utils import calculate_ticks
+
 # Integer range
 ticks = calculate_ticks(0, 100, num_ticks=5)
 print(ticks)  # Output: [0, 20, 40, 60, 80, 100]
@@ -127,6 +142,7 @@ print(ticks)  # Output: [0.2, 0.4, 0.6, 0.8]
 
 ## <span class="func"></span>`pie_angles`
 
+<!--skip-->
 ```py
 pie_angles(values, start_angle=0, end_angle=360)
 ```
@@ -146,6 +162,8 @@ Calculates the start and end angles (in degrees) for each pie slice based on the
 Raises `ZeroDivisionError`: If the sum of `values` is zero.
 
 ```py
+from pydreamplet.utils import pie_angles
+
 angles = pie_angles([1, 2, 3])
 print(angles)  
 # [(0, 60.0), (60.0, 180.0), (180.0, 360.0)]
@@ -184,6 +202,7 @@ svg.display()
 
 ## <span class="func"></span>`sample_uniform`
 
+<!--skip-->
 ```py
 sample_uniform(my_list, n, precedence="first")
 ```
@@ -203,6 +222,8 @@ Selects uniformly spaced indices from a list based on the total number of items,
 Raises `ValueError`: If precedence is not `"first"`, `"last"`, or `None`.
 
 ```py
+from pydreamplet.utils import sample_uniform
+
 # With "first" precedence (anchoring the first element):
 indices = sample_uniform(["a", "b", "c", "d", "e", "f", "g", "h", "i", "j"], n=4, precedence="first")
 print(indices)  # Expected output: (0, 3, 6, 9)
@@ -218,6 +239,7 @@ print(indices)  # Expected output: (1, 3, 7, 10)
 
 ## <span class="func"></span>`force_distance`
 
+<!--skip-->
 ```py
 force_distance(values, distance)
 ```
@@ -234,6 +256,8 @@ Adjusts an unsorted list of numeric label positions so that the spacing between 
 *(list[float])*: A list of adjusted label positions that meet the minimum spacing requirement, returned in the same order as the input list.
 
 ```py
+from pydreamplet.utils import force_distance
+
 input_values = [2, 6, 7, 8, 10, 16, 18]
 adjusted_positions = force_distance(input_values, distance=2)
 print(adjusted_positions)  # Expected output: [2, 5, 7, 9, 11, 16, 18]

@@ -8,6 +8,7 @@ The `SVG` class represents the root SVG element. It manages the viewbox, provide
 
 ## <span class=class></span>`pydreamplet.core.SVG`
 
+<!--skip-->
 ```py
 SVG(*viewbox, **kwargs)
 ```
@@ -33,6 +34,7 @@ print(svg)  # <svg xmlns="http://www.w3.org/2000/svg" width="400px" height="300p
 
 It does not need to be done during initialization. You can set any attribute of [SvgElement](svgelement.md) using `**kwargs`.
 
+<!--skip-->
 ```py
 svg = dp.SVG(300, 300)
 svg.width = "600px"
@@ -41,6 +43,7 @@ svg.height = "600px"
 
 ### <span class="meth"></span>`from_element`
 
+<!--skip-->
 ```py
 SVG.from_element(element: ET.Element)
 ```
@@ -49,6 +52,7 @@ Creates an SVG instance from an ElementTree element.
 
 ### <span class="meth"></span>`from_file`
 
+<!--skip-->
 ```py
 SVG.from_file(filename: str)
 ```
@@ -75,6 +79,7 @@ Creates an SVG instance by parsing an SVG file.
 
     Remember, based on `viewBox`. Do not confuse these properties with `width` and `height` attributes of the SVG element.
 
+<!--skip-->
 ```py
 import pydreamplet as dp
 
@@ -88,6 +93,7 @@ print(f"svg.width is {svg.width}, svg.height is {svg.height}")  # Outputs svg.wi
 
 ### <span class="meth"></span>`style`
 
+<!--skip-->
 ```py
 def style(
     self, file_path: str, overwrite: bool = True, minify: bool = True
@@ -98,6 +104,7 @@ Adds a `<style>` element to the SVG using CSS content loaded from an external fi
 
 === "Usage example"
 
+    <!--skip-->
     ```py
     from pydreamplet import SVG, Circle
 
@@ -121,6 +128,7 @@ Adds a `<style>` element to the SVG using CSS content loaded from an external fi
 
 ### <span class="meth"></span>`display`
 
+<!--skip-->
 ```py
 display(self) -> None
 ```
@@ -129,6 +137,7 @@ Displays the SVG in an IPython environment.
 
 ### <span class="meth"></span>`save`
 
+<!--skip-->
 ```py
 save(self, filename: str) -> None
 ```

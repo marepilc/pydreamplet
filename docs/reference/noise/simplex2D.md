@@ -4,6 +4,7 @@ The SimplexNoise2D class is a two-dimensional noise generator based on the simpl
 
 ## <span class=class></span>`dreamplet.noise.SimplexNoise2D`
 
+<!--skip-->
 ```py
 SimplexNoise2D(seed: int = None)
 ```
@@ -13,6 +14,8 @@ SimplexNoise2D(seed: int = None)
 - `seed` *(int, optional)*: An optional seed for noise generation. When provided, the noise sequence will be reproducible.
 
 ```py
+from pydreamplet.noise import SimplexNoise2D
+
 simplex2d = SimplexNoise2D(seed=123)
 value = simplex2d.noise(10.5, 20.75, frequency=0.05, amplitude=1.0)
 print(value)  # Outputs a noise value scaled to [0, 1]
@@ -20,6 +23,7 @@ print(value)  # Outputs a noise value scaled to [0, 1]
 
 ### <span class="meth"></span>`noise`
 
+<!--skip-->
 ```py
 noise(
     self,

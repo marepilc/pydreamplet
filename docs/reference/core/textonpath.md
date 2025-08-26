@@ -8,6 +8,7 @@ The TextOnPath class represents an SVG text element that follows a path. It wrap
 
 ## <span class=class></span>`pydreamplet.core.TextOnPath`
 
+<!--skip-->
 ```py
 TextOnPath(
     initial_text: str = "",
@@ -27,6 +28,8 @@ Initializes a new text-on-path element with optional initial content and a refer
 - `**kwargs`: Additional attributes for the text element.
 
 ```py
+from pydreamplet import TextOnPath
+
 text_on_path = TextOnPath("Curved Text", path="#myPath", fill="blue")
 ```
 
@@ -36,6 +39,7 @@ text_on_path = TextOnPath("Curved Text", path="#myPath", fill="blue")
 
 `Setter:` Updates the text content on the path.
 
+<!--skip-->
 ```py
 print(text_on_path.content)
 text_on_path.content = "Updated Text"

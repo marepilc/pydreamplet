@@ -4,6 +4,7 @@ The SimplexNoise class is a one-dimensional noise generator that builds on the f
 
 ### <span class=class></span>`dreamplet.noise.SimplexNoise`
 
+<!--skip-->
 ```py
 SimplexNoise(seed: int = None)
 ```
@@ -13,12 +14,15 @@ SimplexNoise(seed: int = None)
 - `seed` *(int, optional)*: An optional seed for noise generation. Providing a seed ensures that the noise sequence is reproducible.
 
 ```py
+from pydreamplet.noise import SimplexNoise
+
 simplex = SimplexNoise(seed=42)
 print(simplex.noise(0.5))
 ```
 
 ### <span class="meth"></span>`noise`
 
+<!--skip-->
 ```py
 noise(self, x: float, frequency: float = 1, amplitude: float = 1) -> float
 ```

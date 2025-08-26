@@ -8,6 +8,9 @@ The `Line` class represents an SVG line element. It allows setting start and end
 
 ## <span class=class></span>`pydreamplet.core.Line`
 
+<!--skip-->
+<!--skip-->
+<!--skip-->
 ```py
 Line(
     x1: float = 0,
@@ -28,6 +31,7 @@ Initializes a new line with specified start (x1, y1) and end (x2, y2) coordinate
 - `y2` *(float)*: The y-coordinate of the end point.
 - `**kwargs`: Additional attributes for the line.
 
+<!--skip-->
 ```py
 from pydreamplet import SVG, Line
 
@@ -43,6 +47,8 @@ svg.append(
 
 **Getters and Setters:** Retrieve or update the line's coordinates.
 
+<!--skip-->
+<!--skip-->
 ```py
 print(line.x1, line.y1, line.x2, line.y2)
 line.x1 = 10
@@ -53,6 +59,8 @@ line.y1 = 10
 
 Returns the length of the line calculated using the distance formula.
 
+<!--skip-->
+<!--skip-->
 ```py
 print(line.length)
 ```
@@ -61,6 +69,8 @@ print(line.length)
 
 Returns the angle (in degrees) of the line relative to the positive x-axis.
 
+<!--skip-->
+<!--skip-->
 ```py
 print(line.angle)
 ```

@@ -4,6 +4,8 @@ The Transformable mixin adds transformation capabilities—translation, rotation
 
 ## <span class=class></span>`pydreamplet.core.Transformable`
 
+<!--skip-->
+<!--skip-->
 ```py
 Transformable(
     pos: Vector = None,
@@ -22,6 +24,7 @@ Initializes transformation properties with position, scale, and rotation angle.
 - `scale` *(Vector, optional)*: Scale vector (default: (1, 1)).
 - `angle` *(float)*: Rotation angle (default: 0).
 
+<!--skip-->
 ```py
 t = Transformable(pos=Vector(10, 20), scale=Vector(2, 2), angle=45)
 ```
@@ -31,6 +34,7 @@ t = Transformable(pos=Vector(10, 20), scale=Vector(2, 2), angle=45)
 
 **Setter:** Updates the position and refreshes the transform.
 
+<!--skip-->
 ```py
 print(t.pos)
 t.pos = Vector(30, 40)
@@ -42,6 +46,7 @@ t.pos = Vector(30, 40)
 
 **Setter:** Updates the scale and refreshes the transform.
 
+<!--skip-->
 ```py
 print(t.scale)
 t.scale = Vector(1, 1)
@@ -53,6 +58,7 @@ t.scale = Vector(1, 1)
 
 **Setter:** Updates the angle and refreshes the transform.
 
+<!--skip-->
 ```py
 print(t.angle)
 t.angle = 90

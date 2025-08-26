@@ -8,6 +8,8 @@ The `Circle` class represents an SVG circle element. It supports setting the cen
 
 ### <span class=class></span>`pydreamplet.core.Circle`
 
+<!--skip-->
+<!--skip-->
 ```py
 Circle(**kwargs)
 ```
@@ -18,6 +20,7 @@ Initializes a new circle. If pos is provided in kwargs, it sets the circle's cen
 
 - `**kwargs`: Attributes for the circle, including pos (a [`Vector`](../math/vector.md)) and other SVG properties (e.g., r for radius).
 
+<!--skip-->
 ```py
 from pydreamplet import SVG, Circle
 
@@ -33,6 +36,8 @@ svg.append(Circle(cx=100, cy=100, r=50, fill="#a00344"))
 
 **Setter:** Updates the center coordinates.
 
+<!--skip-->
+<!--skip-->
 ```py
 print(circle.pos)
 circle.pos = Vector(60, 60)
@@ -43,6 +48,8 @@ circle.pos = Vector(60, 60)
 
 **Setter:** Updates the radius.
 
+<!--skip-->
+<!--skip-->
 ```py
 print(circle.radius)
 circle.radius = 30

@@ -4,6 +4,7 @@ The `Vector` class provides a simple implementation of a two-dimensional vector.
 
 ## <span class=class></span>`dreamplet.math.Vector`
 
+<!--skip-->
 ```py
 Vector(self, x: float, y: float)
 ```
@@ -22,6 +23,7 @@ print(v)  # Output: Vector(x=3.0, y=4.0)
 
 ### <span class="meth"></span>`set`
 
+<!--skip-->
 ```py
 set(self, x: float, y: float) -> None
 ```
@@ -37,6 +39,7 @@ print(v.xy)  # Output: (5.0, 6.0)
 
 ### <span class="meth"></span>`copy`
 
+<!--skip-->
 ```py
 copy(self) -> Vector
 ```
@@ -51,6 +54,7 @@ print(v1 == v2)  # Output: True
 
 ### <span class="meth"></span>`dot`
 
+<!--skip-->
 ```py
 dot(self, other: "Vector") -> float
 ```
@@ -66,6 +70,7 @@ print(result)  # Output: 11.0 (1*3 + 2*4)
 
 ### <span class="meth"></span>`normalize`
 
+<!--skip-->
 ```py
 normalize(self) -> Vector
 ```
@@ -80,6 +85,7 @@ print(normalized_v.magnitude)  # Output: 1.0
 
 ### <span class="meth"></span>`limit`
 
+<!--skip-->
 ```py
 limit(self, limit_scalar: float) -> None
 ```

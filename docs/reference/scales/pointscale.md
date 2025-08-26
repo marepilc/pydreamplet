@@ -4,6 +4,7 @@ The `PointScale` class maps categorical values to discrete points within the out
 
 ## <span class=class></span>`pydreamplet.scales.PointScale`
 
+<!--skip-->
 ```py
 PointScale(
     domain: list[Any],
@@ -19,12 +20,15 @@ PointScale(
 - `padding` *(float, optional)*: The amount of padding on each end (default: 0.5).
 
 ```py
+from pydreamplet.scales import PointScale
+
 point = PointScale(["X", "Y", "Z"], (0, 100))
 print(point.map("Y"))  # Outputs the point corresponding to "Y"
 ```
 
 ### <span class="meth"></span>`map`
 
+<!--skip-->
 ```py
 map(value: Any) -> float | None
 ```

@@ -4,6 +4,7 @@ The `BandScale` class maps categorical values (strings) to evenly spaced positio
 
 ## <span class=class></span>`pydreamplet.scales.BandScale`
 
+<!--skip-->
 ```py
 BandScale(
     domain: list[Any],
@@ -22,6 +23,8 @@ BandScale(
 - `outer_padding` *(float, optional)*: The outer padding; defaults to the inner padding if not provided.
 
 ```py
+from pydreamplet.scales import BandScale
+
 band = BandScale(["A", "B", "C"], (0, 300))
 print(band.map("B"))  # Outputs the start position for category "B"
 print(band.bandwidth)  # Width of each band
@@ -29,6 +32,7 @@ print(band.bandwidth)  # Width of each band
 
 ### <span class="meth"></span>`map`
 
+<!--skip-->
 ```py
 map(value: Any) -> float
 ```

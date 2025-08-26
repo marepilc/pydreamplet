@@ -4,6 +4,7 @@ The `CircleScale` class maps an input value to a circle radius such that the cir
 
 ## <span class=class></span>`pydreamplet.scales.CircleScale`
 
+<!--skip-->
 ```py
 CircleScale(
     domain: NumericPair,
@@ -16,13 +17,17 @@ CircleScale(
 - `domain` *(NumericPair)*: The numeric input domain.
 - `output_range` *(NumericPair)*: The desired radius range (rmin, rmax).
 
+
 ```py
+from pydreamplet.scales import CircleScale
+
 circle_scale = CircleScale((0, 100), (5, 20))
 print(circle_scale.map(50))  # Outputs the radius corresponding to the value 50
 ```
 
 ### <span class="meth"></span>`map`
 
+<!--skip-->
 ```py
 map(value: float) -> float
 ```

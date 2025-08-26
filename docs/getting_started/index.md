@@ -27,8 +27,8 @@ from pydreamplet.colors import random_color
 svg = dp.SVG(300, 300)
 
 circle = dp.Circle(
-    cx=svg.width/2,
-    cy=svg.height/2,
+    cx=svg.w/2,
+    cy=svg.h/2,
     r=100,
     fill=random_color(),
 )

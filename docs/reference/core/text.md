@@ -8,6 +8,7 @@ The `Text` class represents an SVG text element. It supports setting the positio
 
 ## <span class=class></span>`pydreamplet.core.Text`
 
+<!--skip-->
 ```py
 Text(initial_text: str = "", **kwargs)
 ```
@@ -44,6 +45,7 @@ svg = SVG(300, 200).append(
 
 **Setter:** Updates the text position.
 
+<!--skip-->
 ```py
 print(text_elem.pos)
 text_elem.pos = Vector(60, 60)
@@ -55,6 +57,7 @@ text_elem.pos = Vector(60, 60)
 
 **Setter:** Updates the text content. For multiline text, the content is split into <tspan> elements.
 
+<!--skip-->
 ```py
 print(text_elem.content)
 text_elem.content = "Line 1\nLine 2"
