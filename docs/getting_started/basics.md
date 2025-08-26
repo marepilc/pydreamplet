@@ -66,6 +66,7 @@ print(circle.area)
 
 will print the area of the circle, while:
 
+<!--skip-->
 ```py
 circle = dp.SvgElement("circle", cx=200, cy=150, r=100, fill="#1b313b")
 print(circle.area) # Will not work
@@ -156,6 +157,7 @@ for circle in odd:
 
     We use the string "none", not Python's None, because None is used to remove an attribute. The code
 
+    <!--skip-->
     ```py hl_lines="3"
     odd = svg.find_all("circle", class_name="odd")
     for circle in odd:

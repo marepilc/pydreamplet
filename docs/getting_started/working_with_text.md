@@ -76,6 +76,7 @@ At this point, we already have our text placed at the center of the SVG. However
 
 To measure the width and height of any text string, pyDreamplet provides the TypographyMeasurer class. Under the hood, it uses Pillow for measurement:
 
+<!--skip-->
 ```py
 measurer = TypographyMeasurer()
 
@@ -97,6 +98,7 @@ The returned `width` and `height` are floating-point values representing the app
 ## Visualizing Bounding Boxes
 Often, it helps to draw a rectangle around the text to see exactly how it’s placed. We can use the measured `width` and `height` for that.
 
+<!--skip-->
 ```py
 # Create a rectangle based on the measured text dimensions
 rect = dp.Rect(

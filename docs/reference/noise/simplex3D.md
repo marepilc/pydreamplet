@@ -4,6 +4,7 @@ The SimplexNoise3D class extends the simplex noise algorithm into three dimensio
 
 ## <span class=class></span>`dreamplet.noise.SimplexNoise3D`
 
+<!--skip-->
 ```py
 SimplexNoise3D(seed: int = None)
 ```
@@ -13,6 +14,8 @@ SimplexNoise3D(seed: int = None)
 - `seed` *(int, optional)*: An optional seed for noise generation. When provided, the noise sequence will be reproducible.
 
 ```py
+from pydreamplet.noise import SimplexNoise3D
+
 simplex3d = SimplexNoise3D(seed=456)
 value = simplex3d.noise(2.0, 3.5, 7.8, frequency=0.2, amplitude=1.0)
 print(value)  # Outputs a noise value scaled to [0, 1]
@@ -20,6 +23,7 @@ print(value)  # Outputs a noise value scaled to [0, 1]
 
 ### <span class="meth"></span>`noise`
 
+<!--skip-->
 ```py
 noise(
     self,

@@ -4,6 +4,7 @@ This module provides various utility functions for color conversion, manipulatio
 
 ## <span class="func"></span>`hexStr`
 
+<!--skip-->
 ```py
 hexStr(n: int) -> str
 ```
@@ -14,12 +15,14 @@ Converts an integer (0-255) to a two-digit hexadecimal string.
 
 - `n` *(int)*: An integer value between 0 and 255.
 
+<!--skip-->
 ```py
 print(hexStr(15))  # Output: "0f"
 ```
 
 ## <span class="func"></span>`random_int`
 
+<!--skip-->
 ```py
 random_int(min_val: int, max_val: int) -> int
 ```
@@ -31,11 +34,13 @@ Returns a random integer N such that min_val <= N <= max_val.
 - `min_val` *(int)*: The minimum value.
 - `max_val` *(int)*: The maximum value.
 
+<!--skip-->
 ```py
 print(random_int(1, 10))  # Output: An integer between 1 and 10
 ```
 ## <span class="func"></span>`str2rgb`
 
+<!--skip-->
 ```py
 str2rgb(col: str) -> dict
 ```
@@ -47,6 +52,7 @@ If the input doesn't match, returns `{'r': 0, 'g': 0, 'b': 0}`.
 
 - `col` *(str)*: A hex color string.
 
+<!--skip-->
 ```py
 print(str2rgb("#ff0000"))  # Output: {'r': 255, 'g': 0, 'b': 0}
 print(str2rgb("#f00"))     # Output: {'r': 255, 'g': 0, 'b': 0}
@@ -54,6 +60,7 @@ print(str2rgb("#f00"))     # Output: {'r': 255, 'g': 0, 'b': 0}
 
 ## <span class="func"></span>`hex_to_rgb`
 
+<!--skip-->
 ```py
 hex_to_rgb(hex_color: str) -> tuple[int, int, int]
 ```
@@ -64,12 +71,14 @@ Converts a hex color string (e.g., "#ff0000") to an (R, G, B) tuple.
 
 - `hex_color` *(str)*: A hex color string in the format "#RRGGBB".
 
+<!--skip-->
 ```py
 print(hex_to_rgb("#00ff00"))  # Output: (0, 255, 0)
 ```
 
 ## <span class="func"></span>`rgb_to_hex`
 
+<!--skip-->
 ```py
 rgb_to_hex(rgb: tuple[int, int, int]) -> str
 ```
@@ -80,12 +89,14 @@ Converts an (R, G, B) tuple to a hex color string.
 
 - `rgb` *(tuple[int, int, int])*: A tuple representing red, green, and blue values.
 
+<!--skip-->
 ```py
 print(rgb_to_hex((0, 0, 255)))  # Output: "#0000ff"
 ```
 
 ## <span class="func"></span>`color2rgba`
 
+<!--skip-->
 ```py
 color2rgba(c, alpha=1) -> str
 ```
@@ -97,12 +108,14 @@ Converts an input color (which can be a list/tuple of three numbers, an integer,
 - `c` *(list/tuple/int/str)*: The input color in one of the supported formats.
 - `alpha` *(float, optional)*: The alpha value (default is 1).
 
+<!--skip-->
 ```py
 print(color2rgba((255, 0, 0), 0.5))   # Output: "rgba(255, 0, 0, 0.5)"
 print(color2rgba("#00ff00", 0.75))     # Output: "rgba(0, 255, 0, 0.75)"
 ```
 ## <span class="func"></span>`blend`
 
+<!--skip-->
 ```py
 blend(color1: str, color2: str, proportion: float) -> str
 ```
@@ -117,24 +130,28 @@ Returns the blended color as a hex string.
 - `color2` *(str)*: The second hex color string.
 - `proportion` *(float)*: The blend proportion (between 0 and 1).
 
+<!--skip-->
 ```py
 print(blend("#ff0000", "#0000ff", 0.5))  # Output: A blended color, e.g., "#800080"
 ```
 
 ## <span class="func"></span>`random_color`
 
+<!--skip-->
 ```py
 random_color() -> str
 ```
 
 Generates a random hex color string.
 
+<!--skip-->
 ```py
 print(random_color())  # Output: e.g., "#3a5fcd"
 ```
 
 ## <span class="func"></span>`generate_colors`
 
+<!--skip-->
 ```py
 generate_colors(
     base_color: str,
@@ -153,6 +170,7 @@ Generates a list of colors equally distributed on the color wheel. The function 
 
 - *(list[str])*: A list of hex color strings representing the generated color palette.
 
+<!--skip-->
 ```py
 # Example: Generate an equally distributed palette of 10 colors.
 palette = generate_colors(base_color="#db45f9", n=10)

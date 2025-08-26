@@ -8,6 +8,9 @@ The `Polygon` class represents an SVG polygon element. It allows setting a list 
 
 ## <span class=class></span>`pydreamplet.core.Polygon`
 
+<!--skip-->
+<!--skip-->
+<!--skip-->
 ```py
 Polygon(
     points: list[Real],
@@ -22,6 +25,7 @@ Initializes a new polygon with the specified vertices. The points must be provid
 - `points` *(list[Real])*: A list of numbers representing the polygon's vertices, for example: `[x1, y1, x2, y2, x3, y3, ...]`.
 - `**kwargs`: Additional attributes for the polygon element.
 
+<!--skip-->
 ```py
 from pydreamplet import SVG, Polygon
 
@@ -35,6 +39,8 @@ svg.append(Polygon([10, 10, 100, 180, 150, 50], fill="#a00344"))
 
 **Getters and Setters:** Retrieve or update the polygon's points. When setting new points, the list is automatically formatted into a string where each vertex is expressed as `"x,y"` and each pair is separated by a space.
 
+<!--skip-->
+<!--skip-->
 ```py
 print(polygon.points)  # [0, 0, 50, 50, 100, 0]
 polygon.points = [0, 0, 0, 20, 20, 20, 20, 0]

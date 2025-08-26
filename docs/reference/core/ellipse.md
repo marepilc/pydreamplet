@@ -8,6 +8,8 @@ The `Ellipse` class represents an SVG ellipse element. It supports setting the c
 
 ## <span class=class></span>`pydreamplet.core.Ellipse`
 
+<!--skip-->
+<!--skip-->
 ```py
 Ellipse(**kwargs)
 ```
@@ -18,6 +20,7 @@ Initializes a new ellipse. If `pos` is provided, it sets the center coordinates.
 
 - `**kwargs`: Attributes for the ellipse, including `pos` (a [`Vector`](../math/vector.md)) and other properties (e.g., `rx`, `ry`).
 
+<!--skip-->
 ```py
 from pydreamplet import SVG, Ellipse, Vector
 
@@ -33,6 +36,8 @@ svg.append(Ellipse(pos=Vector(100, 100), rx=60, ry=40, fill="#a00344"))
 
 **Setter:** Updates the center coordinates.
 
+<!--skip-->
+<!--skip-->
 ```py
 print(ellipse.pos)
 ellipse.pos = Vector(120, 90)

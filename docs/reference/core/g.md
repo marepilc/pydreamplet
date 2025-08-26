@@ -8,6 +8,9 @@ The `G` class represents a group (`<g>`) element in SVG. It inherits from both S
 
 ## <span class=class></span>`pydreamplet.core.G`
 
+<!--skip-->
+<!--skip-->
+<!--skip-->
 ```py
 G(
     pos: Vector = None,
@@ -30,6 +33,8 @@ Initializes a group element with optional transformation properties and a pivot 
 - `order` *(str)*: Transformation order (combination of 't', 'r', 's'; default: "trs").
 
 ```py
+from pydreamplet.core import G
+from pydreamplet.math import Vector
 group = G(pos=Vector(10, 20), angle=30)
 ```
 
@@ -39,6 +44,8 @@ group = G(pos=Vector(10, 20), angle=30)
 
 **Setter:** Updates the pivot point and refreshes the transform.
 
+<!--skip-->
+<!--skip-->
 ```py
 print(group.pivot)
 group.pivot = Vector(5, 5)
@@ -50,6 +57,8 @@ group.pivot = Vector(5, 5)
 
 *Setter:* Updates the order and refreshes the transform.
 
+<!--skip-->
+<!--skip-->
 ```py
 print(group.order)
 group.order = "rts"
@@ -57,6 +66,8 @@ group.order = "rts"
 
 ### <span class="meth"></span>`remove`
 
+<!--skip-->
+<!--skip-->
 ```py
 remove(self, child) -> G
 ```
@@ -65,6 +76,7 @@ Removes a child element. If the group becomes empty, it removes itself from its 
 
 ### <span class="meth"></span>`attrs`
 
+<!--skip-->
 ```py
 attrs(self, attributes: dict) -> G
 ```
@@ -73,6 +85,7 @@ Sets multiple attributes on the group, including parsing transformation details.
 
 ### <span class="meth"></span>`from_element`
 
+<!--skip-->
 ```py
 G.from_element(element: ET.Element)
 ```

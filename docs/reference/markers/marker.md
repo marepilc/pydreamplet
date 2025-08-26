@@ -8,6 +8,7 @@ The `Marker` class represents an SVG marker element used to define reusable grap
 
 ## <span class=class></span>`dreamplet.markers.Marker`
 
+<!--skip-->
 ```py
 Marker(id: str, d: str, width: Real, height: Real, **kwargs)
 ```
@@ -28,6 +29,10 @@ Initializes a new marker. The marker is defined by a path string `d` and dimensi
     - `stroke`: Stroke color for the marker’s path (default: `"none"`).
     - `stroke-width`: Stroke width for the marker’s path (default: `"1"`).
 
+<!--skip-->
+<!--skip-->
+<!--skip-->
+<!--skip-->
 ```py
 from pydreamplet import SVG, SvgElement, Polyline
 from pydreamplet.markers import Marker, ARROW
@@ -59,6 +64,7 @@ svg.append(polyline)
 
 **Setter:** Updates the marker's path data and reflects the change in the underlying path element.
 
+<!--skip-->
 ```py
 print(marker.d)
 marker.d = ARROW_CONVEX  # Update to a different arrow style
@@ -70,6 +76,7 @@ marker.d = ARROW_CONVEX  # Update to a different arrow style
 
 **Setter:** Sets the fill color for the marker's path.
 
+<!--skip-->
 ```py
 print(marker.fill)
 marker.fill = "#ff0000"
@@ -81,6 +88,7 @@ marker.fill = "#ff0000"
 
 **Setter:** Updates the stroke color of the marker's path.
 
+<!--skip-->
 ```py
 print(marker.stroke)
 marker.stroke = "#00ff00"
@@ -92,6 +100,7 @@ marker.stroke = "#00ff00"
 
 **Setter:** Sets the stroke width for the marker's path.
 
+<!--skip-->
 ```py
 print(marker.stroke_width)
 marker.stroke_width = 2

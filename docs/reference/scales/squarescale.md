@@ -4,6 +4,7 @@ The `SquareScale` class maps an input value to an output using a square-root tra
 
 ## <span class=class></span>`pydreamplet.scales.SquareScale`
 
+<!--skip-->
 ```py
 SquareScale(
     domain: NumericPair,
@@ -17,6 +18,8 @@ SquareScale(
 - `output_range` *(NumericPair)*: The target output range.
 
 ```py
+from pydreamplet.scales import SquareScale
+
 square = SquareScale((0, 100), (0, 10))
 print(square.map(25))  # Maps the square-root of 25 to the output range
 ```
@@ -24,6 +27,7 @@ print(square.map(25))  # Maps the square-root of 25 to the output range
 
 ### <span class="meth"></span>`map`
 
+<!--skip-->
 ```py
 map(value: float) -> float
 ```

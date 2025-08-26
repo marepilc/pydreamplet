@@ -9,6 +9,7 @@ This module provides functions and classes for working with system fonts and mea
 
 ## <span class="func"></span>`get_system_font_path`
 
+<!--skip-->
 ```py
 get_system_font_path(
     font_family: str,
@@ -30,6 +31,8 @@ Searches common system directories for a TrueType or OpenType font file (`.ttf` 
 *(str | None)*: The full path to the matching font file, or None if no match is found.
 
 ```py
+from pydreamplet.typography import get_system_font_path
+
 path = get_system_font_path("Arial", 400)
 if path:
     print("Found font:", path)
@@ -41,6 +44,7 @@ else:
 
 The TypographyMeasurer class measures the rendered width and height of text given a specific font and size. It converts point sizes to pixels based on the provided DPI and leverages the PIL library for text measurement.
 
+<!--skip-->
 ```py
 TypographyMeasurer(dpi: float = 72.0, font_path: str | None = None)
 ```
@@ -56,6 +60,7 @@ measurer = TypographyMeasurer(dpi=96)
 
 ### <span class="meth"></span>`measure_text`
 
+<!--skip-->
 ```py
 measure_text(
     text: str,

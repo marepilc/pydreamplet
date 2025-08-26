@@ -8,6 +8,8 @@ The `Path` class represents an SVG path element. It allows you to set the path d
 
 ## <span class=class></span>`pydreamplet.core.Path`
 
+<!--skip-->
+<!--skip-->
 ```py
 Path(d: str = "", **kwargs)
 ```
@@ -19,6 +21,7 @@ Initializes a new path with an optional d attribute containing path commands.
 - `d` *(str, optional)*: The path data string.
 - `**kwargs`: Additional attributes for the path element.
 
+<!--skip-->
 ```py
 from pydreamplet import SVG, Path
 from pydreamplet.shapes import star
@@ -40,6 +43,8 @@ svg.append(
 
 **Setter:** Updates the path data.
 
+<!--skip-->
+<!--skip-->
 ```py
 print(path.d)
 path.d = "M0 0 L50 50"

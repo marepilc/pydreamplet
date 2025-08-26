@@ -8,6 +8,7 @@ The `Rect` class represents an SVG rectangle element. It supports setting the po
 
 ## <span class=class></span>`pydreamplet.core.Rect`
 
+<!--skip-->
 ```py
 Rect(**kwargs)
 ```
@@ -18,6 +19,7 @@ Initializes a new rectangle. If pos is provided, it sets the top-left corner.
 
 - `**kwargs`: Attributes for the rectangle, including `pos` (a [`Vector`](../math/vector.md)) and other properties (e.g., `width`, `height`).
  
+<!--skip-->
 ```py
 from pydreamplet import SVG, Rect, Vector
 
@@ -40,6 +42,7 @@ svg.append(
 
 **Setter:** Updates the position.
 
+<!--skip-->
 ```py
 print(rect.pos)
 rect.pos = Vector(20, 20)

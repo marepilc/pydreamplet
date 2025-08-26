@@ -4,6 +4,7 @@ The `OrdinalScale` class maps categorical values to a set of output values in a 
 
 ## <span class=class></span>`pydreamplet.scales.OrdinalScale`
 
+<!--skip-->
 ```py
 OrdinalScale(domain: list[Any], output_range: list)
 ```
@@ -14,12 +15,15 @@ OrdinalScale(domain: list[Any], output_range: list)
 - `output_range` *(list)*: A list of output values (e.g., colors) to map to, which are reused cyclically.
 
 ```py
+from pydreamplet.scales import OrdinalScale
+
 ordinal = OrdinalScale(["apple", "banana", "cherry"], ["red", "yellow"])
 print(ordinal.map("cherry"))  # Output: "red" (wraps around)
 ```
 
 ### <span class="meth"></span>`map`
 
+<!--skip-->
 ```py
 map(value: Any) -> object
 ```
