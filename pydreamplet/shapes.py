@@ -30,7 +30,7 @@ def star(
     # Convert the angle offset from degrees to radians.
     angle_offset = math.radians(angle)
 
-    points = []
+    points: list[str] = []
     # There are 2*n vertices: the angular step between each vertex is pi/n.
     step = math.pi / n
     for i in range(2 * n):
@@ -197,7 +197,7 @@ def polygon(x: float, y: float, radius: float, n: int, angle: float = 0) -> str:
     """
     angle_offset = math.radians(angle)
     angle_step = 2 * math.pi / n
-    points = []
+    points: list[str] = []
     for i in range(n):
         a = i * angle_step - math.pi / 2 + angle_offset
         sx = x + math.cos(a) * radius
@@ -252,7 +252,7 @@ def cross(
     cos_a = math.cos(rad)
     sin_a = math.sin(rad)
 
-    rotated_points = []
+    rotated_points: list[tuple[float, float]] = []
     for px, py in points:
         # Rotate the point by the given angle.
         rx = px * cos_a - py * sin_a
@@ -301,7 +301,7 @@ def arc(
     )
 
     # Helper function to compute a point on the circle.
-    def point(angle_rad: float):
+    def point(angle_rad: float) -> tuple[float, float]:
         return (x + radius * math.cos(angle_rad), y + radius * math.sin(angle_rad))
 
     start_point = point(start_rad)
@@ -361,7 +361,7 @@ def ring(
         delta_deg, 360, abs_tol=1e-9
     )
 
-    def point(r, angle):
+    def point(r: float, angle: float) -> tuple[float, float]:
         return (x + r * math.cos(angle), y + r * math.sin(angle))
 
     outer_start = point(outer_radius, start_rad)

@@ -1,9 +1,11 @@
 from collections.abc import Sequence
 from math import ceil, floor, log10
 from math import pi as PI
-from typing import Any, TypedDict
+from typing import Any, Literal, TypedDict
 
 from pydreamplet.core import Real
+
+type Precedence = Literal["first", "last"] | None
 
 
 class Pool(TypedDict):
@@ -14,31 +16,31 @@ class Pool(TypedDict):
     value: float
 
 
-def math_round(x):
+def math_round(x: Real) -> int:
     """
     Rounds x to the nearest integer using round half up.
     """
     return int(x + 0.5)
 
 
-def constrain(value, min_val, max_val):
+def constrain(value: Real, min_val: Real, max_val: Real) -> Real:
     """Constrain value between min_val and max_val."""
     return max(min_val, min(value, max_val))
 
 
-def radians(degrees):
+def radians(degrees: Real) -> Real:
     """Convert degrees to radians."""
     return degrees * PI / 180
 
 
-def degrees(radians):
+def degrees(radians: Real) -> Real:
     """Convert radians to degrees."""
     return radians * 180 / PI
 
 
 def calculate_ticks(
-    min_val: Real, max_val: Real, num_ticks=5, below_max=True
-):
+    min_val: Real, max_val: Real, num_ticks: int = 5, below_max: bool = True
+) -> list[Real]:
     """
     Generate rounded tick values between min_val and max_val.
 
@@ -70,17 +72,19 @@ def calculate_ticks(
     end = ceil(max_val / step) * step  # Use ceil to ensure coverage
 
     # Generate ticks using floating point arithmetic to handle decimal ranges
-    ticks = []
+    ticks: list[Real] = []
     current = start
     while current <= end + step / 2:  # Add small tolerance for floating point precision
         ticks.append(current)
         current += step
-    
+
     # Round to avoid floating point precision issues
     ticks = [round(tick, 10) for tick in ticks]
-    
+
     if below_max:
-        ticks = [tick for tick in ticks if tick <= max_val + step / 1000]  # Small tolerance
+        ticks = [
+            tick for tick in ticks if tick <= max_val + step / 1000
+        ]  # Small tolerance
 
     return ticks
 
@@ -103,7 +107,7 @@ def pie_angles(
         end_angle = start_angle + 360
 
     total = sum(values)
-    angles = []
+    angles: list[tuple[float, float]] = []
     angle_span = end_angle - start_angle
     current_angle = start_angle
 
@@ -123,7 +127,9 @@ def pure_linspace(start: Real, stop: Real, num: int) -> list[Real]:
     return [start + step * i for i in range(num)]
 
 
-def sample_uniform(input_list: list[Any], n: int, precedence="first"):
+def sample_uniform(
+    input_list: list[Any], n: int, precedence: Precedence = "first"
+) -> tuple[int, ...]:
     L = len(input_list)
     if n <= 1:
         # if only one item is needed, return an anchor based on precedence.
@@ -173,7 +179,7 @@ def create_pool(
     }
 
 
-def force_distance(values: list[float], distance: float) -> list[float]:
+def force_distance(values: Sequence[Real], distance: Real) -> list[Real]:
     """
     Given an unsorted list of numeric values and a band size,
     adjust the positions so that each label (with width=band) centered

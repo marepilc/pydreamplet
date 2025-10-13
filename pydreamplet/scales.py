@@ -1,12 +1,11 @@
 import math
-from typing import Any, Iterable, Sequence, TypeVar
+from typing import Any, Iterable, Sequence
 
 from pydreamplet.core import Real
 
 from pydreamplet.colors import hex_to_rgb, rgb_to_hex
 
 type NumericPair = tuple[Real, Real] | list[Real]
-T = TypeVar("T")
 
 
 class LinearScale:
@@ -20,7 +19,7 @@ class LinearScale:
         self._output_range = output_range
         self._calculate_slope()
 
-    def _calculate_slope(self):
+    def _calculate_slope(self) -> None:
         """Calculates the slope for the linear scale."""
         self.slope = (self._output_range[1] - self._output_range[0]) / (
             self._domain[1] - self._domain[0]
@@ -39,7 +38,7 @@ class LinearScale:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: NumericPair):
+    def domain(self, new_domain: NumericPair) -> None:
         self._domain = new_domain
         self._calculate_slope()
 
@@ -48,7 +47,7 @@ class LinearScale:
         return self._output_range
 
     @output_range.setter
-    def output_range(self, new_output_range: NumericPair):
+    def output_range(self, new_output_range: NumericPair) -> None:
         self._output_range = new_output_range
         self._calculate_slope()
 
@@ -74,7 +73,7 @@ class BandScale:
         self._outer_padding = outer_padding if outer_padding is not None else padding
         self._calculate_band_properties()
 
-    def _calculate_band_properties(self):
+    def _calculate_band_properties(self) -> None:
         """Calculates the band width and step size for the band scale."""
         num_bands = len(self._domain)
         total_padding = (num_bands - 1) * self._padding + 2 * self._outer_padding
@@ -106,7 +105,7 @@ class BandScale:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: list[Any] | tuple[Any, ...] | Iterable[Any]):
+    def domain(self, new_domain: list[Any] | tuple[Any, ...] | Iterable[Any]) -> None:
         self._domain = list(new_domain)
         self._calculate_band_properties()
 
@@ -115,7 +114,7 @@ class BandScale:
         return self._output_range
 
     @output_range.setter
-    def output_range(self, new_output_range: NumericPair):
+    def output_range(self, new_output_range: NumericPair) -> None:
         self._output_range = new_output_range
         self._calculate_band_properties()
 
@@ -124,7 +123,7 @@ class BandScale:
         return self._padding
 
     @padding.setter
-    def padding(self, new_padding: float):
+    def padding(self, new_padding: float) -> None:
         self._padding = new_padding
         self._calculate_band_properties()
 
@@ -133,7 +132,7 @@ class BandScale:
         return self._outer_padding
 
     @outer_padding.setter
-    def outer_padding(self, new_outer_padding: float):
+    def outer_padding(self, new_outer_padding: float) -> None:
         self._outer_padding = new_outer_padding
         self._calculate_band_properties()
 
@@ -157,7 +156,7 @@ class PointScale:
         self._padding = padding
         self._calculate_step()
 
-    def _calculate_step(self):
+    def _calculate_step(self) -> None:
         """Calculates the step size based on the domain length and padding."""
         if not self._domain:
             raise ValueError("Domain must contain at least one value")
@@ -181,7 +180,7 @@ class PointScale:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: list[Any] | tuple[Any, ...] | Iterable[Any]):
+    def domain(self, new_domain: list[Any] | tuple[Any, ...] | Iterable[Any]) -> None:
         self._domain = list(new_domain)
         self._calculate_step()
 
@@ -190,7 +189,7 @@ class PointScale:
         return self._output_range
 
     @output_range.setter
-    def output_range(self, new_output_range: NumericPair):
+    def output_range(self, new_output_range: NumericPair) -> None:
         self._output_range = new_output_range
         self._calculate_step()
 
@@ -199,7 +198,7 @@ class PointScale:
         return self._padding
 
     @padding.setter
-    def padding(self, new_padding: float):
+    def padding(self, new_padding: float) -> None:
         self._padding = new_padding
         self._calculate_step()
 
@@ -214,24 +213,25 @@ class OrdinalScale:
     def __init__(
         self,
         domain: list[Any] | tuple[Any, ...] | Iterable[Any],
-        output_range: list | tuple | Sequence,
+        output_range: list[Any] | tuple[Any, ...] | Sequence[Any],
     ):
-        self._domain = list(domain)
+        self._domain: list[Any] = list(domain)
         if len(set(self._domain)) != len(self._domain):
             raise ValueError("Domain values must be distinct")
 
-        self._output_range = list(output_range)
+        self._output_range: list[Any] = list(output_range)
         if not self._output_range:
             raise ValueError("Output range must contain at least one value")
+        self._mapping: dict[Any, Any] = {}
         self._generate_mapping()
 
-    def _generate_mapping(self):
+    def _generate_mapping(self) -> None:
         self._mapping = {
             d: self._output_range[i % len(self._output_range)]
             for i, d in enumerate(self._domain)
         }
 
-    def map(self, value: Any) -> object:
+    def map(self, value: Any) -> Any | None:
         """Returns the mapped output value for the given domain value."""
         return self._mapping.get(value)
 
@@ -240,16 +240,16 @@ class OrdinalScale:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: list[Any] | tuple[Any, ...] | Iterable[Any]):
+    def domain(self, new_domain: list[Any] | tuple[Any, ...] | Iterable[Any]) -> None:
         self._domain = list(new_domain)
         self._generate_mapping()
 
     @property
-    def output_range(self) -> list:
+    def output_range(self) -> list[Any]:
         return self._output_range
 
     @output_range.setter
-    def output_range(self, new_output_range: list | tuple | Sequence):
+    def output_range(self, new_output_range: list[Any] | tuple[Any, ...] | Sequence[Any]) -> None:
         new_output_range = list(new_output_range)
         if not new_output_range:
             raise ValueError("Output range must contain at least one value")
@@ -293,7 +293,7 @@ class ColorScale:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: NumericPair):
+    def domain(self, new_domain: NumericPair) -> None:
         self._domain = new_domain
 
     @property
@@ -301,7 +301,7 @@ class ColorScale:
         return self._output_range
 
     @output_range.setter
-    def output_range(self, new_output_range: tuple[str, str] | list[str]):
+    def output_range(self, new_output_range: tuple[str, str] | list[str]) -> None:
         if len(new_output_range) != 2:
             raise ValueError("Output range must contain exactly two colors")
         self._output_range = new_output_range
@@ -341,7 +341,7 @@ class SquareScale:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: NumericPair):
+    def domain(self, new_domain: NumericPair) -> None:
         self._domain = new_domain
         d0, d1 = new_domain
         if d0 < 0 or d1 < 0:
@@ -356,7 +356,7 @@ class SquareScale:
         return self._output_range
 
     @output_range.setter
-    def output_range(self, new_output_range: NumericPair):
+    def output_range(self, new_output_range: NumericPair) -> None:
         self._output_range = new_output_range
 
 
@@ -388,7 +388,7 @@ class CircleScale:
         return self._domain
 
     @domain.setter
-    def domain(self, new_domain: NumericPair):
+    def domain(self, new_domain: NumericPair) -> None:
         self._domain = new_domain
         d0, d1 = new_domain
         if d1 == d0:
@@ -399,5 +399,5 @@ class CircleScale:
         return self._output_range
 
     @output_range.setter
-    def output_range(self, new_output_range: NumericPair):
+    def output_range(self, new_output_range: NumericPair) -> None:
         self._output_range = new_output_range

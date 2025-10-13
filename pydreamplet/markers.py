@@ -1,3 +1,5 @@
+from typing import Any
+
 from pydreamplet import Path, SvgElement
 from pydreamplet.core import Real
 
@@ -29,12 +31,12 @@ class Marker(SvgElement):
         d: str,
         width: Real,
         height: Real,
-        **kwargs,
+        **kwargs: Any,
     ):
         super().__init__("marker")
-        self._id = id
-        self._d = d
-        defaults = {
+        self._id: str = id
+        self._d: str = d
+        defaults: dict[str, str] = {
             "id": id,
             "markerWidth": str(width),
             "markerHeight": str(height),
@@ -56,11 +58,11 @@ class Marker(SvgElement):
         self.append(marker_path)
 
     @property
-    def d(self):
+    def d(self) -> str:
         return self._d
 
     @d.setter
-    def d(self, value):
+    def d(self, value: str):
         self._d = value
         path_element = self.find("path")
         if path_element is not None:
@@ -74,7 +76,7 @@ class Marker(SvgElement):
         return None
 
     @fill.setter
-    def fill(self, value):
+    def fill(self, value: str):
         path_element = self.find("path")
         if path_element is not None:
             path_element.fill = value
@@ -87,7 +89,7 @@ class Marker(SvgElement):
         return None
 
     @stroke.setter
-    def stroke(self, value):
+    def stroke(self, value: str):
         path_element = self.find("path")
         if path_element is not None:
             path_element.stroke = value
@@ -100,7 +102,7 @@ class Marker(SvgElement):
         return None
 
     @stroke_width.setter
-    def stroke_width(self, value):
+    def stroke_width(self, value: str):
         path_element = self.find("path")
         if path_element is not None:
             path_element.stroke_width = value

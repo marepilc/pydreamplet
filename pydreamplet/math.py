@@ -1,22 +1,18 @@
 import math
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from pydreamplet.core import Real
-else:
-    Real = int | float
+type Real = int | float
 
 
 class Vector:
     def __init__(self, x: Real, y: Real):
         """Creates a new 2D vector."""
-        self._x = x
-        self._y = y
+        self._x: float = float(x)
+        self._y: float = float(y)
 
     def set(self, x: Real, y: Real) -> None:
         """Changes the x and y coordinates."""
-        self._x = x
-        self._y = y
+        self._x = float(x)
+        self._y = float(y)
 
     @property
     def x(self) -> float:
@@ -24,7 +20,7 @@ class Vector:
 
     @x.setter
     def x(self, value: Real) -> None:
-        self._x = value
+        self._x = float(value)
 
     @property
     def y(self) -> float:
@@ -32,7 +28,7 @@ class Vector:
 
     @y.setter
     def y(self, value: Real) -> None:
-        self._y = value
+        self._y = float(value)
 
     @property
     def xy(self) -> tuple[float, float]:
@@ -43,62 +39,54 @@ class Vector:
         """Returns a duplicate of the vector."""
         return Vector(self._x, self._y)
 
-    def __eq__(self, other):
+    def __eq__(self, other: object) -> bool:
         if isinstance(other, Vector):
             return self._x == other._x and self._y == other._y
         return NotImplemented
 
     # Operator overloading for addition
-    def __add__(self, other: "Vector") -> "Vector":
+    def __add__(self, other: object) -> "Vector":
         if not isinstance(other, Vector):
-            return NotImplemented
+            raise TypeError(f"unsupported operand type(s) for +: 'Vector' and '{type(other).__name__}'")
         return Vector(self._x + other.x, self._y + other.y)
 
-    def __iadd__(self, other: "Vector") -> "Vector":
+    def __iadd__(self, other: object) -> "Vector":
         if not isinstance(other, Vector):
-            return NotImplemented
+            raise TypeError(f"unsupported operand type(s) for +=: 'Vector' and '{type(other).__name__}'")
         self._x += other.x
         self._y += other.y
         return self
 
     # Operator overloading for subtraction
-    def __sub__(self, other: "Vector") -> "Vector":
+    def __sub__(self, other: object) -> "Vector":
         if not isinstance(other, Vector):
-            return NotImplemented
+            raise TypeError(f"unsupported operand type(s) for -: 'Vector' and '{type(other).__name__}'")
         return Vector(self._x - other.x, self._y - other.y)
 
-    def __isub__(self, other: "Vector") -> "Vector":
+    def __isub__(self, other: object) -> "Vector":
         if not isinstance(other, Vector):
-            return NotImplemented
+            raise TypeError(f"unsupported operand type(s) for -=: 'Vector' and '{type(other).__name__}'")
         self._x -= other.x
         self._y -= other.y
         return self
 
     # Operator overloading for scalar multiplication
     def __mul__(self, scalar: Real) -> "Vector":
-        if not isinstance(scalar, (int, float)):  # Keep runtime check
-            return NotImplemented
         return Vector(self._x * scalar, self._y * scalar)
 
     def __rmul__(self, scalar: Real) -> "Vector":
         return self.__mul__(scalar)
 
     def __imul__(self, scalar: Real) -> "Vector":
-        if not isinstance(scalar, (int, float)):  # Keep runtime check
-            return NotImplemented
         self._x *= scalar
         self._y *= scalar
         return self
 
     # Operator overloading for scalar division
     def __truediv__(self, scalar: Real) -> "Vector":
-        if not isinstance(scalar, (int, float)):  # Keep runtime check
-            return NotImplemented
         return Vector(self._x / scalar, self._y / scalar)
 
     def __itruediv__(self, scalar: Real) -> "Vector":
-        if not isinstance(scalar, (int, float)):  # Keep runtime check
-            return NotImplemented
         self._x /= scalar
         self._y /= scalar
         return self

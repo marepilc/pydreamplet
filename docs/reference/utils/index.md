@@ -248,8 +248,8 @@ Adjusts an unsorted list of numeric label positions so that the spacing between 
 
 <span class="param">**Parameters**</span>
 
-- `values` *(list[float])*: A sorted list of original numeric label positions.
-- `distance` *(float)*: The minimum required distance between adjacent labels. Each label can shift within the interval `[v - distance/2, v + distance/2]` relative to its original position.
+- `values` *(Sequence[Real])*: A sequence of original numeric label positions (can be a list, tuple, or any other sequence type).
+- `distance` *(Real)*: The minimum required distance between adjacent labels. Each label can shift within the interval `[v - distance/2, v + distance/2]` relative to its original position.
 
 <span class="returns">**Returns**</span>
 

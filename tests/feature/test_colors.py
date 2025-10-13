@@ -150,7 +150,7 @@ def test_generate_colors_equal_spacing():
         # Convert hex to RGB, then normalize to 0-1.
         r, g, b = hex_to_rgb(color)
         r_norm, g_norm, b_norm = r / 255.0, g / 255.0, b / 255.0
-        h, l, s = colorsys.rgb_to_hls(r_norm, g_norm, b_norm)
+        h, _, s = colorsys.rgb_to_hls(r_norm, g_norm, b_norm)
         hues.append(h)
 
     # Compute circular differences between consecutive hues.

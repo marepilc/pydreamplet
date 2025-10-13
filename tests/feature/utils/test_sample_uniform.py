@@ -39,4 +39,4 @@ def test_invalid_precedence():
     # An invalid precedence should raise a ValueError.
     my_list = list(range(10))
     with pytest.raises(ValueError):
-        sample_uniform(my_list, n=3, precedence="invalid")
+        sample_uniform(my_list, n=3, precedence="invalid")  # type: ignore

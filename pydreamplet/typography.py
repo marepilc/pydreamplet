@@ -78,7 +78,7 @@ def get_system_font_path(
                 # Loop over all name records for a looser match.
                 family_matches = False
 
-                for record in font["name"].names:  # type: ignore
+                for record in font["name"].names:  # type: ignore[index]
                     try:
                         record_value = record.toUnicode().strip()
                     except Exception:

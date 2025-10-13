@@ -5,19 +5,19 @@ import re
 from pydreamplet.utils import constrain, math_round
 
 
-def hexStr(n):
+def hexStr(n: int) -> str:
     """
     Converts an integer (0-255) to a two-digit hexadecimal string.
     """
     return format(n, "02x")
 
 
-def random_int(min_val, max_val):
+def random_int(min_val: int, max_val: int) -> int:
     """Returns a random integer N such that min_val <= N <= max_val."""
     return random.randint(min_val, max_val)
 
 
-def str2rgb(col):
+def str2rgb(col: str) -> dict[str, int]:
     """
     Converts a hex color string to an RGB dictionary.
     Accepts strings in the format "#RRGGBB" or "#RGB".
@@ -61,35 +61,37 @@ def rgb_to_hex(rgb: tuple[int, int, int]) -> str:
     return f"#{r:02x}{g:02x}{b:02x}"
 
 
-def color2rgba(c, alpha=1):
+def color2rgba(
+    c: str | int | list[int] | tuple[int, int, int], alpha: float = 1
+) -> str:
     """
     Converts an input color (which can be a list/tuple of three numbers,
     an integer, or a hex string) and an alpha value to an "rgba(r, g, b, a)" string.
     """
     r = g = b = 0
-    a = 1
+    a: float = 1
     if isinstance(c, (list, tuple)):
         if len(c) == 3:
-            r = constrain(c[0], 0, 255)
-            g = constrain(c[1], 0, 255)
-            b = constrain(c[2], 0, 255)
+            r = int(constrain(c[0], 0, 255))
+            g = int(constrain(c[1], 0, 255))
+            b = int(constrain(c[2], 0, 255))
             a = constrain(alpha, 0, 1)
         else:
             r = g = b = 0
             a = 1
     elif isinstance(c, int):
-        r = g = b = constrain(c, 0, 255)
+        r = g = b = int(constrain(c, 0, 255))
         a = constrain(alpha, 0, 1)
-    elif isinstance(c, str):
+    else:
         rgb = str2rgb(c)
-        r = rgb.get("r", 0)
-        g = rgb.get("g", 0)
-        b = rgb.get("b", 0)
+        r = int(rgb.get("r", 0))
+        g = int(rgb.get("g", 0))
+        b = int(rgb.get("b", 0))
         a = constrain(alpha, 0, 1)
     return f"rgba({r}, {g}, {b}, {a})"
 
 
-def blend(color1, color2, proportion):
+def blend(color1: str, color2: str, proportion: float) -> str:
     """
     Blends two hex color strings by the given proportion.
     proportion: 0 returns color1, 1 returns color2.
@@ -137,7 +139,7 @@ def random_color():
     return "#" + r + g + b
 
 
-def generate_colors(base_color: str, n=10):
+def generate_colors(base_color: str, n: int = 10) -> list[str]:
     """
     Generates a list of `n` colors equally distributed on the color wheel.
 
@@ -165,7 +167,7 @@ def generate_colors(base_color: str, n=10):
     # Convert RGB to HLS (Hue, Lightness, Saturation)
     base_hue, light, sat = colorsys.rgb_to_hls(r_norm, g_norm, b_norm)
 
-    palette = []
+    palette: list[str] = []
     for i in range(n):
         # Evenly space hues on the color wheel.
         new_hue = (base_hue + i / n) % 1.0

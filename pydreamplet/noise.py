@@ -1,5 +1,6 @@
 import math
 import random
+from typing import Callable
 
 
 # ────────────────────────────────────────────────────────────
@@ -17,7 +18,7 @@ class Noise:
         return self._min
 
     @min.setter
-    def min(self, value: float):
+    def min(self, value: float) -> None:
         old_relative = self.noise_range
         if self._value < value:
             self._value = value
@@ -29,7 +30,7 @@ class Noise:
         return self._max
 
     @max.setter
-    def max(self, value: float):
+    def max(self, value: float) -> None:
         old_relative = self.noise_range
         if self._value > value:
             self._value = value
@@ -43,7 +44,7 @@ class Noise:
         )
 
     @noise_range.setter
-    def noise_range(self, value: float):
+    def noise_range(self, value: float) -> None:
         if 0 < value < 1:
             self._range = value * (self._max - self._min)
 
@@ -53,7 +54,7 @@ class Noise:
         return self._value
 
     @value.setter
-    def value(self, new_value: float):
+    def value(self, new_value: float) -> None:
         if self._min <= new_value <= self._max:
             self._value = new_value
 
@@ -62,7 +63,7 @@ class Noise:
         self._next_value()
         return round(self._value)
 
-    def _next_value(self):
+    def _next_value(self) -> None:
         min0 = self._value - self._range / 2
         max0 = self._value + self._range / 2
         if min0 < self._min:
@@ -82,7 +83,7 @@ class NoiseBase:
     def __init__(self, seed: int | None = None):
         self.permutation = self._generate_permutation(seed)
 
-    def _generate_permutation(self, seed: int | None = None):
+    def _generate_permutation(self, seed: int | None = None) -> list[int]:
         p = list(range(256))
         # Choose a seeded random function if a seed is provided.
         rnd = self._seeded_random(seed) if seed is not None else random.random
@@ -93,8 +94,8 @@ class NoiseBase:
         # Duplicate the array to avoid overflow in permutation lookups.
         return p + p
 
-    def _seeded_random(self, seed: int):
-        def random_func():
+    def _seeded_random(self, seed: int) -> Callable[[], float]:
+        def random_func() -> float:
             nonlocal seed
             seed = (seed * 16807) % 2147483647
             return (seed - 1) / 2147483646
@@ -229,7 +230,7 @@ class SimplexNoise2D(NoiseBase):
         raw_noise = 70.0 * (n0 + n1 + n2)
         return amplitude * ((raw_noise + 1) / 2)
 
-    def _dot(self, g: list, x: float, y: float) -> float:
+    def _dot(self, g: list[int], x: float, y: float) -> float:
         return g[0] * x + g[1] * y
 
 
@@ -364,5 +365,5 @@ class SimplexNoise3D(NoiseBase):
         raw_noise = 32.0 * (n0 + n1 + n2 + n3)
         return amplitude * ((raw_noise + 1) / 2)
 
-    def _dot(self, g: list, x: float, y: float, z: float) -> float:
+    def _dot(self, g: list[int], x: float, y: float, z: float) -> float:
         return g[0] * x + g[1] * y + g[2] * z

@@ -2,10 +2,12 @@ import math
 import re
 import xml.etree.ElementTree as ET
 from copy import deepcopy
-from typing import Any
+from typing import Any, overload
 
 from IPython.display import SVG as IPythonSVG
-from IPython.display import display
+from IPython.display import (
+    display as ipython_display,  # pyright: ignore[reportUnknownVariableType]
+)
 
 from pydreamplet.math import Vector
 
@@ -15,7 +17,7 @@ SVG_NS = "http://www.w3.org/2000/svg"
 ET.register_namespace("", SVG_NS)
 
 
-def qname(tag):
+def qname(tag: str) -> str:
     return f"{{{SVG_NS}}}{tag}"
 
 
@@ -28,7 +30,7 @@ class SvgElement:
         cls._class_registry[tag] = subclass
 
     @classmethod
-    def from_element(cls, element: ET.Element):
+    def from_element(cls, element: ET.Element) -> "SvgElement":
         """
         Create an instance from an ElementTree element.
         Look up the local tag name and use the registered subclass if available.
@@ -44,14 +46,14 @@ class SvgElement:
         instance.element = element
         return instance
 
-    def __init__(self, tag, **kwargs):
+    def __init__(self, tag: str, **kwargs: Any) -> None:
         object.__setattr__(self, "element", ET.Element(qname(tag)))
         for k, v in self.normalize_attrs(kwargs).items():
             self.element.set(k, str(v))
 
     @staticmethod
-    def normalize_attrs(attrs):
-        new_attrs = {}
+    def normalize_attrs(attrs: dict[str, Any]) -> dict[str, str]:
+        new_attrs: dict[str, str] = {}
         for k, v in attrs.items():
             if k == "class_name":
                 new_attrs["class"] = str(v)
@@ -59,7 +61,7 @@ class SvgElement:
                 new_attrs[k.replace("_", "-")] = str(v)
         return new_attrs
 
-    def attrs(self, attributes):
+    def attrs(self, attributes: dict[str, Any]) -> "SvgElement":
         for key, value in attributes.items():
             attr_key = key.replace("_", "-")
             if value is None:
@@ -68,7 +70,7 @@ class SvgElement:
                 self.element.set(attr_key, str(value))
         return self
 
-    def append(self, *children):
+    def append(self, *children: Any) -> "SvgElement":
         for child in children:
             if hasattr(child, "element"):
                 self.element.append(child.element)
@@ -78,7 +80,7 @@ class SvgElement:
                 self.element.append(child)
         return self
 
-    def remove(self, *children):
+    def remove(self, *children: Any) -> "SvgElement":
         for child in children:
             if hasattr(child, "element"):
                 self.element.remove(child.element)
@@ -95,10 +97,10 @@ class SvgElement:
             return ET.tostring(element_copy, encoding="unicode")
         return ET.tostring(self.element, encoding="unicode")
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.to_string(pretty_print=False)
 
-    def __getattr__(self, name):
+    def __getattr__(self, name: str) -> str | int | float:
         if name == "class_name":
             if "class" in self.element.attrib:
                 return self.element.attrib["class"]
@@ -119,7 +121,7 @@ class SvgElement:
             f"{type(self).__name__!r} object has no attribute {name!r}"
         )
 
-    def __setattr__(self, name, value):
+    def __setattr__(self, name: str, value: str | int | float | None):
         # Map "class_name" to the SVG "class" attribute.
         if name == "class_name":
             attr_name = "class"
@@ -153,7 +155,7 @@ class SvgElement:
         attr_name = name.replace("_", "-")
         return attr_name in self.element.attrib
 
-    def find(self, tag, nested=False, id=None):
+    def find(self, tag: str, nested: bool = False, id: str | None = None):
         # Build the XPath for the tag.
         xpath = ".//" + qname(tag) if nested else qname(tag)
         # If an id is provided, add an attribute filter.
@@ -164,7 +166,7 @@ class SvgElement:
             return SvgElement.from_element(found)
         return None
 
-    def find_all(self, tag, nested=False, class_name=None):
+    def find_all(self, tag: str, nested: bool = False, class_name: str | None = None):
         # Build the XPath for the tag.
         xpath = ".//" + qname(tag) if nested else qname(tag)
         # If a class is provided, add an attribute filter.
@@ -205,8 +207,8 @@ class Transformable:
         pos: Vector | None = None,
         scale: Vector | None = None,
         angle: float = 0,
-        *args,
-        **kwargs,
+        *args: Any,
+        **kwargs: Any,
     ):
         self._pos = pos if pos is not None else Vector(0, 0)
         self._scale = scale if scale is not None else Vector(1, 1)
@@ -214,7 +216,7 @@ class Transformable:
         self._update_transform()
 
     def _update_transform(self) -> None:
-        parts = []
+        parts: list[str] = []
         if self._angle != 0:
             parts.append(f"rotate({self._angle})")
         if self._pos != Vector(0, 0):
@@ -266,7 +268,7 @@ class SVG(SvgElement):
         return instance
 
     @classmethod
-    def from_file(cls, filename):
+    def from_file(cls, filename: str) -> "SVG":
         tree = ET.parse(filename)
         root = tree.getroot()
         viewBox = root.get("viewBox", "0 0 100 100")
@@ -274,39 +276,58 @@ class SVG(SvgElement):
         instance.element = root
         return instance
 
-    def __init__(self, *viewbox, **kwargs):
+    @overload
+    def __init__(self, width: Real, height: Real, **kwargs: Any) -> None: ...
+
+    @overload
+    def __init__(
+        self, x: Real, y: Real, width: Real, height: Real, **kwargs: Any
+    ) -> None: ...
+
+    @overload
+    def __init__(
+        self, viewbox: tuple[Real, ...] | list[Real], **kwargs: Any
+    ) -> None: ...
+
+    def __init__(self, *viewbox: Any, **kwargs: Any) -> None:
         # Convert tuple of args to a single sequence if needed
+        viewbox_seq: tuple[Real, ...] | list[Real]
         if len(viewbox) == 1 and isinstance(viewbox[0], (tuple, list)):
-            viewbox_seq = viewbox[0]
+            # Unpack single tuple/list argument
+            viewbox_seq = viewbox[0]  # type: ignore[assignment]
         else:
-            viewbox_seq = viewbox
+            # Multiple arguments passed directly
+            viewbox_seq = viewbox  # type: ignore[assignment]
 
         # Validate dimensions
         if len(viewbox_seq) not in (2, 4):
             raise ValueError("viewbox must be a tuple or list of 2 or 4 numbers")
 
-        validated_viewbox: list[Real] = list(viewbox_seq)
+        # Create validated list with Real values
+        validated_viewbox: list[Real] = []
+        for item in viewbox_seq:
+            if isinstance(item, (int, float)):
+                validated_viewbox.append(item)
+            else:
+                raise ValueError(f"viewbox must contain only numbers, got {type(item)}")
 
-        super().__init__("svg", **kwargs)
-
+        # Determine width and height before passing kwargs to super().__init__
         if len(validated_viewbox) == 4:
             vb = f"{validated_viewbox[0]} {validated_viewbox[1]} {validated_viewbox[2]} {validated_viewbox[3]}"
-            if "width" not in kwargs:
-                kwargs["width"] = f"{validated_viewbox[2]}px"
-            if "height" not in kwargs:
-                kwargs["height"] = f"{validated_viewbox[3]}px"
+            width = kwargs.pop("width", f"{validated_viewbox[2]}px")
+            height = kwargs.pop("height", f"{validated_viewbox[3]}px")
         else:
             vb = f"0 0 {validated_viewbox[0]} {validated_viewbox[1]}"
-            if "width" not in kwargs:
-                kwargs["width"] = f"{validated_viewbox[0]}px"
-            if "height" not in kwargs:
-                kwargs["height"] = f"{validated_viewbox[1]}px"
+            width = kwargs.pop("width", f"{validated_viewbox[0]}px")
+            height = kwargs.pop("height", f"{validated_viewbox[1]}px")
+
+        super().__init__("svg", **kwargs)
 
         self.attrs(
             {
                 "viewBox": vb,
-                "width": kwargs.pop("width"),
-                "height": kwargs.pop("height"),
+                "width": width,
+                "height": height,
             }
         )
 
@@ -360,10 +381,10 @@ class SVG(SvgElement):
         else:
             self.append(style_elem)
 
-    def display(self):
-        display(IPythonSVG(self.to_string()))
+    def display(self) -> None:
+        ipython_display(IPythonSVG(self.to_string()))
 
-    def save(self, filename, pretty_print=False):
+    def save(self, filename: str, pretty_print: bool = False) -> None:
         with open(filename, "w", encoding="utf-8") as f:
             f.write(self.to_string(pretty_print=pretty_print))
 
@@ -387,7 +408,7 @@ class G(Transformable, SvgElement):
         angle: float = 0,
         pivot: Vector | None = None,
         order: str = "trs",
-        **kwargs,
+        **kwargs: Any,
     ):
         # Set _order and _pivot before calling the base __init__ to avoid issues.
         self._order = order
@@ -414,7 +435,7 @@ class G(Transformable, SvgElement):
         self._order = value
         self._update_transform()
 
-    def remove(self, *children):
+    def remove(self, *children: Any) -> "G":
         super().remove(*children)
         if len(self.element) == 0 and hasattr(self, "_parent"):
             parent = getattr(self, "_parent")
@@ -422,7 +443,7 @@ class G(Transformable, SvgElement):
                 parent.remove(self)
         return self
 
-    def attrs(self, attributes):
+    def attrs(self, attributes: dict[str, Any]) -> "G":
         if "order" in attributes:
             self.order = attributes.pop("order")  # use property setter
         if "pivot" in attributes:
@@ -437,7 +458,7 @@ class G(Transformable, SvgElement):
         if "transform" in attributes:
             transform_str = attributes.pop("transform")
             pos = Vector(0, 0)
-            angle = 0
+            angle = 0.0
             scale = Vector(1, 1)
             pivot = Vector(0, 0)
             m_rotate = re.search(r"rotate\(([^)]+)\)", transform_str)
@@ -473,7 +494,7 @@ class G(Transformable, SvgElement):
             self._angle = angle
             self._scale = scale
             # Use parsed pivot only if not already set.
-            if not hasattr(self, "_pivot") or self._pivot is None:
+            if not hasattr(self, "_pivot"):
                 self._pivot = pivot
             self._update_transform()
         super().attrs(attributes)
@@ -491,19 +512,19 @@ class G(Transformable, SvgElement):
                 del self.element.attrib["transform"]
             return
 
-        parts = []
+        parts: list[str] = []
         for op in self._order:
             if op == "t" and self._pos != Vector(0, 0):
-                parts.append(f"translate({self._pos.x} {self._pos.y})")
+                parts.append(f"translate({self._pos.x:g} {self._pos.y:g})")
             elif op == "r" and self._angle != 0:
                 if self._pivot and (self._pivot.x != 0 or self._pivot.y != 0):
                     parts.append(
-                        f"rotate({self._angle},{self._pivot.x},{self._pivot.y})"
+                        f"rotate({self._angle:g},{self._pivot.x:g},{self._pivot.y:g})"
                     )
                 else:
-                    parts.append(f"rotate({self._angle})")
+                    parts.append(f"rotate({self._angle:g})")
             elif op == "s" and self._scale != Vector(1, 1):
-                parts.append(f"scale({self._scale.x} {self._scale.y})")
+                parts.append(f"scale({self._scale.x:g} {self._scale.y:g})")
         # Set the transform attribute only if there is at least one transform.
         if parts:
             self.element.set("transform", " ".join(parts))
@@ -559,7 +580,7 @@ class G(Transformable, SvgElement):
 
 
 class Animate(SvgElement):
-    def __init__(self, attr: str, **kwargs):
+    def __init__(self, attr: str, **kwargs: Any):
         repeat_count = kwargs.pop("repeatCount", "indefinite")
         values_arg = kwargs.pop("values", None)
         dur = kwargs.pop("dur", "2s")
@@ -584,7 +605,7 @@ class Animate(SvgElement):
         return self._repeat_count
 
     @repeat_count.setter
-    def repeat_count(self, value):
+    def repeat_count(self, value: int | str):
         self._repeat_count = value
         self.attrs({"repeatCount": value})
 
@@ -593,13 +614,13 @@ class Animate(SvgElement):
         return self._values
 
     @values.setter
-    def values(self, value):
+    def values(self, value: list[Any]) -> None:
         self._values = value
         self.attrs({"values": ";".join([str(v) for v in value])})
 
 
 class Circle(SvgElement):
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any):
         super().__init__("circle", **kwargs)
         if "pos" in kwargs:
             pos = kwargs.pop("pos")
@@ -639,7 +660,7 @@ class Circle(SvgElement):
 
 
 class Ellipse(SvgElement):
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any):
         super().__init__("ellipse", **kwargs)
         if "pos" in kwargs:
             pos = kwargs.pop("pos")
@@ -659,7 +680,7 @@ class Ellipse(SvgElement):
 
 
 class Rect(SvgElement):
-    def __init__(self, **kwargs):
+    def __init__(self, **kwargs: Any):
         super().__init__("rect", **kwargs)
         if "pos" in kwargs:
             pos = kwargs.pop("pos")
@@ -687,7 +708,7 @@ class Rect(SvgElement):
 
 
 class Path(SvgElement):
-    def __init__(self, d: str = "", **kwargs):
+    def __init__(self, d: str = "", **kwargs: Any):
         super().__init__("path", **kwargs)
         self.d = d
 
@@ -750,7 +771,7 @@ class Line(SvgElement):
         y1: Real = 0,
         x2: Real = 0,
         y2: Real = 0,
-        **kwargs,
+        **kwargs: Any,
     ):
         super().__init__("line", **kwargs)
         self.element.set("x1", str(x1))
@@ -807,7 +828,7 @@ class Line(SvgElement):
 
 
 class Polygon(SvgElement):
-    def __init__(self, points: list[Real], **kwargs):
+    def __init__(self, points: list[Real], **kwargs: Any):
         super().__init__("polygon", **kwargs)
         self._points = points
         self._update_element()
@@ -833,7 +854,7 @@ class Polygon(SvgElement):
 
 
 class Polyline(SvgElement):
-    def __init__(self, points: list[Real], **kwargs):
+    def __init__(self, points: list[Real], **kwargs: Any):
         super().__init__("polyline", **kwargs)
         self._points = points
         self._update_element()
@@ -859,16 +880,18 @@ class Polyline(SvgElement):
 
 
 class Text(SvgElement):
-    def __init__(self, initial_text="", **kwargs):
+    def __init__(self, initial_text: str = "", **kwargs: Any):
+        # Extract Text-specific kwargs before passing to parent
+        pos = kwargs.pop("pos", None)
+        v_space = kwargs.pop("v_space", None)
+
         super().__init__("text", **kwargs)
-        if "pos" in kwargs:
-            pos = kwargs.pop("pos")
+
+        if pos is not None:
             self.element.set("x", str(pos.x))
             self.element.set("y", str(pos.y))
-        if "v_space" in kwargs:
-            self._v_space = kwargs.pop("v_space")
-        else:
-            self._v_space = None
+
+        self._v_space: float | None = v_space
         self._raw_text = initial_text
         if initial_text:
             self.content = initial_text
@@ -930,21 +953,28 @@ class Text(SvgElement):
         return 16.0
 
     @font_size.setter
-    def font_size(self, value: str) -> None:
+    def font_size(self, value: str | int | float) -> None:
         """
         Sets the font-size attribute. If no unit is present in the provided value,
         "px" is appended.
         """
+        value_str = str(value)
         # If no alphabetical characters (units) are present, default to px.
-        if not re.search(r"[a-zA-Z]", value):
-            value = f"{value}px"
-        self.element.set("font-size", value)
+        if not re.search(r"[a-zA-Z]", value_str):
+            value_str = f"{value_str}px"
+        self.element.set("font-size", value_str)
 
 
 class TextOnPath(SvgElement):
     text_path: SvgElement
 
-    def __init__(self, initial_text="", path_id="", text_path_args=None, **kwargs):
+    def __init__(
+        self,
+        initial_text: str = "",
+        path_id: str = "",
+        text_path_args: dict[str, Any] | None = None,
+        **kwargs: Any,
+    ):
         super().__init__("text", **kwargs)
         object.__setattr__(self, "text_path", SvgElement("textPath"))
         if text_path_args is None:
@@ -978,14 +1008,15 @@ class TextOnPath(SvgElement):
         return 16.0
 
     @font_size.setter
-    def font_size(self, value: str) -> None:
+    def font_size(self, value: str | int | float) -> None:
         """
         Sets the font-size attribute on the text element. If no unit is provided,
         "px" is used as default.
         """
-        if not re.search(r"[a-zA-Z]", value):
-            value = f"{value}px"
-        self.element.set("font-size", value)
+        value_str = str(value)
+        if not re.search(r"[a-zA-Z]", value_str):
+            value_str = f"{value_str}px"
+        self.element.set("font-size", value_str)
 
 
 # -----------------------------------------------------------------------------
