@@ -110,6 +110,9 @@ class SvgElement:
         attr_name = name.replace("_", "-")
         if attr_name in self.element.attrib:
             val = self.element.attrib[attr_name]
+            # Don't auto-convert id attribute to preserve leading zeros
+            if attr_name == "id":
+                return val
             try:
                 if "." not in val and "e" not in val.lower():
                     return int(val)
