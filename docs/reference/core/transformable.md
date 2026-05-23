@@ -2,6 +2,49 @@
 
 The Transformable mixin adds transformation capabilities—translation, rotation, and scaling—to SVG elements. It is intended for use with group elements.
 
+For parsing and serializing raw SVG transform strings, use `Transform` and `TransformList`.
+
+## <span class=class></span>`pydreamplet.core.Transform`
+
+<!--skip-->
+```py
+Transform(name: str, *values)
+```
+
+Represents one SVG transform function. Supported function names are `matrix`, `translate`, `scale`, `rotate`, `skewX`, and `skewY`.
+
+```py
+import pydreamplet as dp
+
+transform = dp.Transform.rotate(45, 10, 20)
+print(str(transform))  # rotate(45,10,20)
+```
+
+Convenience constructors are available:
+
+- `Transform.translate(x, y=0)`
+- `Transform.scale(x, y=None)`
+- `Transform.rotate(angle, cx=None, cy=None)`
+- `Transform.skew_x(angle)`
+- `Transform.skew_y(angle)`
+- `Transform.matrix(a, b, c, d, e, f)`
+
+## <span class=class></span>`pydreamplet.core.TransformList`
+
+<!--skip-->
+```py
+TransformList.parse(value: str) -> TransformList
+```
+
+Parses a transform attribute while preserving transform order.
+
+```py
+import pydreamplet as dp
+
+transforms = dp.TransformList.parse("translate(10, 20) skewX(15) rotate(45)")
+print(str(transforms))  # translate(10 20) skewX(15) rotate(45)
+```
+
 ## <span class=class></span>`pydreamplet.core.Transformable`
 
 <!--skip-->

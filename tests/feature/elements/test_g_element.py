@@ -58,12 +58,12 @@ def test_g_attrs_transform_raises_for_malformed_supported_transform():
         g.attrs({"transform": "translate(foo 12)"})
 
 
-def test_g_attrs_ignores_unsupported_transform_fallback():
+def test_g_attrs_preserves_non_legacy_transform_functions():
     g = dp.G()
 
     g.attrs({"transform": "skewX(20)"})
 
-    assert not g.has_attr("transform")
+    assert g.element.attrib["transform"] == "skewX(20)"
     assert g.pos == dp.Vector(0, 0)
 
 
@@ -74,6 +74,29 @@ def test_g_from_element_parses_comma_separated_transform():
 
     assert g.pos == dp.Vector(10, 12)
     assert g.scale == dp.Vector(2, 2)
+
+
+def test_g_from_element_preserves_transform_order_with_extra_functions():
+    element = ET.Element(
+        qname("g"),
+        {"transform": "translate(10 12) skewX(20) rotate(30) matrix(1 0 0 1 5 6)"},
+    )
+
+    g = dp.G.from_element(element)
+
+    assert g.pos == dp.Vector(10, 12)
+    assert g.angle == 30
+    assert (
+        g.element.attrib["transform"]
+        == "translate(10 12) skewX(20) rotate(30) matrix(1 0 0 1 5 6)"
+    )
+
+    g.pos = dp.Vector(20, 24)
+
+    assert (
+        g.element.attrib["transform"]
+        == "translate(20 24) skewX(20) rotate(30) matrix(1 0 0 1 5 6)"
+    )
 
 
 def test_g_from_element_raises_for_malformed_supported_transform():

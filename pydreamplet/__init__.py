@@ -20,6 +20,8 @@ from pydreamplet.core import (
     SvgElement,
     Text,
     TextOnPath,
+    Transform,
+    TransformList,
 )
 from pydreamplet.math import Vector
 
@@ -45,5 +47,7 @@ __all__ = [
     "SvgElement",
     "Text",
     "TextOnPath",
+    "Transform",
+    "TransformList",
     "Vector",
 ]

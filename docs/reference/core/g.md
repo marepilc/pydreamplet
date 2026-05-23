@@ -83,6 +83,8 @@ attrs(self, attributes: dict) -> G
 
 Sets multiple attributes on the group, including parsing transformation details.
 
+`G` uses `TransformList` when parsing a `transform` attribute. Legacy properties (`pos`, `angle`, `scale`, `pivot`, and `order`) still control translate, rotate, and scale. Other supported transform functions such as `skewX`, `skewY`, and `matrix` are preserved instead of being discarded.
+
 ### <span class="meth"></span>`from_element`
 
 <!--skip-->
@@ -90,4 +92,4 @@ Sets multiple attributes on the group, including parsing transformation details.
 G.from_element(element: ET.Element)
 ```
 
-Creates a G instance from an ElementTree element by parsing its transformation attributes.
+Creates a G instance from an ElementTree element by parsing its transformation attributes. The parsed transform order is preserved when possible.

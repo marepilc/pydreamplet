@@ -20,6 +20,12 @@ def qname(tag: str) -> str:
 type PointLike = Vector | NumericPair
 
 
+def _format_number(value: Real) -> str:
+    if isinstance(value, float) and value.is_integer():
+        return str(int(value))
+    return f"{value:g}" if isinstance(value, float) else str(value)
+
+
 def _coerce_point(value: PointLike, name: str = "point") -> Vector:
     if isinstance(value, Vector):
         return value
@@ -387,6 +393,125 @@ class Filter(SvgDefinition):
         super().__init__("filter", **kwargs)
 
 
+class Transform:
+    _arities: ClassVar[dict[str, tuple[int, ...]]] = {
+        "matrix": (6,),
+        "translate": (1, 2),
+        "scale": (1, 2),
+        "rotate": (1, 3),
+        "skewX": (1,),
+        "skewY": (1,),
+    }
+
+    def __init__(self, name: str, *values: Real):
+        if name not in self._arities:
+            raise ValueError(f"Unsupported transform function: {name}")
+        if len(values) not in self._arities[name]:
+            expected = " or ".join(str(arity) for arity in self._arities[name])
+            raise ValueError(
+                f"{name} transform expects {expected} values, got {len(values)}"
+            )
+        self.name = name
+        self.values = tuple(float(value) for value in values)
+
+    @classmethod
+    def translate(cls, x: Real, y: Real = 0) -> "Transform":
+        return cls("translate", x, y)
+
+    @classmethod
+    def scale(cls, x: Real, y: Real | None = None) -> "Transform":
+        return cls("scale", x, x if y is None else y)
+
+    @classmethod
+    def rotate(cls, angle: Real, cx: Real | None = None, cy: Real | None = None):
+        if cx is None and cy is None:
+            return cls("rotate", angle)
+        if cx is None or cy is None:
+            raise ValueError("rotate pivot requires both cx and cy")
+        return cls("rotate", angle, cx, cy)
+
+    @classmethod
+    def skew_x(cls, angle: Real) -> "Transform":
+        return cls("skewX", angle)
+
+    @classmethod
+    def skew_y(cls, angle: Real) -> "Transform":
+        return cls("skewY", angle)
+
+    @classmethod
+    def matrix(
+        cls, a: Real, b: Real, c: Real, d: Real, e: Real, f: Real
+    ) -> "Transform":
+        return cls("matrix", a, b, c, d, e, f)
+
+    @override
+    def __str__(self) -> str:
+        separator = "," if self.name == "rotate" and len(self.values) == 3 else " "
+        values = separator.join(_format_number(value) for value in self.values)
+        return f"{self.name}({values})"
+
+    @override
+    def __repr__(self) -> str:
+        values = ", ".join(_format_number(value) for value in self.values)
+        return f"Transform({self.name!r}, {values})"
+
+
+class TransformList:
+    _transform_re: ClassVar[re.Pattern[str]] = re.compile(r"([A-Za-z][A-Za-z0-9]*)\(([^)]*)\)")
+
+    def __init__(self, transforms: list[Transform] | None = None):
+        self.transforms = transforms if transforms is not None else []
+
+    @staticmethod
+    def _parse_numbers(transform_name: str, value: str) -> list[float]:
+        try:
+            return [float(part) for part in value.replace(",", " ").split()]
+        except ValueError as exc:
+            raise ValueError(
+                f"Invalid {transform_name} transform values: {value!r}"
+            ) from exc
+
+    @classmethod
+    def parse(cls, value: str) -> "TransformList":
+        transforms: list[Transform] = []
+        pos = 0
+        for match in cls._transform_re.finditer(value):
+            if value[pos : match.start()].strip():
+                raise ValueError(f"Invalid transform syntax: {value!r}")
+            name = match.group(1)
+            numbers = cls._parse_numbers(name, match.group(2))
+            transforms.append(Transform(name, *numbers))
+            pos = match.end()
+        if value[pos:].strip():
+            raise ValueError(f"Invalid transform syntax: {value!r}")
+        return cls(transforms)
+
+    def append(self, transform: Transform) -> "TransformList":
+        self.transforms.append(transform)
+        return self
+
+    def first(self, name: str) -> Transform | None:
+        return next(
+            (transform for transform in self.transforms if transform.name == name),
+            None,
+        )
+
+    def replace_first(self, name: str, transform: Transform | None) -> None:
+        for index, existing in enumerate(self.transforms):
+            if existing.name == name:
+                if transform is None:
+                    del self.transforms[index]
+                else:
+                    self.transforms[index] = transform
+                return
+        if transform is not None:
+            self.transforms.append(transform)
+
+    @override
+    def __str__(self) -> str:
+        return " ".join(str(transform) for transform in self.transforms)
+
+
 class Transformable:
     """
     Mixin for applying transforms to an SVG element.
@@ -687,6 +812,7 @@ class G(Transformable, SvgElement):  # pyright: ignore[reportUnsafeMultipleInher
         # Set _order and _pivot before calling the base __init__ to avoid issues.
         self._order = order
         self._pivot = pivot if pivot is not None else Vector(0, 0)
+        self._transform_list = TransformList()
         SvgElement.__init__(self, "g", **kwargs)
         Transformable.__init__(self, pos=pos, scale=scale, angle=angle)
         self._update_transform()
@@ -717,113 +843,105 @@ class G(Transformable, SvgElement):  # pyright: ignore[reportUnsafeMultipleInher
                 parent.remove(self)
         return self
 
-    @staticmethod
-    def _parse_transform_numbers(transform_name: str, value: str) -> list[float]:
-        try:
-            return [float(part) for part in value.replace(",", " ").split()]
-        except ValueError as exc:
-            raise ValueError(
-                f"Invalid {transform_name} transform values: {value!r}"
-            ) from exc
-
     @classmethod
-    def _parse_transform(cls, transform: str) -> tuple[Vector, float, Vector, Vector]:
+    def _parse_transform(
+        cls, transform: str
+    ) -> tuple[Vector, float, Vector, Vector, TransformList]:
         """
-        Parse the supported transform functions.
+        Parse SVG transform functions into legacy G state and a transform list.
 
-        Unsupported transform functions are ignored by design so SVGs using
-        transforms outside G's current model can still be loaded. Malformed
-        values for supported functions raise ValueError instead of silently
-        resetting to defaults.
+        Malformed values raise ValueError instead of silently resetting to
+        defaults. Transforms outside the legacy translate/rotate/scale model
+        are preserved in the returned TransformList.
         """
+        transform_list = TransformList.parse(transform)
         pos = Vector(0, 0)
         angle = 0.0
         scale = Vector(1, 1)
         pivot = Vector(0, 0)
 
-        m_rotate = re.search(r"rotate\(([^)]+)\)", transform)
-        if m_rotate:
-            parts = cls._parse_transform_numbers("rotate", m_rotate.group(1))
-            if len(parts) not in (1, 3):
-                expected = "1 value or 3 values (angle, cx, cy)"
-                raise ValueError(
-                    f"rotate transform expects {expected}, got {len(parts)}"
-                )
-            angle = parts[0]
-            if len(parts) == 3:
-                pivot = Vector(parts[1], parts[2])
+        translate = transform_list.first("translate")
+        if translate is not None:
+            pos = Vector(
+                translate.values[0],
+                translate.values[1] if len(translate.values) == 2 else 0,
+            )
 
-        m_translate = re.search(r"translate\(([^)]+)\)", transform)
-        if m_translate:
-            parts = cls._parse_transform_numbers("translate", m_translate.group(1))
-            if len(parts) not in (1, 2):
-                raise ValueError(
-                    f"translate transform expects 1 or 2 values, got {len(parts)}"
-                )
-            pos = Vector(parts[0], parts[1] if len(parts) == 2 else 0)
+        rotate = transform_list.first("rotate")
+        if rotate is not None:
+            angle = rotate.values[0]
+            if len(rotate.values) == 3:
+                pivot = Vector(rotate.values[1], rotate.values[2])
 
-        m_scale = re.search(r"scale\(([^)]+)\)", transform)
-        if m_scale:
-            parts = cls._parse_transform_numbers("scale", m_scale.group(1))
-            if len(parts) not in (1, 2):
-                raise ValueError(
-                    f"scale transform expects 1 or 2 values, got {len(parts)}"
-                )
-            scale = Vector(parts[0], parts[1] if len(parts) == 2 else parts[0])
+        parsed_scale = transform_list.first("scale")
+        if parsed_scale is not None:
+            scale = Vector(
+                parsed_scale.values[0],
+                parsed_scale.values[1]
+                if len(parsed_scale.values) == 2
+                else parsed_scale.values[0],
+            )
 
-        return pos, angle, scale, pivot
+        return pos, angle, scale, pivot, transform_list
 
     def attrs(self, attributes: dict[str, object]) -> "G":
         if "order" in attributes:
             self.order = str(attributes.pop("order"))  # use property setter
         if "pivot" in attributes:
             pivot_str = str(attributes.pop("pivot"))
-            parts = self._parse_transform_numbers("pivot", pivot_str)
+            parts = TransformList._parse_numbers("pivot", pivot_str)
             if len(parts) != 2:
                 raise ValueError(f"pivot expects 2 values, got {len(parts)}")
             self.pivot = Vector(parts[0], parts[1])
 
         if "transform" in attributes:
             transform_str = str(attributes.pop("transform"))
-            pos, angle, scale, pivot = self._parse_transform(transform_str)
+            pos, angle, scale, pivot, transform_list = self._parse_transform(
+                transform_str
+            )
             self._pos = pos
             self._angle = angle
             self._scale = scale
-            # Use parsed pivot only if not already set.
-            if not hasattr(self, "_pivot"):
-                self._pivot = pivot
+            self._pivot = pivot
+            self._transform_list = transform_list
             self._update_transform()
         super().attrs(attributes)
         return self
 
-    def _update_transform(self):
-        # Check if all transformations are at their default values.
-        if (
-            self._pos == Vector(0, 0)
-            and self._angle == 0
-            and self._scale == Vector(1, 1)
-        ):
-            # Remove any existing transform attribute and exit.
-            if "transform" in self.element.attrib:
-                del self.element.attrib["transform"]
-            return
+    def _legacy_transform(self, op: str) -> Transform | None:
+        if op == "t" and self._pos != Vector(0, 0):
+            return Transform.translate(self._pos.x, self._pos.y)
+        if op == "r" and self._angle != 0:
+            if self._pivot and (self._pivot.x != 0 or self._pivot.y != 0):
+                return Transform.rotate(self._angle, self._pivot.x, self._pivot.y)
+            return Transform.rotate(self._angle)
+        if op == "s" and self._scale != Vector(1, 1):
+            return Transform.scale(self._scale.x, self._scale.y)
+        return None
 
-        parts: list[str] = []
-        for op in self._order:
-            if op == "t" and self._pos != Vector(0, 0):
-                parts.append(f"translate({self._pos.x:g} {self._pos.y:g})")
-            elif op == "r" and self._angle != 0:
-                if self._pivot and (self._pivot.x != 0 or self._pivot.y != 0):
-                    parts.append(
-                        f"rotate({self._angle:g},{self._pivot.x:g},{self._pivot.y:g})"
-                    )
-                else:
-                    parts.append(f"rotate({self._angle:g})")
-            elif op == "s" and self._scale != Vector(1, 1):
-                parts.append(f"scale({self._scale.x:g} {self._scale.y:g})")
-        # Set the transform attribute only if there is at least one transform.
-        if parts:
-            self.element.set("transform", " ".join(parts))
+    def _has_extra_transforms(self) -> bool:
+        return any(
+            transform.name not in {"translate", "rotate", "scale"}
+            for transform in self._transform_list.transforms
+        )
+
+    def _update_transform(self):
+        if self._has_extra_transforms():
+            self._transform_list.replace_first("translate", self._legacy_transform("t"))
+            self._transform_list.replace_first("rotate", self._legacy_transform("r"))
+            self._transform_list.replace_first("scale", self._legacy_transform("s"))
+            transform = str(self._transform_list)
+        else:
+            transforms = [
+                transform
+                for op in self._order
+                if (transform := self._legacy_transform(op)) is not None
+            ]
+            self._transform_list = TransformList(transforms)
+            transform = str(self._transform_list)
+
+        if transform:
+            self.element.set("transform", transform)
         else:
             if "transform" in self.element.attrib:
                 del self.element.attrib["transform"]
@@ -834,12 +952,13 @@ class G(Transformable, SvgElement):  # pyright: ignore[reportUnsafeMultipleInher
         instance = cls.__new__(cls)
         instance.element = element
         transform = element.get("transform", "")
-        pos, angle, scale, pivot = cls._parse_transform(transform)
+        pos, angle, scale, pivot, transform_list = cls._parse_transform(transform)
         instance._pos = pos
         instance._angle = angle
         instance._scale = scale
         instance._pivot = pivot
         instance._order = element.get("order", "trs")
+        instance._transform_list = transform_list
         instance._update_transform()
         return instance
 
