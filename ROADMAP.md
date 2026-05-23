@@ -84,7 +84,16 @@ The target shape is a layered library:
 - [x] Revisit typography dependencies after choosing the more accurate text
   measurement backend.
 - [x] Add a real `[mypy]` section to `mypy.ini`.
-- [ ] Enable stricter type checking gradually, starting with core public APIs.
+- [ ] Enable stricter type checking gradually, starting with stable public APIs:
+  - [x] Keep `basedpyright pydreamplet` green in CI.
+  - [ ] Enable stricter checks module by module for less dynamic modules first:
+    `types.py`, `math.py`, `path_data.py`, `colors.py`, `scales.py`, and `utils.py`.
+  - [ ] Add typed helper APIs for common SVG attributes before tightening
+    `core.py`.
+  - [ ] Keep dynamic `SvgElement.__getattr__` / `__setattr__` as the documented
+    escape hatch.
+  - [ ] Tighten `core.py` only after typed constructors or helpers cover common
+    public usage.
 - [x] Add Ruff configuration to `pyproject.toml`.
 - [x] Add Ruff lint checks to CI.
 - [x] Add `uv run mypy pydreamplet` to CI.
@@ -96,9 +105,9 @@ The target shape is a layered library:
 
 ## Core API Goals
 
-- [ ] Define a clear public/private API boundary.
-- [ ] Document backward compatibility rules for v2.x.
-- [ ] Decide whether dynamic SVG attributes remain the main API or become a lower-level escape hatch.
+- [x] Define a clear public/private API boundary.
+- [x] Document backward compatibility rules for v2.x.
+- [x] Decide whether dynamic SVG attributes remain the main API or become a lower-level escape hatch.
 - [ ] Add typed constructors for common elements while keeping flexible SVG attributes available.
 - [ ] Introduce a consistent `Point`/`Vector`/tuple input policy.
 - [ ] Add convenience methods for setting position, size, stroke, fill, class, id, and style.
@@ -301,9 +310,9 @@ The target shape is a layered library:
 
 ### Milestone 2: Define The v2.0 Architecture
 
-- [ ] Write the public API design document.
-- [ ] Decide module boundaries.
-- [ ] Define compatibility rules.
+- [x] Write the public API design document.
+- [x] Decide module boundaries.
+- [x] Define compatibility rules.
 - [ ] Design the generator, layout, scale, axis, legend, and annotation layers.
 - [ ] Create one complete vertical slice, such as a polished custom infographic built
   from primitives rather than a fixed chart class.

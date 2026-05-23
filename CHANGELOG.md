@@ -47,6 +47,11 @@ branch is in progress.
   pinned Python versions.
 - Reduced default GitHub Actions permissions and limited `contents: write` to
   the documentation deploy job.
+- Added an API design document defining the public/private boundary,
+  compatibility rules, dynamic SVG attribute policy, typed helper direction, and
+  intended module layers for v2.x.
+- Clarified that v2.0 may intentionally break v1.x compatibility when the change
+  improves the long-term API.
 
 ### Tests
 

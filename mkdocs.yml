@@ -13,6 +13,7 @@ nav:
     - getting_started/working_with_text.md
     - getting_started/tutorial.md
   - Reference:
+    - API design: reference/api_design.md
     - Core:
       - reference/core/svg.md
       - reference/core/svgelement.md
