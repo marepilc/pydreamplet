@@ -120,7 +120,7 @@ The target shape is a layered library:
   - [x] preserve transform order
   - [x] compose transforms
   - [x] support pivot/origin behavior consistently
-- [ ] Improve XML namespace handling and round-trip behavior.
+- [x] Improve XML namespace handling and round-trip behavior.
 
 ## Geometry And Paths
 

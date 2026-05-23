@@ -10,11 +10,37 @@ from pydreamplet.path_data import extract_path_points
 from pydreamplet.types import AttributeValue, NumericPair, Real
 
 SVG_NS = "http://www.w3.org/2000/svg"
+XML_NS = "http://www.w3.org/XML/1998/namespace"
+XLINK_NS = "http://www.w3.org/1999/xlink"
+KNOWN_NAMESPACES: dict[str, str] = {
+    "": SVG_NS,
+    "xml": XML_NS,
+    "xlink": XLINK_NS,
+}
 ET.register_namespace("", SVG_NS)
+ET.register_namespace("xlink", XLINK_NS)
 
 
 def qname(tag: str) -> str:
     return f"{{{SVG_NS}}}{tag}"
+
+
+def ns_attr(prefix: str, name: str) -> str:
+    if prefix not in KNOWN_NAMESPACES:
+        raise ValueError(f"Unknown XML namespace prefix: {prefix}")
+    return f"{{{KNOWN_NAMESPACES[prefix]}}}{name}"
+
+
+def _register_namespace(prefix: str, uri: str) -> None:
+    KNOWN_NAMESPACES[prefix] = uri
+    if prefix != "xml":
+        ET.register_namespace(prefix, uri)
+
+
+def _register_namespaces_from_file(filename: str) -> None:
+    for _, namespace in ET.iterparse(filename, events=("start-ns",)):
+        prefix, uri = cast(tuple[str, str], namespace)
+        _register_namespace(prefix, uri)
 
 
 type PointLike = Vector | NumericPair
@@ -82,22 +108,27 @@ class SvgElement:
             self.element.set(k, str(v))
 
     @staticmethod
-    def normalize_attrs(attrs: dict[str, object]) -> dict[str, str]:
-        new_attrs: dict[str, str] = {}
+    def normalize_attrs(attrs: dict[str, object]) -> dict[str, object]:
+        new_attrs: dict[str, object] = {}
         for k, v in attrs.items():
             if k == "class_name":
-                new_attrs["class"] = str(v)
+                new_attrs["class"] = v
+            elif "_" in k:
+                prefix, local_name = k.split("_", 1)
+                if prefix in KNOWN_NAMESPACES:
+                    new_attrs[ns_attr(prefix, local_name)] = v
+                else:
+                    new_attrs[k.replace("_", "-")] = v
             else:
-                new_attrs[k.replace("_", "-")] = str(v)
+                new_attrs[k] = v
         return new_attrs
 
     def attrs(self, attributes: dict[str, object]) -> Self:
-        for key, value in attributes.items():
-            attr_key = "class" if key == "class_name" else key.replace("_", "-")
+        for key, value in self.normalize_attrs(attributes).items():
             if value is None:
-                self.element.attrib.pop(attr_key, None)
+                self.element.attrib.pop(key, None)
             else:
-                self.element.set(attr_key, str(value))
+                self.element.set(key, str(value))
         return self
 
     def set_attr(self, name: str, value: AttributeValue) -> Self:
@@ -189,7 +220,7 @@ class SvgElement:
             raise AttributeError(
                 f"{type(self).__name__!r} object has no attribute 'class_name'"
             )
-        attr_name = name.replace("_", "-")
+        attr_name = self._normalize_attr_name(name)
         if attr_name in self.element.attrib:
             val = self.element.attrib[attr_name]
             # Don't auto-convert id attribute to preserve leading zeros
@@ -220,11 +251,19 @@ class SvgElement:
         if name == "element" or name.startswith("_") or hasattr(type(self), name):
             object.__setattr__(self, name, value)
         else:
-            attr_name = name.replace("_", "-")
+            attr_name = self._normalize_attr_name(name)
             if value is None:
                 self.element.attrib.pop(attr_name, None)
             else:
                 self.element.set(attr_name, str(value))
+
+    @staticmethod
+    def _normalize_attr_name(name: str) -> str:
+        if "_" in name:
+            prefix, local_name = name.split("_", 1)
+            if prefix in KNOWN_NAMESPACES:
+                return ns_attr(prefix, local_name)
+        return name.replace("_", "-")
 
     def has_attr(self, name: str) -> bool:
         """
@@ -238,7 +277,7 @@ class SvgElement:
         """
         if name == "class_name":
             return "class" in self.element.attrib
-        attr_name = name.replace("_", "-")
+        attr_name = self._normalize_attr_name(name)
         return attr_name in self.element.attrib
 
     def find(
@@ -764,6 +803,7 @@ class SVG(SvgElement):
 
     @classmethod
     def from_file(cls, filename: str) -> "SVG":
+        _register_namespaces_from_file(filename)
         tree = ET.parse(filename)
         root = tree.getroot()
         viewbox = cls._parse_viewbox(root.get("viewBox"))

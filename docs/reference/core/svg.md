@@ -71,6 +71,8 @@ svg.find("path").fill = "darkgreen"
 
 Creates an SVG instance by parsing an SVG file.
 
+Namespace declarations found while loading are registered before serialization, so known prefixes such as `xlink` and custom prefixes from the source SVG can round-trip without being rewritten to generated `ns0` prefixes.
+
 ### <span class="meth"></span>`ensure_defs`
 
 <!--skip-->

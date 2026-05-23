@@ -56,6 +56,8 @@ attrs(self, attributes: dict) -> SvgElement
 
 Sets multiple attributes on the element.
 
+Underscore names are converted to hyphenated SVG attributes. Known XML namespace prefixes can also be used with underscore syntax: `xlink_href` maps to `xlink:href`.
+
 <!--skip-->
 ```py
 drop_shadow = SvgElement("feDropShadow")
@@ -66,6 +68,11 @@ drop_shadow.attrs({
     "stdDeviation": "0.2",
 })
 print(drop_shadow)  # <feDropShadow xmlns="http://www.w3.org/2000/svg" id="shadow" dx="0.2" dy="0.4" stdDeviation="0.2" />
+```
+
+<!--skip-->
+```py
+use = SvgElement("use", xlink_href="#symbol")
 ```
 
 ### <span class="meth"></span>`has_attr`

@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 import pydreamplet as dp
-from pydreamplet.core import qname
+from pydreamplet.core import XLINK_NS, ns_attr, qname
 
 
 def test_svg_dimensions(svg_300, two_rectangles):
@@ -97,6 +97,46 @@ def test_svg_from_file_preserves_existing_root_attributes(tmp_path: Path):
     assert svg.element.attrib["role"] == "img"
     assert svg.element.attrib["width"] == "320"
     assert svg.element.attrib["height"] == "240"
+
+
+def test_svg_from_file_preserves_loaded_namespace_prefixes(tmp_path: Path):
+    svg_file = tmp_path / "namespaced.svg"
+    svg_file.write_text(
+        (
+            '<svg xmlns="http://www.w3.org/2000/svg" '
+            'xmlns:xlink="http://www.w3.org/1999/xlink" '
+            'xmlns:serif="http://www.serif.com/" '
+            'viewBox="0 0 10 10">'
+            '<use xlink:href="#shape" serif:id="copy" />'
+            "</svg>"
+        ),
+        encoding="utf-8",
+    )
+
+    svg = dp.SVG.from_file(str(svg_file))
+    use = svg.find("use")
+    output = svg.to_string(pretty_print=False)
+
+    assert use is not None
+    assert use.element.attrib[ns_attr("xlink", "href")] == "#shape"
+    assert use.element.attrib[ns_attr("serif", "id")] == "copy"
+    assert "xlink:href" in output
+    assert "serif:id" in output
+    assert "ns0:" not in output
+
+
+def test_namespaced_attribute_helpers_use_known_prefixes():
+    use = dp.SvgElement("use", xlink_href="#shape")
+
+    assert use.element.attrib[f"{{{XLINK_NS}}}href"] == "#shape"
+    assert use.xlink_href == "#shape"
+    assert use.has_attr("xlink_href") is True
+
+    use.xlink_href = "#other"
+    assert use.element.attrib[f"{{{XLINK_NS}}}href"] == "#other"
+
+    use.attrs({"xlink_href": None})
+    assert f"{{{XLINK_NS}}}href" not in use.element.attrib
 
 
 def test_svg_from_file_without_viewbox_or_dimensions_uses_zero_size(tmp_path: Path):
