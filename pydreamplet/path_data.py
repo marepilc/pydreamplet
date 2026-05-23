@@ -1,6 +1,7 @@
 import re
 
 from pydreamplet.math import Vector
+from pydreamplet.types import Real
 
 type PathToken = str | float
 
@@ -21,6 +22,102 @@ _ARG_COUNTS = {
     "A": 7,
     "Z": 0,
 }
+
+
+def _format_number(value: Real) -> str:
+    if isinstance(value, float) and value.is_integer():
+        return str(int(value))
+    return f"{value:g}" if isinstance(value, float) else str(value)
+
+
+class PathBuilder:
+    def __init__(self):
+        self._commands: list[tuple[str, tuple[Real, ...]]] = []
+
+    def _append(self, command: str, *values: Real) -> "PathBuilder":
+        self._commands.append((command, values))
+        return self
+
+    def move_to(self, x: Real, y: Real) -> "PathBuilder":
+        return self._append("M", x, y)
+
+    def line_to(self, x: Real, y: Real) -> "PathBuilder":
+        return self._append("L", x, y)
+
+    def horizontal_to(self, x: Real) -> "PathBuilder":
+        return self._append("H", x)
+
+    def vertical_to(self, y: Real) -> "PathBuilder":
+        return self._append("V", y)
+
+    def curve_to(
+        self,
+        x1: Real,
+        y1: Real,
+        x2: Real,
+        y2: Real,
+        x: Real,
+        y: Real,
+    ) -> "PathBuilder":
+        return self._append("C", x1, y1, x2, y2, x, y)
+
+    def smooth_curve_to(
+        self,
+        x2: Real,
+        y2: Real,
+        x: Real,
+        y: Real,
+    ) -> "PathBuilder":
+        return self._append("S", x2, y2, x, y)
+
+    def quadratic_to(
+        self,
+        x1: Real,
+        y1: Real,
+        x: Real,
+        y: Real,
+    ) -> "PathBuilder":
+        return self._append("Q", x1, y1, x, y)
+
+    def smooth_quadratic_to(self, x: Real, y: Real) -> "PathBuilder":
+        return self._append("T", x, y)
+
+    def arc_to(
+        self,
+        rx: Real,
+        ry: Real,
+        x_axis_rotation: Real,
+        large_arc: bool | int,
+        sweep: bool | int,
+        x: Real,
+        y: Real,
+    ) -> "PathBuilder":
+        return self._append(
+            "A",
+            rx,
+            ry,
+            x_axis_rotation,
+            int(large_arc),
+            int(sweep),
+            x,
+            y,
+        )
+
+    def close(self) -> "PathBuilder":
+        return self._append("Z")
+
+    def to_string(self) -> str:
+        parts: list[str] = []
+        for command, values in self._commands:
+            if values:
+                args = " ".join(_format_number(value) for value in values)
+                parts.append(f"{command}{args}")
+            else:
+                parts.append(command)
+        return " ".join(parts)
+
+    def __str__(self) -> str:
+        return self.to_string()
 
 
 def _tokenize_path_data(path_data: str) -> list[PathToken]:

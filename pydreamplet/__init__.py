@@ -25,6 +25,7 @@ from pydreamplet.core import (
     TransformList,
 )
 from pydreamplet.math import Vector
+from pydreamplet.path_data import PathBuilder
 
 __all__ = [
     "SVG",
@@ -40,6 +41,7 @@ __all__ = [
     "Mask",
     "Matrix2D",
     "Path",
+    "PathBuilder",
     "Pattern",
     "Polygon",
     "Polyline",

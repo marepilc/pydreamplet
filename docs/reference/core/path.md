@@ -11,14 +11,14 @@ The `Path` class represents an SVG path element. It allows you to set the path d
 <!--skip-->
 <!--skip-->
 ```py
-Path(d: str = "", **kwargs)
+Path(d: str | PathBuilder = "", **kwargs)
 ```
 
 Initializes a new path with an optional d attribute containing path commands.
 
 <span class="param">**Parameters**</span>
 
-- `d` *(str, optional)*: The path data string.
+- `d` *(str or PathBuilder, optional)*: The path data string or a path builder.
 - `**kwargs`: Additional attributes for the path element.
 
 <!--skip-->
@@ -36,6 +36,43 @@ svg.append(
 ```
 
 ![Example](assets/path_example.svg){.img-light-dark-bg}
+
+## <span class=class></span>`pydreamplet.path_data.PathBuilder`
+
+<!--skip-->
+```py
+PathBuilder()
+```
+
+Builds SVG path data with chainable absolute path commands.
+
+```py
+import pydreamplet as dp
+
+path_data = (
+    dp.PathBuilder()
+    .move_to(10, 20)
+    .line_to(110, 20)
+    .line_to(110, 70)
+    .close()
+)
+
+path = dp.Path(path_data, fill="none")
+```
+
+Supported methods:
+
+- `move_to(x, y)`
+- `line_to(x, y)`
+- `horizontal_to(x)`
+- `vertical_to(y)`
+- `curve_to(x1, y1, x2, y2, x, y)`
+- `smooth_curve_to(x2, y2, x, y)`
+- `quadratic_to(x1, y1, x, y)`
+- `smooth_quadratic_to(x, y)`
+- `arc_to(rx, ry, x_axis_rotation, large_arc, sweep, x, y)`
+- `close()`
+- `to_string()`
 
 ### <span class="prop"></span>`d`
 

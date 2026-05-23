@@ -6,7 +6,7 @@ from collections.abc import Mapping
 from typing import Any, ClassVar, Self, cast, overload, override
 
 from pydreamplet.math import Vector
-from pydreamplet.path_data import extract_path_points
+from pydreamplet.path_data import PathBuilder, extract_path_points
 from pydreamplet.types import AttributeValue, NumericPair, Real
 
 SVG_NS = "http://www.w3.org/2000/svg"
@@ -1352,7 +1352,7 @@ class Rect(SvgElement):
 
 
 class Path(SvgElement):
-    def __init__(self, d: str = "", **kwargs: Any):
+    def __init__(self, d: str | PathBuilder = "", **kwargs: Any):
         super().__init__("path", **kwargs)
         self.d = d
 
@@ -1361,8 +1361,9 @@ class Path(SvgElement):
         return self.element.get("d", "")
 
     @d.setter
-    def d(self, value: str) -> None:
-        self.element.set("d", value)
+    def d(self, value: str | PathBuilder) -> None:
+        path_data = value.to_string() if isinstance(value, PathBuilder) else value
+        self.element.set("d", path_data)
 
     def _get_coordinates(self) -> list[Vector]:
         return extract_path_points(self.d)

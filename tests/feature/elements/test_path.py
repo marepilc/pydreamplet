@@ -113,3 +113,49 @@ def test_path_close_command_resets_current_point_for_following_relative_commands
 def test_path_data_must_start_with_command():
     with pytest.raises(ValueError, match="must start with a path command"):
         _ = dp.Path("10 20").w
+
+
+def test_path_builder_serializes_absolute_commands():
+    builder = (
+        dp.PathBuilder()
+        .move_to(0, 0)
+        .line_to(10, 20)
+        .horizontal_to(30)
+        .vertical_to(40)
+        .curve_to(1, 2, 3, 4, 5, 6)
+        .smooth_curve_to(7, 8, 9, 10)
+        .quadratic_to(11, 12, 13, 14)
+        .smooth_quadratic_to(15, 16)
+        .arc_to(20, 30, 0, False, True, 50, 60)
+        .close()
+    )
+
+    assert builder.to_string() == (
+        "M0 0 L10 20 H30 V40 C1 2 3 4 5 6 S7 8 9 10 "
+        "Q11 12 13 14 T15 16 A20 30 0 0 1 50 60 Z"
+    )
+
+
+def test_path_accepts_path_builder():
+    builder = (
+        dp.PathBuilder()
+        .move_to(10, 20)
+        .line_to(110, 20)
+        .line_to(110, 70)
+        .close()
+    )
+
+    path = dp.Path(builder, fill="none")
+
+    assert path.d == "M10 20 L110 20 L110 70 Z"
+    assert path.w == 100
+    assert path.h == 50
+    assert path.fill == "none"
+
+
+def test_path_d_setter_accepts_path_builder():
+    path = dp.Path()
+
+    path.d = dp.PathBuilder().move_to(0, 0).arc_to(10, 10, 0, 1, 0, 20, 20)
+
+    assert path.d == "M0 0 A10 10 0 1 0 20 20"
