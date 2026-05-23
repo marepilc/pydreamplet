@@ -44,7 +44,7 @@ svg.append(
 PathBuilder()
 ```
 
-Builds SVG path data with chainable absolute path commands.
+Builds SVG path data with chainable path commands. Absolute methods use the `_to` suffix; relative methods use the `_by` suffix.
 
 ```py
 import pydreamplet as dp
@@ -63,14 +63,23 @@ path = dp.Path(path_data, fill="none")
 Supported methods:
 
 - `move_to(x, y)`
+- `move_by(dx, dy)`
 - `line_to(x, y)`
+- `line_by(dx, dy)`
 - `horizontal_to(x)`
+- `horizontal_by(dx)`
 - `vertical_to(y)`
+- `vertical_by(dy)`
 - `curve_to(x1, y1, x2, y2, x, y)`
+- `curve_by(dx1, dy1, dx2, dy2, dx, dy)`
 - `smooth_curve_to(x2, y2, x, y)`
+- `smooth_curve_by(dx2, dy2, dx, dy)`
 - `quadratic_to(x1, y1, x, y)`
+- `quadratic_by(dx1, dy1, dx, dy)`
 - `smooth_quadratic_to(x, y)`
+- `smooth_quadratic_by(dx, dy)`
 - `arc_to(rx, ry, x_axis_rotation, large_arc, sweep, x, y)`
+- `arc_by(rx, ry, x_axis_rotation, large_arc, sweep, dx, dy)`
 - `close()`
 - `to_string()`
 

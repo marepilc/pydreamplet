@@ -136,6 +136,46 @@ def test_path_builder_serializes_absolute_commands():
     )
 
 
+def test_path_builder_serializes_relative_commands():
+    builder = (
+        dp.PathBuilder()
+        .move_to(0, 0)
+        .move_by(1, 2)
+        .line_by(10, 20)
+        .horizontal_by(30)
+        .vertical_by(40)
+        .curve_by(1, 2, 3, 4, 5, 6)
+        .smooth_curve_by(7, 8, 9, 10)
+        .quadratic_by(11, 12, 13, 14)
+        .smooth_quadratic_by(15, 16)
+        .arc_by(20, 30, 0, False, True, 50, 60)
+        .close()
+    )
+
+    assert builder.to_string() == (
+        "M0 0 m1 2 l10 20 h30 v40 c1 2 3 4 5 6 s7 8 9 10 "
+        "q11 12 13 14 t15 16 a20 30 0 0 1 50 60 Z"
+    )
+
+
+def test_path_builder_relative_commands_work_with_path_geometry():
+    builder = (
+        dp.PathBuilder()
+        .move_to(10, 20)
+        .line_by(100, 0)
+        .vertical_by(50)
+        .horizontal_by(-100)
+        .close()
+    )
+
+    path = dp.Path(builder)
+
+    assert path.d == "M10 20 l100 0 v50 h-100 Z"
+    assert path.w == 100
+    assert path.h == 50
+    assert path.center == dp.Vector(60, 45)
+
+
 def test_path_accepts_path_builder():
     builder = (
         dp.PathBuilder()

@@ -41,14 +41,26 @@ class PathBuilder:
     def move_to(self, x: Real, y: Real) -> "PathBuilder":
         return self._append("M", x, y)
 
+    def move_by(self, dx: Real, dy: Real) -> "PathBuilder":
+        return self._append("m", dx, dy)
+
     def line_to(self, x: Real, y: Real) -> "PathBuilder":
         return self._append("L", x, y)
+
+    def line_by(self, dx: Real, dy: Real) -> "PathBuilder":
+        return self._append("l", dx, dy)
 
     def horizontal_to(self, x: Real) -> "PathBuilder":
         return self._append("H", x)
 
+    def horizontal_by(self, dx: Real) -> "PathBuilder":
+        return self._append("h", dx)
+
     def vertical_to(self, y: Real) -> "PathBuilder":
         return self._append("V", y)
+
+    def vertical_by(self, dy: Real) -> "PathBuilder":
+        return self._append("v", dy)
 
     def curve_to(
         self,
@@ -61,6 +73,17 @@ class PathBuilder:
     ) -> "PathBuilder":
         return self._append("C", x1, y1, x2, y2, x, y)
 
+    def curve_by(
+        self,
+        dx1: Real,
+        dy1: Real,
+        dx2: Real,
+        dy2: Real,
+        dx: Real,
+        dy: Real,
+    ) -> "PathBuilder":
+        return self._append("c", dx1, dy1, dx2, dy2, dx, dy)
+
     def smooth_curve_to(
         self,
         x2: Real,
@@ -69,6 +92,15 @@ class PathBuilder:
         y: Real,
     ) -> "PathBuilder":
         return self._append("S", x2, y2, x, y)
+
+    def smooth_curve_by(
+        self,
+        dx2: Real,
+        dy2: Real,
+        dx: Real,
+        dy: Real,
+    ) -> "PathBuilder":
+        return self._append("s", dx2, dy2, dx, dy)
 
     def quadratic_to(
         self,
@@ -79,8 +111,20 @@ class PathBuilder:
     ) -> "PathBuilder":
         return self._append("Q", x1, y1, x, y)
 
+    def quadratic_by(
+        self,
+        dx1: Real,
+        dy1: Real,
+        dx: Real,
+        dy: Real,
+    ) -> "PathBuilder":
+        return self._append("q", dx1, dy1, dx, dy)
+
     def smooth_quadratic_to(self, x: Real, y: Real) -> "PathBuilder":
         return self._append("T", x, y)
+
+    def smooth_quadratic_by(self, dx: Real, dy: Real) -> "PathBuilder":
+        return self._append("t", dx, dy)
 
     def arc_to(
         self,
@@ -101,6 +145,27 @@ class PathBuilder:
             int(sweep),
             x,
             y,
+        )
+
+    def arc_by(
+        self,
+        rx: Real,
+        ry: Real,
+        x_axis_rotation: Real,
+        large_arc: bool | int,
+        sweep: bool | int,
+        dx: Real,
+        dy: Real,
+    ) -> "PathBuilder":
+        return self._append(
+            "a",
+            rx,
+            ry,
+            x_axis_rotation,
+            int(large_arc),
+            int(sweep),
+            dx,
+            dy,
         )
 
     def close(self) -> "PathBuilder":

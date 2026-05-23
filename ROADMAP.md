@@ -126,7 +126,7 @@ The target shape is a layered library:
 
 - [x] Add a path builder API instead of requiring manual `d` strings.
 - [x] Support SVG commands: `M`, `L`, `H`, `V`, `C`, `S`, `Q`, `T`, `A`, `Z`.
-- [ ] Support relative and absolute commands.
+- [x] Support relative and absolute commands.
 - [ ] Add path normalization utilities.
 - [ ] Add path parsing as a first-class capability, separate from the `Path` element wrapper.
 - [ ] Add path measurement utilities:
