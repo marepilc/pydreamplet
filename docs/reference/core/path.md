@@ -90,6 +90,10 @@ Supported methods:
 parse_path_data(path_data: str) -> list[PathCommand]
 normalize_path_commands(path_data: str) -> list[PathCommand]
 normalize_path_data(path_data: str) -> str
+iter_path_segments(path_data: str) -> list[PathSegment]
+path_length(path_data: str) -> float
+point_at_length(path_data: str, distance) -> Vector
+tangent_at_length(path_data: str, distance) -> Vector
 ```
 
 `parse_path_data()` parses an SVG path `d` string into structured `PathCommand` objects. It preserves relative commands and expands repeated coordinate groups into explicit commands.
@@ -104,6 +108,19 @@ import pydreamplet as dp
 normalized = dp.normalize_path_data("M10 20 l100 0 v50 h-100 Z")
 print(normalized)  # M10 20 L110 20 V70 H10 Z
 ```
+
+The first measurement utilities support linear commands: `M`, `L`, `H`, `V`, and `Z`. Curves and arcs raise `ValueError` for now instead of returning an approximate result.
+
+```py
+import pydreamplet as dp
+
+path = dp.Path("M0 0 L10 0 L10 10")
+print(path.length)        # 20.0
+print(path.point_at(15))  # Vector(x=10.0, y=5.0)
+print(path.tangent_at(15))  # Vector(x=0.0, y=1.0)
+```
+
+`Path` exposes `length`, `point_at(distance)`, and `tangent_at(distance)` convenience APIs backed by the path measurement functions.
 
 ### <span class="prop"></span>`d`
 

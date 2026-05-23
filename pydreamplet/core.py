@@ -7,6 +7,7 @@ from typing import Any, ClassVar, Self, cast, overload, override
 
 from pydreamplet.math import Vector
 from pydreamplet.path_data import PathBuilder, extract_path_points
+from pydreamplet.path_data import path_length, point_at_length, tangent_at_length
 from pydreamplet.types import AttributeValue, NumericPair, Real
 
 SVG_NS = "http://www.w3.org/2000/svg"
@@ -1394,6 +1395,16 @@ class Path(SvgElement):
         center_x = (max(xs) + min(xs)) / 2
         center_y = (max(ys) + min(ys)) / 2
         return Vector(center_x, center_y)
+
+    @property
+    def length(self) -> float:
+        return path_length(self.d)
+
+    def point_at(self, distance: Real) -> Vector:
+        return point_at_length(self.d, distance)
+
+    def tangent_at(self, distance: Real) -> Vector:
+        return tangent_at_length(self.d, distance)
 
 
 class Line(SvgElement):

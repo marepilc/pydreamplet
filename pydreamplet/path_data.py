@@ -1,5 +1,6 @@
 import re
 from dataclasses import dataclass
+import math
 
 from pydreamplet.math import Vector
 from pydreamplet.types import Real
@@ -52,6 +53,35 @@ class PathCommand:
 
     def __str__(self) -> str:
         return self.to_string()
+
+
+@dataclass(frozen=True)
+class PathSegment:
+    command: str
+    start: Vector
+    end: Vector
+
+    @property
+    def length(self) -> float:
+        return math.hypot(self.end.x - self.start.x, self.end.y - self.start.y)
+
+    def point_at(self, distance: Real) -> Vector:
+        if self.length == 0:
+            return self.start
+        t = max(0.0, min(1.0, float(distance) / self.length))
+        return Vector(
+            self.start.x + (self.end.x - self.start.x) * t,
+            self.start.y + (self.end.y - self.start.y) * t,
+        )
+
+    @property
+    def tangent(self) -> Vector:
+        if self.length == 0:
+            return Vector(0, 0)
+        return Vector(
+            (self.end.x - self.start.x) / self.length,
+            (self.end.y - self.start.y) / self.length,
+        )
 
 
 class PathBuilder:
@@ -346,6 +376,78 @@ def normalize_path_commands(path_data: str) -> list[PathCommand]:
 
 def normalize_path_data(path_data: str) -> str:
     return " ".join(command.to_string() for command in normalize_path_commands(path_data))
+
+
+def iter_path_segments(path_data: str) -> list[PathSegment]:
+    segments: list[PathSegment] = []
+    current = Vector(0, 0)
+    subpath_start = Vector(0, 0)
+
+    for path_command in normalize_path_commands(path_data):
+        command = path_command.command
+        values = path_command.values
+
+        if command == "M":
+            current = Vector(values[0], values[1])
+            subpath_start = current
+            continue
+
+        if command == "Z":
+            if current != subpath_start:
+                segments.append(PathSegment("Z", current, subpath_start))
+            current = subpath_start
+            continue
+
+        if command == "L":
+            end = Vector(values[0], values[1])
+        elif command == "H":
+            end = Vector(values[0], current.y)
+        elif command == "V":
+            end = Vector(current.x, values[0])
+        else:
+            raise ValueError(
+                f"Path measurement only supports linear commands, got {command!r}"
+            )
+
+        segments.append(PathSegment(command, current, end))
+        current = end
+
+    return segments
+
+
+def path_length(path_data: str) -> float:
+    return sum(segment.length for segment in iter_path_segments(path_data))
+
+
+def point_at_length(path_data: str, distance: Real) -> Vector:
+    remaining = max(0.0, float(distance))
+    segments = iter_path_segments(path_data)
+    if not segments:
+        return Vector(0, 0)
+
+    for segment in segments:
+        if remaining <= segment.length:
+            return segment.point_at(remaining)
+        remaining -= segment.length
+
+    return segments[-1].end
+
+
+def tangent_at_length(path_data: str, distance: Real) -> Vector:
+    remaining = max(0.0, float(distance))
+    segments = iter_path_segments(path_data)
+    if not segments:
+        return Vector(0, 0)
+
+    last_nonzero_tangent = Vector(0, 0)
+    for segment in segments:
+        if segment.length > 0:
+            last_nonzero_tangent = segment.tangent
+        if remaining <= segment.length:
+            return segment.tangent
+        remaining -= segment.length
+
+    return last_nonzero_tangent
 
 
 def extract_path_points(path_data: str) -> list[Vector]:

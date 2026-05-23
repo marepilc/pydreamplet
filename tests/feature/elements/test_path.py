@@ -5,8 +5,12 @@ import pytest
 import pydreamplet as dp
 from pydreamplet.path_data import (
     PathCommand,
+    iter_path_segments,
     normalize_path_data,
+    path_length,
+    point_at_length,
     parse_path_data,
+    tangent_at_length,
 )
 
 
@@ -239,3 +243,62 @@ def test_normalize_path_data_resets_current_point_after_close():
     normalized = normalize_path_data("M10 10 L20 10 Z l5 5")
 
     assert normalized == "M10 10 L20 10 Z L15 15"
+
+
+def test_iter_path_segments_returns_linear_segments():
+    segments = iter_path_segments("M0 0 L3 4 H10 V10 Z")
+
+    assert [segment.command for segment in segments] == ["L", "H", "V", "Z"]
+    assert [segment.start for segment in segments] == [
+        dp.Vector(0, 0),
+        dp.Vector(3, 4),
+        dp.Vector(10, 4),
+        dp.Vector(10, 10),
+    ]
+    assert [segment.end for segment in segments] == [
+        dp.Vector(3, 4),
+        dp.Vector(10, 4),
+        dp.Vector(10, 10),
+        dp.Vector(0, 0),
+    ]
+
+
+def test_path_length_measures_linear_commands():
+    assert path_length("M0 0 L3 4 H10 V10") == 18
+
+
+def test_path_length_measures_relative_commands_after_normalization():
+    assert path_length("M10 20 h100 v50 h-100 z") == 300
+
+
+def test_point_at_length_clamps_to_path_extents():
+    path_data = "M0 0 L10 0 L10 10"
+
+    assert point_at_length(path_data, -5) == dp.Vector(0, 0)
+    assert point_at_length(path_data, 5) == dp.Vector(5, 0)
+    assert point_at_length(path_data, 15) == dp.Vector(10, 5)
+    assert point_at_length(path_data, 30) == dp.Vector(10, 10)
+
+
+def test_tangent_at_length_returns_unit_direction():
+    path_data = "M0 0 L10 0 L10 10"
+
+    assert tangent_at_length(path_data, 5) == dp.Vector(1, 0)
+    assert tangent_at_length(path_data, 15) == dp.Vector(0, 1)
+    assert tangent_at_length(path_data, 30) == dp.Vector(0, 1)
+
+
+def test_path_measurement_rejects_curves_and_arcs_for_now():
+    with pytest.raises(ValueError, match="only supports linear commands"):
+        path_length("M0 0 C10 20 30 40 50 60")
+
+    with pytest.raises(ValueError, match="only supports linear commands"):
+        path_length("M0 0 A10 10 0 0 1 20 20")
+
+
+def test_path_element_exposes_linear_measurement_helpers():
+    path = dp.Path("M0 0 L10 0 L10 10")
+
+    assert path.length == 20
+    assert path.point_at(15) == dp.Vector(10, 5)
+    assert path.tangent_at(15) == dp.Vector(0, 1)

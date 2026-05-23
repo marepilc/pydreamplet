@@ -129,11 +129,11 @@ The target shape is a layered library:
 - [x] Support relative and absolute commands.
 - [x] Add path normalization utilities.
 - [x] Add path parsing as a first-class capability, separate from the `Path` element wrapper.
-- [ ] Add path measurement utilities:
-  - total length
-  - point at length
-  - tangent at length
-  - segment iteration
+- [x] Add path measurement utilities:
+  - [x] total length
+  - [x] point at length
+  - [x] tangent at length
+  - [x] segment iteration
 - [ ] Add robust bounding boxes for lines, rectangles, circles, ellipses, polygons,
   polylines, and paths.
 - [ ] Add arc and ring helpers with tested sweep/large-arc behavior.

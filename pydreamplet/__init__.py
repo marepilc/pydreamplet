@@ -28,9 +28,14 @@ from pydreamplet.math import Vector
 from pydreamplet.path_data import (
     PathBuilder,
     PathCommand,
+    PathSegment,
+    iter_path_segments,
     normalize_path_commands,
     normalize_path_data,
+    path_length,
+    point_at_length,
     parse_path_data,
+    tangent_at_length,
 )
 
 __all__ = [
@@ -49,6 +54,7 @@ __all__ = [
     "Path",
     "PathBuilder",
     "PathCommand",
+    "PathSegment",
     "Pattern",
     "Polygon",
     "Polyline",
@@ -61,7 +67,11 @@ __all__ = [
     "Transform",
     "TransformList",
     "Vector",
+    "iter_path_segments",
     "normalize_path_commands",
     "normalize_path_data",
+    "path_length",
+    "point_at_length",
     "parse_path_data",
+    "tangent_at_length",
 ]
