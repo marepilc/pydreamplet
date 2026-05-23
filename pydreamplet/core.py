@@ -273,6 +273,120 @@ class SvgElement:
         return cast(Self, new_instance)
 
 
+class Defs(SvgElement):
+    def __init__(self, **kwargs: Any):
+        super().__init__("defs", **kwargs)
+
+
+class SvgDefinition(SvgElement):
+    @property
+    def id_ref(self) -> str:
+        return f"url(#{self.id})"
+
+
+class Stop(SvgElement):
+    def __init__(
+        self,
+        offset: AttributeValue,
+        color: str | None = None,
+        opacity: AttributeValue = None,
+        **kwargs: Any,
+    ):
+        if color is not None:
+            kwargs["stop_color"] = color
+        if opacity is not None:
+            kwargs["stop_opacity"] = opacity
+        super().__init__("stop", offset=offset, **kwargs)
+
+
+class LinearGradient(SvgDefinition):
+    def __init__(
+        self,
+        id: str | None = None,
+        *,
+        x1: AttributeValue = None,
+        y1: AttributeValue = None,
+        x2: AttributeValue = None,
+        y2: AttributeValue = None,
+        **kwargs: Any,
+    ):
+        if id is not None:
+            kwargs["id"] = id
+        for key, value in {"x1": x1, "y1": y1, "x2": x2, "y2": y2}.items():
+            if value is not None:
+                kwargs[key] = value
+        super().__init__("linearGradient", **kwargs)
+
+    def add_stop(
+        self,
+        offset: AttributeValue,
+        color: str,
+        opacity: AttributeValue = None,
+        **kwargs: Any,
+    ) -> Self:
+        self.append(Stop(offset, color, opacity, **kwargs))
+        return self
+
+
+class RadialGradient(SvgDefinition):
+    def __init__(
+        self,
+        id: str | None = None,
+        *,
+        cx: AttributeValue = None,
+        cy: AttributeValue = None,
+        r: AttributeValue = None,
+        fx: AttributeValue = None,
+        fy: AttributeValue = None,
+        **kwargs: Any,
+    ):
+        if id is not None:
+            kwargs["id"] = id
+        attrs = {"cx": cx, "cy": cy, "r": r, "fx": fx, "fy": fy}
+        for key, value in attrs.items():
+            if value is not None:
+                kwargs[key] = value
+        super().__init__("radialGradient", **kwargs)
+
+    def add_stop(
+        self,
+        offset: AttributeValue,
+        color: str,
+        opacity: AttributeValue = None,
+        **kwargs: Any,
+    ) -> Self:
+        self.append(Stop(offset, color, opacity, **kwargs))
+        return self
+
+
+class Pattern(SvgDefinition):
+    def __init__(self, id: str | None = None, **kwargs: Any):
+        if id is not None:
+            kwargs["id"] = id
+        super().__init__("pattern", **kwargs)
+
+
+class Mask(SvgDefinition):
+    def __init__(self, id: str | None = None, **kwargs: Any):
+        if id is not None:
+            kwargs["id"] = id
+        super().__init__("mask", **kwargs)
+
+
+class ClipPath(SvgDefinition):
+    def __init__(self, id: str | None = None, **kwargs: Any):
+        if id is not None:
+            kwargs["id"] = id
+        super().__init__("clipPath", **kwargs)
+
+
+class Filter(SvgDefinition):
+    def __init__(self, id: str | None = None, **kwargs: Any):
+        if id is not None:
+            kwargs["id"] = id
+        super().__init__("filter", **kwargs)
+
+
 class Transformable:
     """
     Mixin for applying transforms to an SVG element.
@@ -538,6 +652,15 @@ class SVG(SvgElement):
     def save(self, filename: str, pretty_print: bool = False) -> None:
         with open(filename, "w", encoding="utf-8") as f:
             f.write(self.to_string(pretty_print=pretty_print))
+
+    def ensure_defs(self) -> Defs:
+        existing = self.find("defs")
+        if isinstance(existing, Defs):
+            return existing
+        defs = Defs()
+        self.element.insert(0, defs.element)
+        defs._parent = self
+        return defs
 
 
 class G(Transformable, SvgElement):  # pyright: ignore[reportUnsafeMultipleInheritance]
@@ -1204,6 +1327,14 @@ class TextOnPath(SvgElement):
 # Register element classes so that find/find_all returns the proper type.
 # -----------------------------------------------------------------------------
 SvgElement.register("g", G)
+SvgElement.register("defs", Defs)
+SvgElement.register("stop", Stop)
+SvgElement.register("linearGradient", LinearGradient)
+SvgElement.register("radialGradient", RadialGradient)
+SvgElement.register("pattern", Pattern)
+SvgElement.register("mask", Mask)
+SvgElement.register("clipPath", ClipPath)
+SvgElement.register("filter", Filter)
 SvgElement.register("circle", Circle)
 SvgElement.register("ellipse", Ellipse)
 SvgElement.register("rect", Rect)

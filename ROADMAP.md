@@ -114,7 +114,7 @@ The target shape is a layered library:
   elements and `set_position()`.
 - [x] Add convenience methods for setting position, size, stroke, fill, class, id, and style.
 - [x] Make copy, append, remove, find, and find_all behavior explicit and tested.
-- [ ] Add support for SVG `defs`, gradients, patterns, masks, clip paths, and filters.
+- [x] Add support for SVG `defs`, gradients, patterns, masks, clip paths, and filters.
 - [ ] Add a stronger transform model:
   - parse transforms
   - preserve transform order

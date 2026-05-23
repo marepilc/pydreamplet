@@ -71,6 +71,15 @@ svg.find("path").fill = "darkgreen"
 
 Creates an SVG instance by parsing an SVG file.
 
+### <span class="meth"></span>`ensure_defs`
+
+<!--skip-->
+```py
+ensure_defs(self) -> Defs
+```
+
+Returns the first existing `<defs>` element or creates one as the first child of the SVG. The returned `Defs` object is a live wrapper around the SVG tree.
+
 ### <span class="prop"></span>`w` and `h`
 
 **Getter:** Returns the width (w) and height (h) of the SVG based on its **`viewBox`**.
