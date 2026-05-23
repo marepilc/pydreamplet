@@ -24,7 +24,8 @@ def test_svg_find(svg_300, two_rectangles):
 def test_svg_find_all(svg_300, two_rectangles):
     rect1, rect2 = two_rectangles
     svg_300.append(rect1).append(rect2)
-    rectangles = list(svg_300.find_all("rect"))
+    rectangles = svg_300.find_all("rect")
+    assert isinstance(rectangles, list)
     assert len(rectangles) == 2
     assert rectangles[1].pos.x == 50
 
@@ -58,9 +59,11 @@ def test_find_and_find_all():
 def test_svg_append_remove(svg_300, two_rectangles):
     rect1, rect2 = two_rectangles
 
-    svg_300.append(rect1)
+    assert svg_300.append(rect1) is svg_300
+    assert getattr(rect1, "_parent") is svg_300
     assert len(list(svg_300.element)) == 1
-    svg_300.remove(rect1)
+    assert svg_300.remove(rect1) is svg_300
+    assert not hasattr(rect1, "_parent")
     assert len(list(svg_300.element)) == 0
 
     svg_300.append(rect1).append(rect2)
@@ -107,6 +110,97 @@ def test_svg_element_copy():
     assert original.height == duplicate.height
     assert original.element is not duplicate.element
     assert original.element.attrib is not duplicate.element.attrib
+
+
+def test_copy_preserves_element_class_and_deep_copies_children():
+    group = dp.G(id="layer")
+    rect = dp.Rect(x=10, y=20, width=30, height=40)
+    group.append(rect)
+
+    duplicate = group.copy()
+    duplicate_rect = duplicate.find("rect")
+    assert isinstance(duplicate, dp.G)
+    assert isinstance(duplicate_rect, dp.Rect)
+    assert duplicate is not group
+    assert duplicate.element is not group.element
+    assert duplicate_rect is not None
+    assert duplicate_rect.element is not rect.element
+
+    duplicate_rect.x = 99
+    assert rect.x == 10
+    assert duplicate_rect.x == 99
+
+
+def test_append_remove_parent_contract_for_multiple_children():
+    group = dp.G()
+    rect = dp.Rect()
+    circle = dp.Circle()
+
+    result = group.append(rect, circle)
+
+    assert result is group
+    assert getattr(rect, "_parent") is group
+    assert getattr(circle, "_parent") is group
+    assert group.remove(rect, circle) is group
+    assert not hasattr(rect, "_parent")
+    assert not hasattr(circle, "_parent")
+
+
+def test_find_returns_registered_types_and_none_for_missing_elements():
+    svg = dp.SVG(100, 100)
+    group = dp.G(id="layer")
+    rect = dp.Rect(id="box")
+    circle = dp.Circle(id="dot")
+    group.append(rect, circle)
+    svg.append(group)
+
+    assert isinstance(svg.find("g"), dp.G)
+    assert isinstance(svg.find("rect", nested=True, id="box"), dp.Rect)
+    assert isinstance(svg.find("circle", nested=True, id="dot"), dp.Circle)
+    assert svg.find("ellipse", nested=True) is None
+
+
+def test_find_returns_live_wrapper_for_existing_element():
+    svg = dp.SVG(100, 100)
+    rect = dp.Rect(id="box", fill="red")
+    svg.append(rect)
+
+    found = svg.find("rect", id="box")
+    assert isinstance(found, dp.Rect)
+    assert found is not rect
+    assert found.element is rect.element
+
+    found.fill = "blue"
+    assert rect.fill == "blue"
+    assert 'fill="blue"' in svg.to_string(pretty_print=False)
+
+
+def test_find_all_returns_registered_types_with_filters():
+    svg = dp.SVG(100, 100)
+    svg.append(
+        dp.Rect(class_name="item"),
+        dp.Circle(class_name="item"),
+        dp.Rect(class_name="other"),
+    )
+
+    items = svg.find_all("rect", class_name="item")
+
+    assert isinstance(items, list)
+    assert len(items) == 1
+    assert isinstance(items[0], dp.Rect)
+
+
+def test_find_all_returns_live_wrappers_for_existing_elements():
+    svg = dp.SVG(100, 100)
+    rect = dp.Rect(class_name="item", fill="red")
+    svg.append(rect)
+
+    found = svg.find_all("rect", class_name="item")
+    found[0].fill = "blue"
+
+    assert found[0].element is rect.element
+    assert rect.fill == "blue"
+    assert 'fill="blue"' in svg.to_string(pretty_print=False)
 
 
 def test_has_attr():

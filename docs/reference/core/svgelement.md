@@ -102,19 +102,19 @@ print(text.has_attr("class_name"))   # True
 
 <!--skip-->
 ```py
-append(self, *children) -> SvgElement
+append(self, *children) -> Self
 ```
 
-Appends aone or more child elements to the current element. Returns self, allowing method chaining.
+Appends one or more child elements to the current element. Returns self, allowing method chaining. When a wrapped `SvgElement` is appended, the child receives a `_parent` reference to the current element.
 
 ### <span class="meth"></span>`remove`
 
 <!--skip-->
 ```py
-remove(self, *children) -> SvgElement
+remove(self, *children) -> Self
 ```
 
-Removes one or more child elements from the current element. If a child was wrapped, it removes its underlying element.
+Removes one or more child elements from the current element. If a child was wrapped, it removes its underlying element and clears its `_parent` reference.
 
 <!--skip-->
 ```py
@@ -146,23 +146,34 @@ Returns the SVG element as a string. If pretty_print is set to `True`, the outpu
 
 <!--skip-->
 ```py
-find(self, tag: str, nested: bool = False, id: str | None = None)
-find_all(self, tag: str, nested: bool = False, class_name: str | None = None)
+find(self, tag: str, nested: bool = False, id: str | None = None) -> SvgElement | None
+find_all(self, tag: str, nested: bool = False, class_name: str | None = None) -> list[SvgElement]
 ```
 
 Searches for child elements by tag. If `nested` is `True`, the search is recursive.
 
 For `find`, if an `id` is provided, only the element with that matching id will be returned.
-For `find_all`, if a `class_name` is provided, only elements with that matching class attribute will be returned.
+For `find_all`, if a `class_name` is provided, only elements with that matching class attribute will be returned. Registered SVG tags are returned as their specialized pyDreamplet classes, such as `Rect`, `Circle`, or `G`.
+
+The returned objects are live wrappers around the existing XML elements in the SVG tree. Mutating a result from `find()` or `find_all()` mutates the original SVG. Use `copy()` only when you need an independent duplicate.
+
+<!--skip-->
+```py
+svg = SVG(200, 100)
+svg.append(Rect(id="box", x=10, y=10, width=50, height=30, fill="red"))
+
+rect = svg.find("rect", id="box")
+rect.fill = "blue"  # Updates the rect inside svg.
+```
 
 ### <span class="meth"></span>`copy`
 
 <!--skip-->
 ```py
-copy(self) -> SvgElement
+copy(self) -> Self
 ```
 
-Creates and returns a deep copy of the current SVG element. The new instance is a complete duplicate with its own separate copy of the underlying ElementTree element (and its subtree). This ensures that subsequent modifications to the copy do not affect the original element.
+Creates and returns a deep copy of the current SVG element. The new instance preserves the original pyDreamplet class and has its own separate copy of the underlying ElementTree element and subtree. This ensures that subsequent modifications to the copy do not affect the original element.
 
 For example:
 

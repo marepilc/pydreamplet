@@ -3,7 +3,7 @@ import re
 import xml.etree.ElementTree as ET
 from copy import deepcopy
 from collections.abc import Mapping
-from typing import Any, ClassVar, Self, overload, override
+from typing import Any, ClassVar, Self, cast, overload, override
 
 from pydreamplet.math import Vector
 from pydreamplet.path_data import extract_path_points
@@ -85,7 +85,7 @@ class SvgElement:
                 new_attrs[k.replace("_", "-")] = str(v)
         return new_attrs
 
-    def attrs(self, attributes: dict[str, object]) -> "SvgElement":
+    def attrs(self, attributes: dict[str, object]) -> Self:
         for key, value in attributes.items():
             attr_key = "class" if key == "class_name" else key.replace("_", "-")
             if value is None:
@@ -145,7 +145,7 @@ class SvgElement:
         self.attrs({"width": width, "height": height})
         return self
 
-    def append(self, *children: Any) -> "SvgElement":
+    def append(self, *children: Any) -> Self:
         for child in children:
             if hasattr(child, "element"):
                 self.element.append(child.element)
@@ -155,7 +155,7 @@ class SvgElement:
                 self.element.append(child)
         return self
 
-    def remove(self, *children: Any) -> "SvgElement":
+    def remove(self, *children: Any) -> Self:
         for child in children:
             if hasattr(child, "element"):
                 self.element.remove(child.element)
@@ -201,7 +201,7 @@ class SvgElement:
         )
 
     @override
-    def __setattr__(self, name: str, value: str | int | float | None):
+    def __setattr__(self, name: str, value: object):
         # Map "class_name" to the SVG "class" attribute.
         if name == "class_name":
             attr_name = "class"
@@ -235,7 +235,9 @@ class SvgElement:
         attr_name = name.replace("_", "-")
         return attr_name in self.element.attrib
 
-    def find(self, tag: str, nested: bool = False, id: str | None = None):
+    def find(
+        self, tag: str, nested: bool = False, id: str | None = None
+    ) -> "SvgElement | None":
         # Build the XPath for the tag.
         xpath = ".//" + qname(tag) if nested else qname(tag)
         # If an id is provided, add an attribute filter.
@@ -246,16 +248,18 @@ class SvgElement:
             return SvgElement.from_element(found)
         return None
 
-    def find_all(self, tag: str, nested: bool = False, class_name: str | None = None):
+    def find_all(
+        self, tag: str, nested: bool = False, class_name: str | None = None
+    ) -> list["SvgElement"]:
         # Build the XPath for the tag.
         xpath = ".//" + qname(tag) if nested else qname(tag)
         # If a class is provided, add an attribute filter.
         if class_name is not None:
             xpath += f"[@class='{class_name}']"
         found_list = self.element.findall(xpath)
-        return (SvgElement.from_element(el) for el in found_list)
+        return [SvgElement.from_element(el) for el in found_list]
 
-    def copy(self):
+    def copy(self) -> Self:
         """
         Create a deep copy of this SvgElement.
         The new copy has a deep-copied ElementTree element, so modifications
@@ -266,7 +270,7 @@ class SvgElement:
         # Create a new instance without calling __init__
         new_instance = self.__class__.__new__(self.__class__)
         new_instance.element = new_element
-        return new_instance
+        return cast(Self, new_instance)
 
 
 class Transformable:
