@@ -39,6 +39,14 @@ branch is in progress.
   including notebook extra installation examples.
 - Added a base `[mypy]` section and configured mypy to ignore missing
   `uharfbuzz` stubs.
+- Split local dependency groups for development and documentation tooling.
+- Kept HarfBuzz and fontTools as default runtime dependencies because text
+  measurement is a common pyDreamplet workflow.
+- Added Ruff configuration and expanded CI to run pytest, basedpyright, mypy,
+  Ruff, documentation build, package build, and wheel install smoke checks on
+  pinned Python versions.
+- Reduced default GitHub Actions permissions and limited `contents: write` to
+  the documentation deploy job.
 
 ### Tests
 

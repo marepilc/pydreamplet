@@ -71,25 +71,27 @@ The target shape is a layered library:
 
 ## Packaging And Tooling
 
-- [ ] Split dependencies into clearer groups:
+- [x] Split dependencies into clearer groups:
   - core runtime
   - notebook/Jupyter
   - docs
   - dev/test
-- [ ] Remove `ipykernel` from default install.
-- [ ] Consider whether HarfBuzz and fontTools should be optional under a
-  `typography` extra if text measurement is not required by the core package.
+- [x] Remove `ipykernel` from default install.
+- [x] Decide whether HarfBuzz and fontTools should be optional under a
+  `typography` extra.
+  Text measurement is common enough for pyDreamplet that HarfBuzz and fontTools
+  stay in the default runtime dependency set.
 - [x] Revisit typography dependencies after choosing the more accurate text
   measurement backend.
 - [x] Add a real `[mypy]` section to `mypy.ini`.
 - [ ] Enable stricter type checking gradually, starting with core public APIs.
-- [ ] Add Ruff configuration to `pyproject.toml`.
-- [ ] Add formatting/lint checks to CI.
-- [ ] Add `uv run mypy pydreamplet` to CI.
-- [ ] Add package build verification to CI.
-- [ ] Add wheel install smoke test to CI.
-- [ ] Pin CI Python versions explicitly, for example `3.12` and latest stable.
-- [ ] Reduce default GitHub Actions permissions and grant `contents: write` only to
+- [x] Add Ruff configuration to `pyproject.toml`.
+- [x] Add Ruff lint checks to CI.
+- [x] Add `uv run mypy pydreamplet` to CI.
+- [x] Add package build verification to CI.
+- [x] Add wheel install smoke test to CI.
+- [x] Pin CI Python versions explicitly, for example `3.12` and latest stable.
+- [x] Reduce default GitHub Actions permissions and grant `contents: write` only to
   the documentation deploy job.
 
 ## Core API Goals
