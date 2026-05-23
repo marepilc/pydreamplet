@@ -1,8 +1,14 @@
 import os
 import platform
+from pathlib import Path
+from typing import Any, cast
 
 from fontTools.ttLib import TTFont, TTLibError
-from PIL import ImageFont
+import uharfbuzz as _hb
+
+from pydreamplet.types import Real
+
+hb = cast(Any, _hb)
 
 
 def get_system_font_path(
@@ -10,12 +16,14 @@ def get_system_font_path(
 ) -> str | None:
     """
     Search common system directories for a TrueType or OpenType font file (.ttf/.otf)
-    that matches the requested font_family and is within a specified tolerance of the desired weight.
+    that matches the requested font_family and is within a specified tolerance of
+    the desired weight.
 
     Args:
         font_family: The desired system font name (e.g. "Arial").
         weight: Numeric weight (e.g., 400 for regular, 700 for bold).
-        weight_tolerance: Allowed difference between the desired weight and the font's actual weight.
+        weight_tolerance: Allowed difference between the desired weight and the
+            font's actual weight.
 
     Returns:
         The full path to the matching font file, or None if no match is found.
@@ -116,76 +124,110 @@ class TypographyMeasurer:
         """
         self.dpi = dpi
         self.font_path = font_path
-        self._font_cache: dict[tuple[str, int], ImageFont.FreeTypeFont] = {}
+        self._font_data_cache: dict[str, bytes] = {}
+        self._ttfont_cache: dict[str, TTFont] = {}
 
-    def _get_font(self, font_path: str, pixel_size: int) -> ImageFont.FreeTypeFont:
-        """Get a cached font object or create a new one."""
-        cache_key = (font_path, pixel_size)
-        if cache_key not in self._font_cache:
-            self._font_cache[cache_key] = ImageFont.truetype(font_path, pixel_size)
-        return self._font_cache[cache_key]
-
-    def measure_text(
-        self,
-        text: str,
-        font_family: str | None = None,
-        weight: int | None = None,
-        font_size: float = 12.0,
-    ) -> tuple[float, float]:
-        """
-        Measure the width and height of the given text rendered in the specified font.
-        Supports multiline text if newline characters are present.
-        Uses modern Pillow text measurement methods for better accuracy.
-
-        Args:
-            text: The text to measure.
-            font_family: The system font name (e.g., "Arial"). Optional if self.font_path is provided.
-            weight: Numeric weight (e.g., 400 for regular, 700 for bold). Optional if self.font_path is provided.
-            font_size: The desired font size in points.
-
-        Returns:
-            A tuple (width, height) in pixels.
-
-        Raises:
-            ValueError: If the specified font cannot be found and font_family or weight are missing.
-        """
-        # If no font_path is already set, require font_family and weight.
+    def _resolve_font_path(
+        self, font_family: str | None, weight: int | None
+    ) -> str:
         if not self.font_path:
             if font_family is None or weight is None:
                 raise ValueError(
-                    "A font path was not provided and font_family and weight are required to search for a font."
+                    "A font path was not provided and font_family and weight are "
+                    "required to search for a font."
                 )
             self.font_path = get_system_font_path(font_family, weight)
         if self.font_path is None:
             raise ValueError(
                 f"Font '{font_family}' with weight {weight} not found on the system."
             )
+        return self.font_path
 
-        # Convert point size to pixel size using DPI conversion.
-        pixel_size = int(font_size * self.dpi / 72.0)
-        font = self._get_font(self.font_path, pixel_size)
+    def _get_font_data(self, font_path: str) -> bytes:
+        if font_path not in self._font_data_cache:
+            self._font_data_cache[font_path] = Path(font_path).read_bytes()
+        return self._font_data_cache[font_path]
 
-        # Use modern Pillow text measurement methods
-        if "\n" in text:
-            # For multiline text, calculate dimensions manually using font metrics
-            lines = text.split("\n")
-            max_width = 0.0
-            for line in lines:
-                line_width = font.getlength(line)
-                max_width = max(max_width, line_width)
+    def _get_ttfont(self, font_path: str) -> TTFont:
+        if font_path not in self._ttfont_cache:
+            self._ttfont_cache[font_path] = TTFont(font_path)
+        return self._ttfont_cache[font_path]
 
-            # Calculate total height: number of lines * line height
-            ascent, descent = font.getmetrics()
-            line_height = ascent + descent
-            total_height = len(lines) * line_height
+    def _font_scale(self, font_path: str, font_size: Real) -> tuple[float, float]:
+        ttfont = self._get_ttfont(font_path)
+        head_table = cast(Any, ttfont["head"])
+        units_per_em = head_table.unitsPerEm
+        pixel_size = float(font_size) * self.dpi / 72.0
+        return pixel_size, pixel_size / units_per_em
 
-            width = max_width
-            height = total_height
-        else:
-            # For single line text, use getlength for width and font metrics for height
-            width = font.getlength(text)
-            # Get height from font metrics for more accurate line height
-            ascent, descent = font.getmetrics()
-            height = ascent + descent
+    def _line_height(self, font_path: str, font_size: Real) -> float:
+        ttfont = self._get_ttfont(font_path)
+        pixel_size, scale = self._font_scale(font_path, font_size)
+
+        if "OS/2" in ttfont:
+            os2_table = ttfont["OS/2"]
+            ascender = getattr(os2_table, "sTypoAscender", 0)
+            descender = getattr(os2_table, "sTypoDescender", 0)
+            line_gap = getattr(os2_table, "sTypoLineGap", 0)
+            if ascender or descender or line_gap:
+                return float((ascender - descender + line_gap) * scale)
+
+        if "hhea" in ttfont:
+            hhea_table = cast(Any, ttfont["hhea"])
+            return float(
+                (hhea_table.ascent - hhea_table.descent + hhea_table.lineGap) * scale
+            )
+
+        return pixel_size
+
+    def _measure_line_width(self, text: str, font_path: str, font_size: Real) -> float:
+        font_data = self._get_font_data(font_path)
+        face = hb.Face(font_data)
+        font = hb.Font(face)
+        font.scale = (face.upem, face.upem)
+
+        buffer = hb.Buffer()
+        buffer.add_str(text)
+        buffer.guess_segment_properties()
+        hb.shape(font, buffer)
+
+        _, scale = self._font_scale(font_path, font_size)
+        advance = sum(position.x_advance for position in buffer.glyph_positions)
+        return float(advance * scale)
+
+    def measure_text(
+        self,
+        text: str,
+        font_family: str | None = None,
+        weight: int | None = None,
+        font_size: Real = 12.0,
+    ) -> tuple[float, float]:
+        """
+        Measure the width and height of the given text rendered in the specified font.
+        Supports multiline text if newline characters are present.
+        Uses HarfBuzz for OpenType shaping and fontTools for font metrics.
+
+        Args:
+            text: The text to measure.
+            font_family: The system font name (e.g., "Arial"). Optional if
+                self.font_path is provided.
+            weight: Numeric weight (e.g., 400 for regular, 700 for bold).
+                Optional if self.font_path is provided.
+            font_size: The desired font size in points.
+
+        Returns:
+            A tuple (width, height) in pixels.
+
+        Raises:
+            ValueError: If the specified font cannot be found and font_family or
+                weight are missing.
+        """
+        font_path = self._resolve_font_path(font_family, weight)
+        lines = text.split("\n") or [""]
+        width = max(
+            (self._measure_line_width(line, font_path, font_size) for line in lines),
+            default=0.0,
+        )
+        height = self._line_height(font_path, font_size) * len(lines)
 
         return (float(width), float(height))

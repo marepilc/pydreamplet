@@ -35,7 +35,7 @@ The target shape is a layered library:
   and polylines.
 - [x] Scale helpers exist: linear, band, point, ordinal, color, square, and circle scales.
 - [x] Color helpers exist for conversion, blending, random colors, and palette generation.
-- [x] Typography measurement exists through Pillow and fontTools.
+- [x] Typography measurement exists through HarfBuzz and fontTools.
 - [x] Noise helpers exist, including 1D, 2D, and 3D simplex noise.
 - [x] Marker helpers and predefined marker path constants exist.
 - [x] Package includes bundled SVG resources.
@@ -64,10 +64,9 @@ The target shape is a layered library:
   viewBox values, dimensions, and existing root attributes more robustly.
 - [x] Replace or isolate the simplistic path coordinate parser used by `Path.w`,
   `Path.h`, and `Path.center`.
-- [ ] Improve text measurement accuracy.
-  Current typography measurement based on Pillow/fontTools is not precise enough
-  for reliable SVG layout. Evaluate replacing it with a more accurate shaping and
-  measurement backend, or make backend selection explicit.
+- [x] Improve text measurement accuracy.
+  Typography measurement now uses HarfBuzz shaping with fontTools metrics instead
+  of Pillow bounding boxes.
 - [ ] Add tests for malformed SVG input, path edge cases, and non-integer viewBox values.
 
 ## Packaging And Tooling
@@ -78,11 +77,11 @@ The target shape is a layered library:
   - docs
   - dev/test
 - [ ] Remove `ipykernel` from default install.
-- [ ] Consider whether Pillow and fontTools should be optional under a `typography`
-  extra if text measurement is not required by the core package.
-- [ ] Revisit typography dependencies after choosing the more accurate text
+- [ ] Consider whether HarfBuzz and fontTools should be optional under a
+  `typography` extra if text measurement is not required by the core package.
+- [x] Revisit typography dependencies after choosing the more accurate text
   measurement backend.
-- [ ] Add a real `[mypy]` section to `mypy.ini`.
+- [x] Add a real `[mypy]` section to `mypy.ini`.
 - [ ] Enable stricter type checking gradually, starting with core public APIs.
 - [ ] Add Ruff configuration to `pyproject.toml`.
 - [ ] Add formatting/lint checks to CI.

@@ -4,7 +4,7 @@ icon: material/format-font
 
 # Font utilities
 
-This module provides functions and classes for working with system fonts and measuring text dimensions. It includes a utility function to search for a system font file that matches a given font family and weight, as well as a class to measure the width and height of rendered text using the PIL library.
+This module provides functions and classes for working with system fonts and measuring text dimensions. It includes a utility function to search for a system font file that matches a given font family and weight, as well as a class to measure text width and height using HarfBuzz shaping and fontTools metrics.
 
 
 ## <span class="func"></span>`get_system_font_path`
@@ -42,7 +42,7 @@ else:
 
 ## <span class="class"></span>`TypographyMeasurer`
 
-The TypographyMeasurer class measures the rendered width and height of text given a specific font and size. It converts point sizes to pixels based on the provided DPI and leverages the PIL library for text measurement.
+The TypographyMeasurer class measures the rendered width and height of text given a specific font and size. It converts point sizes to pixels based on the provided DPI, shapes text with HarfBuzz, and reads line metrics from the font with fontTools.
 
 <!--skip-->
 ```py

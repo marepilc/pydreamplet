@@ -31,11 +31,12 @@ branch is in progress.
 - Isolated path data coordinate extraction into a dedicated helper used by
   `Path.w`, `Path.h`, and `Path.center`.
 - Centralized shared numeric type aliases in `pydreamplet.types`.
+- Replaced Pillow-based text measurement with HarfBuzz shaping and fontTools
+  metrics, and removed Pillow from core runtime dependencies.
 - Updated installation documentation to show `uv` first and `pip` second,
   including notebook extra installation examples.
-- Started tracking text measurement accuracy as a 2.0 known issue. The current
-  Pillow/fontTools-based measurement path should be replaced or made
-  backend-selectable before relying on it for precise SVG layout.
+- Added a base `[mypy]` section and configured mypy to ignore missing
+  `uharfbuzz` stubs.
 
 ### Tests
 
@@ -46,3 +47,4 @@ branch is in progress.
 - Added regression tests for malformed and unsupported group transform parsing.
 - Added regression tests for path bounds with relative commands, horizontal and
   vertical lines, curves, arcs, and repeated move coordinates.
+- Added typography tests for explicit font paths and multiline measurements.

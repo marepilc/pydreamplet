@@ -12,7 +12,7 @@ Below is a step-by-step tutorial on how to measure and visualize text dimensions
 
 When working with text in **pyDreamplet**, you often need to know the approximate dimensions of the text to handle layout correctly. For instance, if you want to center text within a rectangle or place shapes around your text, you must know how wide and tall the text will be.
 
-pyDreamplet uses **Pillow** (the Python Imaging Library) to compute this estimate. Pillow’s text measurement is not as precise as layout engines like a web browser (e.g., using `<canvas>` or `SVG` in an actual HTML environment), but it is lightweight and good enough for most design tasks.
+pyDreamplet uses **HarfBuzz** for OpenType shaping and **fontTools** for font metrics. This gives more reliable width measurements for kerning, ligatures, and other shaped text features than a simple image-font bounding box. SVG renderers and browsers can still differ slightly, so treat measurements as layout estimates rather than exact browser output.
 
 Key points about measurement:
 
@@ -74,7 +74,7 @@ At this point, we already have our text placed at the center of the SVG. However
 
 ## Measuring Text Using TypographyMeasurer
 
-To measure the width and height of any text string, pyDreamplet provides the TypographyMeasurer class. Under the hood, it uses Pillow for measurement:
+To measure the width and height of any text string, pyDreamplet provides the TypographyMeasurer class. Under the hood, it shapes text with HarfBuzz and reads font metrics with fontTools:
 
 <!--skip-->
 ```py
@@ -129,13 +129,13 @@ Your final output might look like this:
 Make sure you pass the exact same font properties (font_family, font_size, font_weight, etc.) to both your Text element and to the TypographyMeasurer. If there is a mismatch, your measured dimensions will not match the on-screen text.
 
 **Mind the environment**
-Some systems may have different font renderers or default fonts when the specified font is unavailable. Verify that Pillow can find the font you’re requesting. If it can’t, it might fall back to a default (often DejaVuSans).
+Some systems may have different installed fonts or font file names. Verify that pyDreamplet can find the font you’re requesting, or pass `font_path` to `TypographyMeasurer` when you need a specific font file.
 
 **Adjust for vertical offsets**
 Depending on the chosen dominant_baseline, the text might render slightly differently than the bounding box you expect. If precise alignment is crucial, experiment with different baseline settings or manually offset using dy or the pos property.
 
 **Measuring multiple lines**
-If you have multiline text, consider measuring each line separately or measure the joined lines with newline characters ("\n"). Keep in mind that line spacing might not be accurately reflected by Pillow. You may need to add additional spacing based on your design needs.
+If you have multiline text, measure the joined lines with newline characters (`"\n"`). pyDreamplet uses the maximum shaped line width and multiplies the font line metrics by the number of lines. You may still need extra spacing based on your design needs.
 
 **Performance considerations**
 Measuring text repeatedly can be somewhat expensive. If you are repeatedly measuring the same text (e.g., in a loop), cache the result.
