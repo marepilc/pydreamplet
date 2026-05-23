@@ -20,6 +20,7 @@ pyDreamplet is a Python library designed for creating stunning SVG visualization
 
 The following example demonstrates how to create a simple SVG canvas, draw a shape, and save the result to a file.
 
+<!--skip-->
 ```py title="Your first SVG" linenums="1"
 import pydreamplet as dp
 from pydreamplet.colors import random_color

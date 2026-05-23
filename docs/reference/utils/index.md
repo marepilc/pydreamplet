@@ -174,6 +174,7 @@ print(semi_angles)
 # [(0, 30.0), (30.0, 90.0), (90.0, 180.0)]
 ```
 
+<!--skip-->
 ```py title="Usage example"
 import pydreamplet as dp
 from pydreamplet.shapes import ring

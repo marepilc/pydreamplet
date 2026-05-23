@@ -45,6 +45,7 @@ print(text_on_path.content)
 text_on_path.content = "Updated Text"
 ```
 
+<!--skip-->
 ```py title="Usage example"
 import pydreamplet as dp
 

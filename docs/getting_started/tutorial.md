@@ -192,6 +192,7 @@ svg.append(defs)
 
 After creating the gradient, update the circle's fill to use the gradient and change its stroke to "gray".
 
+<!--skip-->
 ```py
 # Apply the gradient fill to the circle and update its stroke color
 circle.fill = "url(#grad)"
