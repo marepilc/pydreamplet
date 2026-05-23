@@ -81,17 +81,14 @@ To measure the width and height of any text string, pyDreamplet provides the Typ
 measurer = TypographyMeasurer()
 
 width, height = measurer.measure_text(
-    txt.content,
-    font_family=txt.font_family,
-    font_size=txt.font_size,
-    weight=txt.font_weight
+    txt,
 )
 
 print(f"Measured text width: {width}, height: {height}") #  prints Width: 347.0, Height: 47.0
 ```
 
-- `txt.content` is the string you want to measure.
-- `font_family=txt.font_family`, `font_size=txt.font_size`, and `weight=txt.font_weight` match the same styling you set on your `Text` object.
+- Passing `txt` measures the text content with the same `font_family`,
+  `font_size`, and `font_weight` set on the `Text` object.
 
 The returned `width` and `height` are floating-point values representing the approximate bounding box in pixels.
 

@@ -63,21 +63,22 @@ measurer = TypographyMeasurer(dpi=96)
 <!--skip-->
 ```py
 measure_text(
-    text: str,
+    text: str | Text | TextOnPath,
+    *,
     font_family: str | None = None,
     weight: int | None = None,
-    font_size: Real = 12.0
+    font_size: Real | None = None
 ) -> tuple[float, float]
 ```
 
-Measures the width and height (in pixels) of the provided text when rendered in the specified font. Multiline text is supported if newline characters are present.
+Measures the width and height (in pixels) of the provided text when rendered in the specified font. Multiline text is supported if newline characters are present. You can pass a string with explicit font settings, or pass a `Text`/`TextOnPath` element to read `content`, `font_family`, `font_size`, and `font_weight` from the element.
 
 <span class="param">**Parameters**</span>
 
-- `text` *(str)*: The text to measure.
+- `text` *(str | Text | TextOnPath)*: The text or text element to measure.
 - `font_family` *(str | None, optional)*: The system font name (e.g., "Arial"). Required if no font_path is already set.
 - `weight` *(int | None, optional)*: Numeric weight (e.g., 400 for regular, 700 for bold). Required if no font_path is already set.
-- `font_size` *(Real, optional)*: The desired font size in points (default: 12.0).
+- `font_size` *(Real | None, optional)*: The desired font size in points. If omitted for a text element, the element's font size is used. Plain strings default to 12.0.
 
 <span class="returns">**Returns**</span>
 
@@ -94,4 +95,17 @@ width, height = measurer.measure_text(
     font_size=14,
 )
 print(f"Text dimensions: {width}px x {height}px")
+```
+
+```py
+import pydreamplet as dp
+from pydreamplet.typography import TypographyMeasurer
+
+text = dp.Text("Hello")
+text.font_family = "Arial"
+text.font_size = "14"
+text.font_weight = 400
+
+measurer = TypographyMeasurer()
+width, height = measurer.measure_text(text)
 ```

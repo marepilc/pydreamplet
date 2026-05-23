@@ -1,7 +1,8 @@
 import os
 import platform
+import re
 from pathlib import Path
-from typing import Any, cast
+from typing import Any, Protocol, overload, cast
 
 from fontTools.ttLib import TTFont, TTLibError
 import uharfbuzz as _hb
@@ -9,6 +10,12 @@ import uharfbuzz as _hb
 from pydreamplet.types import Real
 
 hb = cast(Any, _hb)
+FontSize = Real | str
+
+
+class TextElementLike(Protocol):
+    @property
+    def content(self) -> str: ...
 
 
 def get_system_font_path(
@@ -195,12 +202,94 @@ class TypographyMeasurer:
         advance = sum(position.x_advance for position in buffer.glyph_positions)
         return float(advance * scale)
 
+    @staticmethod
+    def _coerce_font_size(value: object, default: Real = 12.0) -> Real:
+        if value is None:
+            return default
+        if isinstance(value, (int, float)):
+            return value
+        if isinstance(value, str):
+            match = re.match(r"\s*([0-9]+(?:\.[0-9]+)?)", value)
+            if match:
+                return float(match.group(1))
+        raise ValueError(f"font_size must be numeric, got {value!r}")
+
+    @staticmethod
+    def _coerce_weight(value: object) -> int | None:
+        if value is None:
+            return None
+        if isinstance(value, int):
+            return value
+        if isinstance(value, float):
+            return int(value)
+        if isinstance(value, str):
+            normalized = value.strip().lower()
+            if normalized == "normal":
+                return 400
+            if normalized == "bold":
+                return 700
+            try:
+                return int(normalized)
+            except ValueError as exc:
+                raise ValueError(f"font weight must be numeric, got {value!r}") from exc
+        raise ValueError(f"font weight must be numeric, got {value!r}")
+
+    def _text_measurement_args(
+        self,
+        text: str | object,
+        font_family: str | None,
+        weight: int | None,
+        font_size: FontSize | None,
+    ) -> tuple[str, str | None, int | None, Real]:
+        if isinstance(text, str):
+            return text, font_family, weight, self._coerce_font_size(font_size)
+
+        content = getattr(text, "content", None)
+        if not isinstance(content, str):
+            raise TypeError("measure_text() expects a string or a text element.")
+
+        if font_family is None:
+            font_family_value = getattr(text, "font_family", None)
+            if font_family_value is not None:
+                font_family = str(font_family_value)
+
+        if weight is None:
+            weight = self._coerce_weight(getattr(text, "font_weight", None))
+            if weight is None and font_family is not None:
+                weight = 400
+
+        if font_size is None:
+            font_size = self._coerce_font_size(getattr(text, "font_size", None))
+
+        return content, font_family, weight, self._coerce_font_size(font_size)
+
+    @overload
     def measure_text(
         self,
         text: str,
+        *,
         font_family: str | None = None,
         weight: int | None = None,
-        font_size: Real = 12.0,
+        font_size: FontSize | None = None,
+    ) -> tuple[float, float]: ...
+
+    @overload
+    def measure_text(
+        self,
+        text: TextElementLike,
+        *,
+        font_family: str | None = None,
+        weight: int | None = None,
+        font_size: FontSize | None = None,
+    ) -> tuple[float, float]: ...
+
+    def measure_text(
+        self,
+        text: str | object,
+        *,
+        font_family: str | None = None,
+        weight: int | None = None,
+        font_size: FontSize | None = None,
     ) -> tuple[float, float]:
         """
         Measure the width and height of the given text rendered in the specified font.
@@ -208,12 +297,13 @@ class TypographyMeasurer:
         Uses HarfBuzz for OpenType shaping and fontTools for font metrics.
 
         Args:
-            text: The text to measure.
+            text: The string or text element to measure.
             font_family: The system font name (e.g., "Arial"). Optional if
                 self.font_path is provided.
             weight: Numeric weight (e.g., 400 for regular, 700 for bold).
                 Optional if self.font_path is provided.
-            font_size: The desired font size in points.
+            font_size: The desired font size in points. If omitted for a text
+                element, its font_size is used.
 
         Returns:
             A tuple (width, height) in pixels.
@@ -222,6 +312,9 @@ class TypographyMeasurer:
             ValueError: If the specified font cannot be found and font_family or
                 weight are missing.
         """
+        text, font_family, weight, font_size = self._text_measurement_args(
+            text, font_family, weight, font_size
+        )
         font_path = self._resolve_font_path(font_family, weight)
         lines = text.split("\n") or [""]
         width = max(

@@ -33,6 +33,8 @@ branch is in progress.
 - Centralized shared numeric type aliases in `pydreamplet.types`.
 - Replaced Pillow-based text measurement with HarfBuzz shaping and fontTools
   metrics, and removed Pillow from core runtime dependencies.
+- Made `TypographyMeasurer.measure_text()` accept `Text` and `TextOnPath`
+  elements directly, reading content and font attributes from the element.
 - Updated installation documentation to show `uv` first and `pip` second,
   including notebook extra installation examples.
 - Added a base `[mypy]` section and configured mypy to ignore missing
@@ -48,3 +50,4 @@ branch is in progress.
 - Added regression tests for path bounds with relative commands, horizontal and
   vertical lines, curves, arcs, and repeated move coordinates.
 - Added typography tests for explicit font paths and multiline measurements.
+- Added typography coverage for measuring a `Text` element directly.

@@ -1,5 +1,6 @@
 from pathlib import Path
 
+import pydreamplet as dp
 from pydreamplet.typography import TypographyMeasurer, get_system_font_path
 
 
@@ -62,3 +63,25 @@ def test_measure_text_multiline_height_scales_by_line_count():
 
     assert multiline_width == single_width
     assert multiline_height == single_height * 2
+
+
+def test_measure_text_accepts_text_element():
+    """
+    Test that Text elements can be measured directly from their attributes.
+    """
+    text = dp.Text("pyDreamplet")
+    text.font_family = "Arial"
+    text.font_size = "16"
+    text.font_weight = 400
+
+    measurer = TypographyMeasurer()
+    direct_width, direct_height = measurer.measure_text(text)
+    manual_width, manual_height = measurer.measure_text(
+        text.content,
+        font_family=text.font_family,
+        weight=text.font_weight,
+        font_size=text.font_size,
+    )
+
+    assert direct_width == manual_width
+    assert direct_height == manual_height
