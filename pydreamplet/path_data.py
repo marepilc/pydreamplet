@@ -1,4 +1,5 @@
 import re
+from dataclasses import dataclass
 
 from pydreamplet.math import Vector
 from pydreamplet.types import Real
@@ -28,6 +29,29 @@ def _format_number(value: Real) -> str:
     if isinstance(value, float) and value.is_integer():
         return str(int(value))
     return f"{value:g}" if isinstance(value, float) else str(value)
+
+
+@dataclass(frozen=True)
+class PathCommand:
+    command: str
+    values: tuple[float, ...] = ()
+
+    @property
+    def is_relative(self) -> bool:
+        return self.command.islower()
+
+    @property
+    def absolute_command(self) -> str:
+        return self.command.upper()
+
+    def to_string(self) -> str:
+        if not self.values:
+            return self.command
+        args = " ".join(_format_number(value) for value in self.values)
+        return f"{self.command}{args}"
+
+    def __str__(self) -> str:
+        return self.to_string()
 
 
 class PathBuilder:
@@ -209,21 +233,11 @@ def _read_numbers(tokens: list[PathToken], index: int, count: int) -> list[float
     return values
 
 
-def extract_path_points(path_data: str) -> list[Vector]:
-    """
-    Extract explicit coordinate points from SVG path data.
-
-    This is not a full geometric path evaluator. It parses command structure and
-    returns points that are explicit coordinates in the path data: move/line
-    endpoints, curve control/end points, horizontal/vertical line endpoints, and
-    arc endpoints. Arc radii and flags are intentionally not treated as points.
-    """
+def parse_path_data(path_data: str) -> list[PathCommand]:
     tokens = _tokenize_path_data(path_data)
-    points: list[Vector] = []
+    commands: list[PathCommand] = []
     index = 0
     command = ""
-    current = Vector(0, 0)
-    subpath_start = Vector(0, 0)
 
     while index < len(tokens):
         token = tokens[index]
@@ -238,46 +252,132 @@ def extract_path_points(path_data: str) -> list[Vector]:
             raise ValueError(f"Unsupported path command: {command!r}")
 
         if upper_command == "Z":
-            current = subpath_start
+            commands.append(PathCommand(command, ()))
             command = ""
             continue
 
         arg_count = _ARG_COUNTS[upper_command]
         values = _read_numbers(tokens, index, arg_count)
         index += arg_count
-
-        is_relative = command.islower()
+        commands.append(PathCommand(command, tuple(values)))
 
         if upper_command == "M":
-            x, y = values
-            current = (
-                Vector(current.x + x, current.y + y)
-                if is_relative
-                else Vector(x, y)
-            )
-            subpath_start = current
-            points.append(current)
-            command = "l" if is_relative else "L"
+            command = "l" if command.islower() else "L"
+
+    return commands
+
+
+def _path_command_to_absolute(
+    path_command: PathCommand,
+    current: Vector,
+    subpath_start: Vector,
+) -> tuple[PathCommand, Vector, Vector]:
+    command = path_command.command
+    values = path_command.values
+    upper_command = command.upper()
+    is_relative = command.islower()
+
+    if upper_command == "Z":
+        return PathCommand("Z"), subpath_start, subpath_start
+
+    if upper_command == "M":
+        x, y = values
+        point = Vector(current.x + x, current.y + y) if is_relative else Vector(x, y)
+        return PathCommand("M", point.xy), point, point
+
+    if upper_command == "H":
+        x = values[0] + current.x if is_relative else values[0]
+        point = Vector(x, current.y)
+        return PathCommand("H", (point.x,)), point, subpath_start
+
+    if upper_command == "V":
+        y = values[0] + current.y if is_relative else values[0]
+        point = Vector(current.x, y)
+        return PathCommand("V", (point.y,)), point, subpath_start
+
+    if not is_relative:
+        endpoint_indices = {
+            "L": (0, 1),
+            "T": (0, 1),
+            "S": (2, 3),
+            "Q": (2, 3),
+            "C": (4, 5),
+            "A": (5, 6),
+        }
+        end_x_index, end_y_index = endpoint_indices[upper_command]
+        return (
+            PathCommand(upper_command, values),
+            Vector(values[end_x_index], values[end_y_index]),
+            subpath_start,
+        )
+
+    absolute_values = list(values)
+    coordinate_indices = {
+        "L": (0,),
+        "T": (0,),
+        "S": (0, 2),
+        "Q": (0, 2),
+        "C": (0, 2, 4),
+        "A": (5,),
+    }[upper_command]
+
+    for point_index in coordinate_indices:
+        absolute_values[point_index] += current.x
+        absolute_values[point_index + 1] += current.y
+
+    end_x_index = coordinate_indices[-1]
+    endpoint = Vector(absolute_values[end_x_index], absolute_values[end_x_index + 1])
+    return PathCommand(upper_command, tuple(absolute_values)), endpoint, subpath_start
+
+
+def normalize_path_commands(path_data: str) -> list[PathCommand]:
+    commands: list[PathCommand] = []
+    current = Vector(0, 0)
+    subpath_start = Vector(0, 0)
+
+    for command in parse_path_data(path_data):
+        absolute_command, current, subpath_start = _path_command_to_absolute(
+            command, current, subpath_start
+        )
+        commands.append(absolute_command)
+
+    return commands
+
+
+def normalize_path_data(path_data: str) -> str:
+    return " ".join(command.to_string() for command in normalize_path_commands(path_data))
+
+
+def extract_path_points(path_data: str) -> list[Vector]:
+    """
+    Extract explicit coordinate points from SVG path data.
+
+    This is not a full geometric path evaluator. It parses command structure and
+    returns points that are explicit coordinates in the path data: move/line
+    endpoints, curve control/end points, horizontal/vertical line endpoints, and
+    arc endpoints. Arc radii and flags are intentionally not treated as points.
+    """
+    points: list[Vector] = []
+
+    for path_command in normalize_path_commands(path_data):
+        command = path_command.command
+        values = path_command.values
+
+        if command == "Z":
             continue
 
-        if upper_command == "H":
-            x = values[0]
-            current = (
-                Vector(current.x + x, current.y)
-                if is_relative
-                else Vector(x, current.y)
-            )
-            points.append(current)
+        if command == "M":
+            points.append(Vector(values[0], values[1]))
             continue
 
-        if upper_command == "V":
-            y = values[0]
-            current = (
-                Vector(current.x, current.y + y)
-                if is_relative
-                else Vector(current.x, y)
-            )
-            points.append(current)
+        if command == "H":
+            previous_y = points[-1].y if points else 0
+            points.append(Vector(values[0], previous_y))
+            continue
+
+        if command == "V":
+            previous_x = points[-1].x if points else 0
+            points.append(Vector(previous_x, values[0]))
             continue
 
         coordinate_indices = {
@@ -287,17 +387,9 @@ def extract_path_points(path_data: str) -> list[Vector]:
             "Q": (0, 2),
             "C": (0, 2, 4),
             "A": (5,),
-        }[upper_command]
+        }[command]
 
-        command_points: list[Vector] = []
         for point_index in coordinate_indices:
-            x = values[point_index]
-            y = values[point_index + 1]
-            command_points.append(
-                Vector(current.x + x, current.y + y) if is_relative else Vector(x, y)
-            )
-
-        points.extend(command_points)
-        current = command_points[-1]
+            points.append(Vector(values[point_index], values[point_index + 1]))
 
     return points

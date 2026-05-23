@@ -83,6 +83,28 @@ Supported methods:
 - `close()`
 - `to_string()`
 
+## Path parsing and normalization
+
+<!--skip-->
+```py
+parse_path_data(path_data: str) -> list[PathCommand]
+normalize_path_commands(path_data: str) -> list[PathCommand]
+normalize_path_data(path_data: str) -> str
+```
+
+`parse_path_data()` parses an SVG path `d` string into structured `PathCommand` objects. It preserves relative commands and expands repeated coordinate groups into explicit commands.
+
+`normalize_path_commands()` converts relative commands to absolute commands while preserving command types such as `H`, `V`, `C`, `Q`, and `A`.
+
+`normalize_path_data()` returns the normalized commands as an SVG path string.
+
+```py
+import pydreamplet as dp
+
+normalized = dp.normalize_path_data("M10 20 l100 0 v50 h-100 Z")
+print(normalized)  # M10 20 L110 20 V70 H10 Z
+```
+
 ### <span class="prop"></span>`d`
 
 **Getter:** Returns the path data string.

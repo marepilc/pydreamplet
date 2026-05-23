@@ -3,6 +3,11 @@ import math
 import pytest
 
 import pydreamplet as dp
+from pydreamplet.path_data import (
+    PathCommand,
+    normalize_path_data,
+    parse_path_data,
+)
 
 
 def test_path_properties():
@@ -199,3 +204,38 @@ def test_path_d_setter_accepts_path_builder():
     path.d = dp.PathBuilder().move_to(0, 0).arc_to(10, 10, 0, 1, 0, 20, 20)
 
     assert path.d == "M0 0 A10 10 0 1 0 20 20"
+
+
+def test_parse_path_data_returns_structured_commands():
+    commands = parse_path_data("M10 20 30 40 h5 z")
+
+    assert commands == [
+        PathCommand("M", (10, 20)),
+        PathCommand("L", (30, 40)),
+        PathCommand("h", (5,)),
+        PathCommand("z", ()),
+    ]
+
+
+def test_normalize_path_data_converts_relative_commands_to_absolute():
+    normalized = normalize_path_data(
+        "M10 20 l100 0 v50 h-100 c1 2 3 4 5 6 "
+        "s7 8 9 10 q11 12 13 14 t15 16 a20 30 0 0 1 50 60 z"
+    )
+
+    assert normalized == (
+        "M10 20 L110 20 V70 H10 C11 72 13 74 15 76 "
+        "S22 84 24 86 Q35 98 37 100 T52 116 A20 30 0 0 1 102 176 Z"
+    )
+
+
+def test_normalize_path_data_keeps_absolute_commands_absolute():
+    normalized = normalize_path_data("M10 20 L30 40 H50 V60 A5 6 0 1 0 70 80 Z")
+
+    assert normalized == "M10 20 L30 40 H50 V60 A5 6 0 1 0 70 80 Z"
+
+
+def test_normalize_path_data_resets_current_point_after_close():
+    normalized = normalize_path_data("M10 10 L20 10 Z l5 5")
+
+    assert normalized == "M10 10 L20 10 Z L15 15"
