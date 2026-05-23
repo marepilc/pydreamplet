@@ -3,7 +3,7 @@ from math import ceil, floor, log10
 from math import pi as PI
 from typing import Any, Literal, TypedDict
 
-from pydreamplet.core import Real
+from pydreamplet.types import Real
 
 type Precedence = Literal["first", "last"] | None
 

@@ -30,6 +30,7 @@ branch is in progress.
   decimal `viewBox` values, and derive a missing `viewBox` from dimensions.
 - Isolated path data coordinate extraction into a dedicated helper used by
   `Path.w`, `Path.h`, and `Path.center`.
+- Centralized shared numeric type aliases in `pydreamplet.types`.
 - Updated installation documentation to show `uv` first and `pip` second,
   including notebook extra installation examples.
 - Started tracking text measurement accuracy as a 2.0 known issue. The current

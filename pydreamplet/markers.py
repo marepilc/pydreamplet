@@ -1,7 +1,7 @@
 from typing import Any
 
 from pydreamplet import Path, SvgElement
-from pydreamplet.core import Real
+from pydreamplet.types import Real
 
 ARROW = "M2.499 5 L1.565 1.7 L8.435 5 L1.565 8.3 Z"
 ARROW_BASIC = "M0 1.91 10 5 0 8.09V1.91Z"

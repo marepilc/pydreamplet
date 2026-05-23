@@ -6,8 +6,7 @@ from typing import Any, ClassVar, overload, override
 
 from pydreamplet.math import Vector
 from pydreamplet.path_data import extract_path_points
-
-type Real = int | float
+from pydreamplet.types import Real
 
 SVG_NS = "http://www.w3.org/2000/svg"
 ET.register_namespace("", SVG_NS)

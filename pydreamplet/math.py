@@ -1,6 +1,6 @@
 import math
 
-type Real = int | float
+from pydreamplet.types import Real
 
 
 class Vector:
