@@ -36,7 +36,7 @@ def str2rgb(col: str) -> dict[str, int]:
             rgb["b"] = int(col[5:7], 16)
         except ValueError:
             # In case of conversion error, keep default (0,0,0)
-            pass
+            return rgb
     return rgb
 
 
@@ -123,7 +123,7 @@ def blend(color1: str, color2: str, proportion: float) -> str:
             b2 = int(col2[4:6], 16)
             b = math_round((1 - proportion) * b1 + proportion * b2)
             return "#" + hexStr(r) + hexStr(g) + hexStr(b)
-        except Exception:
+        except ValueError:
             return "#000000"
     else:
         return "#000000"

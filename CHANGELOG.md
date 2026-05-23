@@ -21,6 +21,9 @@ branch is in progress.
   not require notebook dependencies.
 - Fixed the MkDocs Material dark-mode palette configuration typo, changing
   `mediia` to `media`.
+- Replaced broad silent exception handling in transform, typography, and color
+  parsing with explicit parsing errors or documented fallback behavior.
+- Added basedpyright configuration for the current dynamic SVG API surface.
 - Updated installation documentation to show `uv` first and `pip` second,
   including notebook extra installation examples.
 - Started tracking text measurement accuracy as a 2.0 known issue. The current
@@ -33,3 +36,4 @@ branch is in progress.
   `Ellipse`, and `Rect`.
 - Added regression tests proving package import does not require IPython and
   that `SVG.display()` reports missing notebook dependencies clearly.
+- Added regression tests for malformed and unsupported group transform parsing.

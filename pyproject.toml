@@ -33,7 +33,11 @@ packages = ["pydreamplet"]
 "pydreamplet/resources/world_map_iso3.svg" = "pydreamplet/resources/world_map_iso3.svg"
 
 [dependency-groups]
-dev = ["mypy>=1.18.2", "pytest>=8.4.1"]
+dev = [
+    "basedpyright>=1.39.5",
+    "mypy>=1.18.2",
+    "pytest>=8.4.1",
+]
 
 [project.optional-dependencies]
 notebook = [
@@ -47,5 +51,12 @@ dev = [
     "mkdocs-material>=9.6.4",
 ]
 
-[tool.pyright]
+[tool.basedpyright]
+typeCheckingMode = "standard"
 reportMissingTypeStubs = false
+reportAny = false
+reportExplicitAny = false
+reportImplicitOverride = false
+reportUnannotatedClassAttribute = false
+reportUnknownVariableType = false
+reportUnusedCallResult = false

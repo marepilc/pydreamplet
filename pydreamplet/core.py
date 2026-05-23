@@ -2,7 +2,7 @@ import math
 import re
 import xml.etree.ElementTree as ET
 from copy import deepcopy
-from typing import Any, overload
+from typing import Any, ClassVar, overload, override
 
 from pydreamplet.math import Vector
 
@@ -17,11 +17,11 @@ def qname(tag: str) -> str:
 
 
 class SvgElement:
-    _class_registry: dict[str, Any] = {}
+    _class_registry: ClassVar[dict[str, type["SvgElement"]]] = {}
     element: ET.Element
 
     @classmethod
-    def register(cls, tag: str, subclass: type) -> None:
+    def register(cls, tag: str, subclass: type["SvgElement"]) -> None:
         cls._class_registry[tag] = subclass
 
     @classmethod
@@ -42,12 +42,12 @@ class SvgElement:
         return instance
 
     def __init__(self, tag: str, **kwargs: Any) -> None:
-        object.__setattr__(self, "element", ET.Element(qname(tag)))
+        self.element = ET.Element(qname(tag))
         for k, v in self.normalize_attrs(kwargs).items():
             self.element.set(k, str(v))
 
     @staticmethod
-    def normalize_attrs(attrs: dict[str, Any]) -> dict[str, str]:
+    def normalize_attrs(attrs: dict[str, object]) -> dict[str, str]:
         new_attrs: dict[str, str] = {}
         for k, v in attrs.items():
             if k == "class_name":
@@ -56,7 +56,7 @@ class SvgElement:
                 new_attrs[k.replace("_", "-")] = str(v)
         return new_attrs
 
-    def attrs(self, attributes: dict[str, Any]) -> "SvgElement":
+    def attrs(self, attributes: dict[str, object]) -> "SvgElement":
         for key, value in attributes.items():
             attr_key = key.replace("_", "-")
             if value is None:
@@ -92,6 +92,7 @@ class SvgElement:
             return ET.tostring(element_copy, encoding="unicode")
         return ET.tostring(self.element, encoding="unicode")
 
+    @override
     def __str__(self) -> str:
         return self.to_string(pretty_print=False)
 
@@ -119,6 +120,7 @@ class SvgElement:
             f"{type(self).__name__!r} object has no attribute {name!r}"
         )
 
+    @override
     def __setattr__(self, name: str, value: str | int | float | None):
         # Map "class_name" to the SVG "class" attribute.
         if name == "class_name":
@@ -198,7 +200,7 @@ class Transformable:
     Note: Classes using this mixin must provide an `element` attribute.
     """
 
-    element: ET.Element
+    element: ET.Element  # pyright: ignore[reportUninitializedInstanceVariable]
 
     def __init__(
         self,
@@ -256,6 +258,7 @@ class Transformable:
 
 class SVG(SvgElement):
     @classmethod
+    @override
     def from_element(cls, element: ET.Element):
         local_tag = element.tag.split("}")[-1]
         subclass = cls._class_registry.get(local_tag, cls)
@@ -386,10 +389,15 @@ class SVG(SvgElement):
                 display as ipython_display,  # pyright: ignore[reportUnknownVariableType]
             )
         except ImportError as exc:
+            message = " ".join(
+                [
+                    "SVG.display() requires the optional notebook dependencies.",
+                    "Install them with `pip install pydreamplet[notebook]` or",
+                    "`uv add pydreamplet --extra notebook`.",
+                ]
+            )
             raise RuntimeError(
-                "SVG.display() requires the optional notebook dependencies. "
-                "Install them with `pip install pydreamplet[notebook]` or "
-                "`uv add pydreamplet --extra notebook`."
+                message
             ) from exc
 
         ipython_display(IPythonSVG(self.to_string()))
@@ -399,7 +407,7 @@ class SVG(SvgElement):
             f.write(self.to_string(pretty_print=pretty_print))
 
 
-class G(Transformable, SvgElement):
+class G(Transformable, SvgElement):  # pyright: ignore[reportUnsafeMultipleInheritance]
     """
     Group (<g>) element that combines Transformable behavior with SvgElement.
 
@@ -453,53 +461,75 @@ class G(Transformable, SvgElement):
                 parent.remove(self)
         return self
 
-    def attrs(self, attributes: dict[str, Any]) -> "G":
+    @staticmethod
+    def _parse_transform_numbers(transform_name: str, value: str) -> list[float]:
+        try:
+            return [float(part) for part in value.replace(",", " ").split()]
+        except ValueError as exc:
+            raise ValueError(
+                f"Invalid {transform_name} transform values: {value!r}"
+            ) from exc
+
+    @classmethod
+    def _parse_transform(cls, transform: str) -> tuple[Vector, float, Vector, Vector]:
+        """
+        Parse the supported transform functions.
+
+        Unsupported transform functions are ignored by design so SVGs using
+        transforms outside G's current model can still be loaded. Malformed
+        values for supported functions raise ValueError instead of silently
+        resetting to defaults.
+        """
+        pos = Vector(0, 0)
+        angle = 0.0
+        scale = Vector(1, 1)
+        pivot = Vector(0, 0)
+
+        m_rotate = re.search(r"rotate\(([^)]+)\)", transform)
+        if m_rotate:
+            parts = cls._parse_transform_numbers("rotate", m_rotate.group(1))
+            if len(parts) not in (1, 3):
+                expected = "1 value or 3 values (angle, cx, cy)"
+                raise ValueError(
+                    f"rotate transform expects {expected}, got {len(parts)}"
+                )
+            angle = parts[0]
+            if len(parts) == 3:
+                pivot = Vector(parts[1], parts[2])
+
+        m_translate = re.search(r"translate\(([^)]+)\)", transform)
+        if m_translate:
+            parts = cls._parse_transform_numbers("translate", m_translate.group(1))
+            if len(parts) not in (1, 2):
+                raise ValueError(
+                    f"translate transform expects 1 or 2 values, got {len(parts)}"
+                )
+            pos = Vector(parts[0], parts[1] if len(parts) == 2 else 0)
+
+        m_scale = re.search(r"scale\(([^)]+)\)", transform)
+        if m_scale:
+            parts = cls._parse_transform_numbers("scale", m_scale.group(1))
+            if len(parts) not in (1, 2):
+                raise ValueError(
+                    f"scale transform expects 1 or 2 values, got {len(parts)}"
+                )
+            scale = Vector(parts[0], parts[1] if len(parts) == 2 else parts[0])
+
+        return pos, angle, scale, pivot
+
+    def attrs(self, attributes: dict[str, object]) -> "G":
         if "order" in attributes:
-            self.order = attributes.pop("order")  # use property setter
+            self.order = str(attributes.pop("order"))  # use property setter
         if "pivot" in attributes:
-            pivot_str = attributes.pop("pivot")
-            try:
-                parts = pivot_str.replace(",", " ").split()
-                if len(parts) >= 2:
-                    self.pivot = Vector(float(parts[0]), float(parts[1]))
-            except Exception:
-                pass
+            pivot_str = str(attributes.pop("pivot"))
+            parts = self._parse_transform_numbers("pivot", pivot_str)
+            if len(parts) != 2:
+                raise ValueError(f"pivot expects 2 values, got {len(parts)}")
+            self.pivot = Vector(parts[0], parts[1])
 
         if "transform" in attributes:
-            transform_str = attributes.pop("transform")
-            pos = Vector(0, 0)
-            angle = 0.0
-            scale = Vector(1, 1)
-            pivot = Vector(0, 0)
-            m_rotate = re.search(r"rotate\(([^)]+)\)", transform_str)
-            if m_rotate:
-                try:
-                    parts = m_rotate.group(1).replace(",", " ").split()
-                    if len(parts) >= 1:
-                        angle = float(parts[0])
-                    if len(parts) >= 3:
-                        pivot = Vector(float(parts[1]), float(parts[2]))
-                except Exception:
-                    pass
-            m_translate = re.search(r"translate\(([^)]+)\)", transform_str)
-            if m_translate:
-                try:
-                    parts = m_translate.group(1).split()
-                    if len(parts) >= 2:
-                        pos = Vector(float(parts[0]), float(parts[1]))
-                except Exception:
-                    pass
-            m_scale = re.search(r"scale\(([^)]+)\)", transform_str)
-            if m_scale:
-                try:
-                    parts = m_scale.group(1).split()
-                    if len(parts) == 1:
-                        s = float(parts[0])
-                        scale = Vector(s, s)
-                    elif len(parts) >= 2:
-                        scale = Vector(float(parts[0]), float(parts[1]))
-                except Exception:
-                    pass
+            transform_str = str(attributes.pop("transform"))
+            pos, angle, scale, pivot = self._parse_transform(transform_str)
             self._pos = pos
             self._angle = angle
             self._scale = scale
@@ -543,43 +573,12 @@ class G(Transformable, SvgElement):
                 del self.element.attrib["transform"]
 
     @classmethod
+    @override
     def from_element(cls, element: ET.Element):
         instance = cls.__new__(cls)
         instance.element = element
         transform = element.get("transform", "")
-        pos = Vector(0, 0)
-        angle: float = 0
-        scale = Vector(1, 1)
-        pivot = Vector(0, 0)
-        m_rotate = re.search(r"rotate\(([^)]+)\)", transform)
-        if m_rotate:
-            try:
-                parts = m_rotate.group(1).replace(",", " ").split()
-                if len(parts) >= 1:
-                    angle = float(parts[0])
-                if len(parts) >= 3:
-                    pivot = Vector(float(parts[1]), float(parts[2]))
-            except Exception:
-                pass
-        m_translate = re.search(r"translate\(([^)]+)\)", transform)
-        if m_translate:
-            try:
-                parts = m_translate.group(1).split()
-                if len(parts) >= 2:
-                    pos = Vector(float(parts[0]), float(parts[1]))
-            except Exception:
-                pass
-        m_scale = re.search(r"scale\(([^)]+)\)", transform)
-        if m_scale:
-            try:
-                parts = m_scale.group(1).split()
-                if len(parts) == 1:
-                    s = float(parts[0])
-                    scale = Vector(s, s)
-                elif len(parts) >= 2:
-                    scale = Vector(float(parts[0]), float(parts[1]))
-            except Exception:
-                pass
+        pos, angle, scale, pivot = cls._parse_transform(transform)
         instance._pos = pos
         instance._angle = angle
         instance._scale = scale
@@ -952,7 +951,7 @@ class Text(SvgElement):
             self.element.text = new_text
 
     @property
-    def font_size(self) -> float:
+    def font_size(self) -> str | int | float:
         """
         Returns the numeric part of the font-size attribute.
         """
@@ -976,13 +975,13 @@ class Text(SvgElement):
 
 
 class TextOnPath(SvgElement):
-    text_path: SvgElement
+    text_path: SvgElement  # pyright: ignore[reportUninitializedInstanceVariable]
 
     def __init__(
         self,
         initial_text: str = "",
         path_id: str = "",
-        text_path_args: dict[str, Any] | None = None,
+        text_path_args: dict[str, object] | None = None,
         **kwargs: Any,
     ):
         super().__init__("text", **kwargs)
@@ -1007,7 +1006,7 @@ class TextOnPath(SvgElement):
         self.text_path.element.text = new_text
 
     @property
-    def font_size(self) -> float:
+    def font_size(self) -> str | int | float:
         """
         Returns the numeric part of the font-size attribute.
         """

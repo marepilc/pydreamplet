@@ -1,4 +1,9 @@
+import xml.etree.ElementTree as ET
+
+import pytest
+
 import pydreamplet as dp
+from pydreamplet.core import qname
 
 
 def test_g_element_transformation(svg_300, two_rectangles):
@@ -44,3 +49,35 @@ def test_g_transformation_order(svg_300):
     assert 'transform="translate(20 20) rotate(45) scale(2 2)"' in str(svg_300)
     g.order = "rts"
     assert 'transform="rotate(45) translate(20 20) scale(2 2)"' in str(svg_300)
+
+
+def test_g_attrs_transform_raises_for_malformed_supported_transform():
+    g = dp.G()
+
+    with pytest.raises(ValueError, match="Invalid translate transform values"):
+        g.attrs({"transform": "translate(foo 12)"})
+
+
+def test_g_attrs_ignores_unsupported_transform_fallback():
+    g = dp.G()
+
+    g.attrs({"transform": "skewX(20)"})
+
+    assert not g.has_attr("transform")
+    assert g.pos == dp.Vector(0, 0)
+
+
+def test_g_from_element_parses_comma_separated_transform():
+    element = ET.Element(qname("g"), {"transform": "translate(10, 12) scale(2)"})
+
+    g = dp.G.from_element(element)
+
+    assert g.pos == dp.Vector(10, 12)
+    assert g.scale == dp.Vector(2, 2)
+
+
+def test_g_from_element_raises_for_malformed_supported_transform():
+    element = ET.Element(qname("g"), {"transform": "rotate(foo)"})
+
+    with pytest.raises(ValueError, match="Invalid rotate transform values"):
+        dp.G.from_element(element)

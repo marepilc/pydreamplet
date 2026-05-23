@@ -54,7 +54,7 @@ The target shape is a layered library:
 - [x] Move IPython and ipykernel out of core runtime dependencies.
   Notebook display support should be optional and imported lazily.
 - [x] Fix `mkdocs.yml` dark-mode typo: `mediia` should be `media`.
-- [ ] Replace broad `except Exception: pass` blocks with explicit parsing failures or
+- [x] Replace broad `except Exception: pass` blocks with explicit parsing failures or
   documented fallback behavior.
 - [ ] Decide how strict unknown SVG attribute access should be.
   The current dynamic `__getattr__`/`__setattr__` model is convenient, but it makes

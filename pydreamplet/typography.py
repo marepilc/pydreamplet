@@ -1,7 +1,7 @@
 import os
 import platform
 
-from fontTools.ttLib import TTFont
+from fontTools.ttLib import TTFont, TTLibError
 from PIL import ImageFont
 
 
@@ -72,7 +72,7 @@ def get_system_font_path(
                 file_path = os.path.join(root, file)
                 try:
                     font = TTFont(file_path)
-                except Exception:
+                except (OSError, TTLibError):
                     continue
 
                 # Loop over all name records for a looser match.
@@ -81,7 +81,7 @@ def get_system_font_path(
                 for record in font["name"].names:  # type: ignore[index]
                     try:
                         record_value = record.toUnicode().strip()
-                    except Exception:
+                    except UnicodeError:
                         record_value = record.string.decode(
                             "utf-8", errors="ignore"
                         ).strip()
