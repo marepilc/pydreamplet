@@ -118,7 +118,7 @@ The target shape is a layered library:
 - [ ] Add a stronger transform model:
   - [x] parse transforms
   - [x] preserve transform order
-  - [ ] compose transforms
+  - [x] compose transforms
   - [ ] support pivot/origin behavior consistently
 - [ ] Improve XML namespace handling and round-trip behavior.
 

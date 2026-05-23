@@ -4,6 +4,34 @@ The Transformable mixin adds transformation capabilities—translation, rotation
 
 For parsing and serializing raw SVG transform strings, use `Transform` and `TransformList`.
 
+## <span class=class></span>`pydreamplet.core.Matrix2D`
+
+<!--skip-->
+```py
+Matrix2D(a=1, b=0, c=0, d=1, e=0, f=0)
+```
+
+Represents an SVG 2D affine transform matrix in the standard `matrix(a b c d e f)` form.
+
+```py
+import pydreamplet as dp
+
+matrix = dp.Matrix2D.translate(10, 20).multiply(dp.Matrix2D.scale(2, 3))
+point = matrix.apply(5, 6)
+print(point)  # Vector(x=20.0, y=38.0)
+```
+
+Convenience constructors are available:
+
+- `Matrix2D.identity()`
+- `Matrix2D.translate(x, y=0)`
+- `Matrix2D.scale(x, y=None)`
+- `Matrix2D.rotate(angle)`
+- `Matrix2D.skew_x(angle)`
+- `Matrix2D.skew_y(angle)`
+
+Use `multiply()` to compose two matrices and `apply(x, y)` to transform a point.
+
 ## <span class=class></span>`pydreamplet.core.Transform`
 
 <!--skip-->
@@ -29,6 +57,8 @@ Convenience constructors are available:
 - `Transform.skew_y(angle)`
 - `Transform.matrix(a, b, c, d, e, f)`
 
+Use `to_matrix()` to convert a transform to a `Matrix2D`.
+
 ## <span class=class></span>`pydreamplet.core.TransformList`
 
 <!--skip-->
@@ -44,6 +74,8 @@ import pydreamplet as dp
 transforms = dp.TransformList.parse("translate(10, 20) skewX(15) rotate(45)")
 print(str(transforms))  # translate(10 20) skewX(15) rotate(45)
 ```
+
+Use `to_matrix()` to compose all transforms into a single `Matrix2D` in SVG order.
 
 ## <span class=class></span>`pydreamplet.core.Transformable`
 

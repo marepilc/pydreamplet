@@ -393,6 +393,80 @@ class Filter(SvgDefinition):
         super().__init__("filter", **kwargs)
 
 
+class Matrix2D:
+    def __init__(
+        self,
+        a: Real = 1,
+        b: Real = 0,
+        c: Real = 0,
+        d: Real = 1,
+        e: Real = 0,
+        f: Real = 0,
+    ):
+        self.a = float(a)
+        self.b = float(b)
+        self.c = float(c)
+        self.d = float(d)
+        self.e = float(e)
+        self.f = float(f)
+
+    @classmethod
+    def identity(cls) -> "Matrix2D":
+        return cls()
+
+    @classmethod
+    def translate(cls, x: Real, y: Real = 0) -> "Matrix2D":
+        return cls(1, 0, 0, 1, x, y)
+
+    @classmethod
+    def scale(cls, x: Real, y: Real | None = None) -> "Matrix2D":
+        return cls(x, 0, 0, x if y is None else y, 0, 0)
+
+    @classmethod
+    def rotate(cls, angle: Real) -> "Matrix2D":
+        radians = math.radians(angle)
+        cos = math.cos(radians)
+        sin = math.sin(radians)
+        return cls(cos, sin, -sin, cos, 0, 0)
+
+    @classmethod
+    def skew_x(cls, angle: Real) -> "Matrix2D":
+        return cls(1, 0, math.tan(math.radians(angle)), 1, 0, 0)
+
+    @classmethod
+    def skew_y(cls, angle: Real) -> "Matrix2D":
+        return cls(1, math.tan(math.radians(angle)), 0, 1, 0, 0)
+
+    def multiply(self, other: "Matrix2D") -> "Matrix2D":
+        return Matrix2D(
+            self.a * other.a + self.c * other.b,
+            self.b * other.a + self.d * other.b,
+            self.a * other.c + self.c * other.d,
+            self.b * other.c + self.d * other.d,
+            self.a * other.e + self.c * other.f + self.e,
+            self.b * other.e + self.d * other.f + self.f,
+        )
+
+    def apply(self, x: Real, y: Real) -> Vector:
+        return Vector(
+            self.a * x + self.c * y + self.e,
+            self.b * x + self.d * y + self.f,
+        )
+
+    def as_tuple(self) -> tuple[float, float, float, float, float, float]:
+        return self.a, self.b, self.c, self.d, self.e, self.f
+
+    @override
+    def __str__(self) -> str:
+        values = " ".join(_format_number(value) for value in self.as_tuple())
+        return f"matrix({values})"
+
+    @override
+    def __repr__(self) -> str:
+        values = ", ".join(_format_number(value) for value in self.as_tuple())
+        return f"Matrix2D({values})"
+
+
 class Transform:
     _arities: ClassVar[dict[str, tuple[int, ...]]] = {
         "matrix": (6,),
@@ -443,6 +517,34 @@ class Transform:
         cls, a: Real, b: Real, c: Real, d: Real, e: Real, f: Real
     ) -> "Transform":
         return cls("matrix", a, b, c, d, e, f)
+
+    def to_matrix(self) -> Matrix2D:
+        if self.name == "matrix":
+            return Matrix2D(*self.values)
+        if self.name == "translate":
+            x = self.values[0]
+            y = self.values[1] if len(self.values) == 2 else 0
+            return Matrix2D.translate(x, y)
+        if self.name == "scale":
+            x = self.values[0]
+            y = self.values[1] if len(self.values) == 2 else x
+            return Matrix2D.scale(x, y)
+        if self.name == "rotate":
+            angle = self.values[0]
+            rotation = Matrix2D.rotate(angle)
+            if len(self.values) == 1:
+                return rotation
+            cx, cy = self.values[1], self.values[2]
+            return (
+                Matrix2D.translate(cx, cy)
+                .multiply(rotation)
+                .multiply(Matrix2D.translate(-cx, -cy))
+            )
+        if self.name == "skewX":
+            return Matrix2D.skew_x(self.values[0])
+        if self.name == "skewY":
+            return Matrix2D.skew_y(self.values[0])
+        raise ValueError(f"Unsupported transform function: {self.name}")
 
     @override
     def __str__(self) -> str:
@@ -506,6 +608,12 @@ class TransformList:
                 return
         if transform is not None:
             self.transforms.append(transform)
+
+    def to_matrix(self) -> Matrix2D:
+        matrix = Matrix2D.identity()
+        for transform in self.transforms:
+            matrix = matrix.multiply(transform.to_matrix())
+        return matrix
 
     @override
     def __str__(self) -> str:
