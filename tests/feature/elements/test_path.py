@@ -78,6 +78,38 @@ def test_path_repeated_move_coordinates_are_treated_as_lines():
     assert path.center == dp.Vector(60, 45)
 
 
+def test_path_supports_scientific_notation_and_compact_negative_values():
+    path = dp.Path("M1e2-5e1L.5-.25")
+
+    assert path.w == 99.5
+    assert path.h == 49.75
+    assert path.center == dp.Vector(50.25, -25.125)
+
+
+def test_path_smooth_and_quadratic_commands_include_control_and_end_points():
+    path = dp.Path("M0 0 Q10 20 30 40 T50 60 S70 80 90 100")
+
+    assert path.w == 90
+    assert path.h == 100
+    assert path.center == dp.Vector(45, 50)
+
+
+def test_path_relative_arc_uses_relative_endpoint():
+    path = dp.Path("M10 10 a50 25 0 0 1 100 10")
+
+    assert path.w == 100
+    assert path.h == 10
+    assert path.center == dp.Vector(60, 15)
+
+
+def test_path_close_command_resets_current_point_for_following_relative_commands():
+    path = dp.Path("M10 10 L20 10 Z l5 5")
+
+    assert path.w == 10
+    assert path.h == 5
+    assert path.center == dp.Vector(15, 12.5)
+
+
 def test_path_data_must_start_with_command():
     with pytest.raises(ValueError, match="must start with a path command"):
         _ = dp.Path("10 20").w

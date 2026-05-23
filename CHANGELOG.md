@@ -51,3 +51,5 @@ branch is in progress.
   vertical lines, curves, arcs, and repeated move coordinates.
 - Added typography tests for explicit font paths and multiline measurements.
 - Added typography coverage for measuring a `Text` element directly.
+- Added regression tests for malformed SVG files, invalid and non-integer
+  `viewBox` values, decimal dimensions, and path data edge cases.

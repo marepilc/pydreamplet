@@ -67,7 +67,7 @@ The target shape is a layered library:
 - [x] Improve text measurement accuracy.
   Typography measurement now uses HarfBuzz shaping with fontTools metrics instead
   of Pillow bounding boxes.
-- [ ] Add tests for malformed SVG input, path edge cases, and non-integer viewBox values.
+- [x] Add tests for malformed SVG input, path edge cases, and non-integer viewBox values.
 
 ## Packaging And Tooling
 
