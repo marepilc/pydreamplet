@@ -19,6 +19,8 @@ branch is in progress.
   extra instead of being installed by default.
 - Made `SVG.display()` import IPython lazily, so importing `pydreamplet` does
   not require notebook dependencies.
+- Fixed the MkDocs Material dark-mode palette configuration typo, changing
+  `mediia` to `media`.
 - Updated installation documentation to show `uv` first and `pip` second,
   including notebook extra installation examples.
 - Started tracking text measurement accuracy as a 2.0 known issue. The current

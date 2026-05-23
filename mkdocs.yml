@@ -83,7 +83,7 @@ theme:
         name: Light mode
       primary: teal
       accent: orange
-    - mediia: "(prefers-color-scheme: dark)"
+    - media: "(prefers-color-scheme: dark)"
       scheme: slate
       toggle:
         icon: material/weather-night

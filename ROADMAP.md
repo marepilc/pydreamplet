@@ -53,7 +53,7 @@ The target shape is a layered library:
   `pos="Vector(x=1.0, y=2.0)"`.
 - [x] Move IPython and ipykernel out of core runtime dependencies.
   Notebook display support should be optional and imported lazily.
-- [ ] Fix `mkdocs.yml` dark-mode typo: `mediia` should be `media`.
+- [x] Fix `mkdocs.yml` dark-mode typo: `mediia` should be `media`.
 - [ ] Replace broad `except Exception: pass` blocks with explicit parsing failures or
   documented fallback behavior.
 - [ ] Decide how strict unknown SVG attribute access should be.
