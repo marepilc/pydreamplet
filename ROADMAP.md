@@ -1,21 +1,26 @@
 # pyDreamplet 2.0 Roadmap
 
 This document tracks the current state of pyDreamplet and the work needed to make
-version 2.0 a strong foundation for advanced infographics, charts, and creative
-coding with Python.
+version 2.0 a strong foundation for advanced infographics, data-driven SVG, and
+creative coding with Python.
 
 ## Product Direction
 
 pyDreamplet should remain a lightweight, expressive Python library for generating
-SVG, but version 2.0 should move beyond being only a low-level SVG wrapper.
+SVG, but version 2.0 should move beyond being only a low-level SVG wrapper. The
+goal is closer to "D3.js for Python" than to another plotting library: composable
+primitives, data-to-visual mapping, shape/path generators, layouts, and precise
+SVG control.
 
 The target shape is a layered library:
 
 - A stable SVG core for elements, attributes, transforms, serialization, and import.
-- Geometry and path utilities for reliable curves, arcs, bounding boxes, and layout.
+- Geometry and path utilities for reliable curves, arcs, bounding boxes, and layouts.
+- Shape, line, area, symbol, arc, and curve generators inspired by D3's composable model.
 - Scales, colors, typography, and data utilities for visualization work.
-- Higher-level marks and chart components for common infographic patterns.
+- Axis, legend, annotation, and layout primitives rather than fixed chart components.
 - Creative coding helpers for generative visuals, noise, grids, tiling, and animation.
+- Optional ecosystem tooling for agentic coding, example generation, and MCP integration.
 - Documentation centered on rich examples, not only API reference pages.
 
 ## Current Foundation
@@ -105,46 +110,102 @@ The target shape is a layered library:
 - [ ] Support SVG commands: `M`, `L`, `H`, `V`, `C`, `S`, `Q`, `T`, `A`, `Z`.
 - [ ] Support relative and absolute commands.
 - [ ] Add path normalization utilities.
+- [ ] Add path parsing as a first-class capability, separate from the `Path` element wrapper.
+- [ ] Add path measurement utilities:
+  - total length
+  - point at length
+  - tangent at length
+  - segment iteration
 - [ ] Add robust bounding boxes for lines, rectangles, circles, ellipses, polygons,
   polylines, and paths.
 - [ ] Add arc and ring helpers with tested sweep/large-arc behavior.
-- [ ] Add curve interpolation helpers suitable for line charts and creative coding.
+- [ ] Add curve interpolation helpers for paths through points:
+  - linear
+  - step
+  - basis spline
+  - cardinal spline
+  - Catmull-Rom
+  - monotone X/Y
+  - closed curves
+- [ ] Add generators that return SVG path data from data points:
+  - line generator
+  - area generator
+  - radial line generator
+  - radial area generator
+  - arc generator
+  - pie angle generator
+  - symbol generator
+  - link/edge generator
+- [ ] Add shape generators for reusable geometric forms:
+  - regular polygon
+  - star
+  - cross
+  - superellipse
+  - rounded polygon
+  - blob/metaball-like organic shapes
 - [ ] Add collision and label-placement utilities for infographic layouts.
 
-## Data Visualization Layer
+## Data Visualization Primitives
 
-- [ ] Introduce a `marks` layer for reusable visual primitives:
-  - bar
-  - line
-  - area
-  - scatter point
-  - label
-  - axis
-  - grid
-  - legend
-  - annotation
-- [ ] Introduce chart-level helpers for common use cases:
-  - line chart
-  - bar chart
-  - scatter plot
-  - waffle chart
-  - pie/donut chart
-  - radial chart
-  - map-based visualization
-- [ ] Define a chart layout model with margins, plotting area, titles, captions, and legends.
-- [ ] Add axis generation using scales and tick helpers.
+- [ ] Treat complete charts as examples and recipes, not as the primary API.
+- [ ] Avoid locking the library into fixed `BarChart`, `LineChart`, or similar classes
+  unless they are optional recipes built on top of lower-level primitives.
+- [ ] Introduce a D3-like generator layer for data-to-SVG conversion.
+- [ ] Introduce Pythonic data binding helpers for turning sequences of data into SVG elements.
+- [ ] Add selection/grouping helpers if they can stay simple and idiomatic in Python.
+- [ ] Define layout primitives:
+  - margin box
+  - plotting frame
+  - stack layout
+  - pack layout
+  - treemap layout
+  - force layout
+  - chord/ribbon layout
+  - grid layout
+  - radial layout
+- [ ] Add axis generation as composable primitives using scales and tick helpers.
+- [ ] Add legend generation as composable primitives.
+- [ ] Add annotation helpers:
+  - callouts
+  - leader lines
+  - brackets
+  - ranges
+  - highlighted regions
+- [ ] Add map/geography primitives if they can be kept lightweight:
+  - load bundled SVG maps
+  - map regions by id
+  - project points onto known SVG coordinate spaces
+  - generate choropleth-like fills without becoming a full GIS package
 - [ ] Add color palettes designed for categorical and sequential data.
 - [ ] Add accessibility helpers for titles, descriptions, roles, and readable SVG metadata.
-- [ ] Add examples that show real infographic workflows, not only primitive drawing.
+- [ ] Add examples that show real infographic workflows built from primitives.
 
 ## Creative Coding Layer
 
 - [ ] Expand noise utilities with deterministic seeding examples.
 - [ ] Add generative grid helpers.
 - [ ] Add tiling and pattern helpers.
+- [ ] Add point cloud and distribution generators.
+- [ ] Add parametric curve helpers.
+- [ ] Add polar/radial helper functions.
 - [ ] Add particle/flow field examples.
 - [ ] Add animation examples based on native SVG animation.
 - [ ] Add reusable creative presets that remain editable as plain SVG.
+
+## Agentic Coding And MCP Ecosystem
+
+- [ ] Treat agentic tooling as a separate ecosystem layer, not as part of the core runtime.
+- [ ] Create a Codex/agent skill for generating pyDreamplet examples from short creative briefs.
+- [ ] Create an agent skill for converting sketches or chart descriptions into pyDreamplet code.
+- [ ] Create an agent skill for debugging generated SVG output and suggesting simplifications.
+- [ ] Consider an MCP server exposing:
+  - component and API reference
+  - runnable example search
+  - SVG asset search
+  - path/shape generator documentation
+  - project templates
+- [ ] Keep MCP and agent skills versioned alongside documentation, so agents use the correct API.
+- [ ] Use the MCP server or skills to support documentation authoring and example generation.
 
 ## Documentation
 
@@ -155,9 +216,11 @@ The target shape is a layered library:
 - [x] Documentation uses generated SVG assets.
 - [x] Documentation code blocks are tested.
 - [ ] Fix spelling and wording issues in current docs and README.
-- [ ] Add a v2.0 concept page explaining the layered architecture.
+- [ ] Add a v2.0 concept page explaining the D3-like layered architecture.
 - [ ] Add a gallery of examples as a primary documentation entry point.
 - [ ] Add a page for design principles and API philosophy.
+- [ ] Add a "Generators" documentation section for paths, curves, shapes, symbols, and layouts.
+- [ ] Add a "Recipes" section for full infographic examples built from primitives.
 - [ ] Add migration notes from v1.x to v2.0.
 - [ ] Add more complete reference documentation for each public class and function.
 - [ ] Add visual regression or snapshot strategy for generated SVG examples.
@@ -197,7 +260,8 @@ The target shape is a layered library:
 - [ ] Add tests for optional dependencies being absent.
 - [ ] Add tests for package import speed and minimal import behavior.
 - [ ] Add SVG snapshot tests for complex generated examples.
-- [ ] Add tests for generated chart components.
+- [ ] Add tests for path, shape, curve, and layout generators.
+- [ ] Add tests for generated full-example recipes where useful.
 - [ ] Add tests for serialization round-trips.
 - [ ] Add tests for deterministic creative coding outputs with seeds.
 - [ ] Add CI matrix for supported Python versions.
@@ -209,8 +273,8 @@ The target shape is a layered library:
 - [ ] Add deprecation warnings where needed before final 2.0 release.
 - [ ] Publish migration guide.
 - [ ] Build complete example gallery.
-- [ ] Ensure docs cover installation, quick start, charts, infographics, creative coding,
-  API reference, and migration.
+- [ ] Ensure docs cover installation, quick start, generators, layouts, infographics,
+  creative coding, API reference, and migration.
 - [ ] Verify package metadata on PyPI.
 - [ ] Verify source distribution and wheel contents.
 - [ ] Verify fresh install in a clean environment.
@@ -233,23 +297,27 @@ The target shape is a layered library:
 - [ ] Write the public API design document.
 - [ ] Decide module boundaries.
 - [ ] Define compatibility rules.
-- [ ] Design the chart and mark layer.
-- [ ] Create one complete vertical slice, such as a production-quality line chart.
+- [ ] Design the generator, layout, scale, axis, legend, and annotation layers.
+- [ ] Create one complete vertical slice, such as a polished custom infographic built
+  from primitives rather than a fixed chart class.
 
-### Milestone 3: Build High-Level Visualization Features
+### Milestone 3: Build D3-Like Visualization Primitives
 
-- [ ] Implement marks.
-- [ ] Implement axes, legends, labels, and layout helpers.
-- [ ] Implement core chart helpers.
+- [ ] Implement path and shape generators.
+- [ ] Implement curve interpolation through points.
+- [ ] Implement axes, legends, labels, annotations, and layout helpers.
+- [ ] Implement recipes that demonstrate how to compose primitives into full visuals.
 - [ ] Add real-world infographic examples.
 - [ ] Add SVG snapshots for examples.
 
-### Milestone 4: Documentation Platform
+### Milestone 4: Documentation And Agent Tooling
 
 - [ ] Prepare current docs for migration.
 - [ ] Build the Nuxt Content documentation site.
 - [ ] Port current pages and assets.
 - [ ] Add custom example/gallery components.
+- [ ] Add generator and recipe documentation.
+- [ ] Decide whether to ship agent skills or an MCP server as a separate package/repo.
 - [ ] Deploy the new docs site.
 
 ### Milestone 5: 2.0 Release
@@ -259,4 +327,3 @@ The target shape is a layered library:
 - [ ] Publish release candidate.
 - [ ] Collect feedback.
 - [ ] Publish stable 2.0.
-
