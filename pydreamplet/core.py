@@ -2,11 +2,12 @@ import math
 import re
 import xml.etree.ElementTree as ET
 from copy import deepcopy
-from typing import Any, ClassVar, overload, override
+from collections.abc import Mapping
+from typing import Any, ClassVar, Self, overload, override
 
 from pydreamplet.math import Vector
 from pydreamplet.path_data import extract_path_points
-from pydreamplet.types import Real
+from pydreamplet.types import AttributeValue, NumericPair, Real
 
 SVG_NS = "http://www.w3.org/2000/svg"
 ET.register_namespace("", SVG_NS)
@@ -14,6 +15,34 @@ ET.register_namespace("", SVG_NS)
 
 def qname(tag: str) -> str:
     return f"{{{SVG_NS}}}{tag}"
+
+
+type PointLike = Vector | NumericPair
+
+
+def _coerce_point(value: PointLike, name: str = "point") -> Vector:
+    if isinstance(value, Vector):
+        return value
+    if len(value) != 2:
+        raise ValueError(f"{name} must contain exactly 2 numbers")
+    x, y = value
+    if not isinstance(x, (int, float)) or not isinstance(y, (int, float)):
+        raise ValueError(f"{name} must contain only numbers")
+    return Vector(x, y)
+
+
+def _coerce_point_args(
+    x: PointLike | Real,
+    y: Real | None,
+    name: str = "position",
+) -> Vector:
+    if y is None:
+        if isinstance(x, Vector | tuple | list):
+            return _coerce_point(x, name)
+        raise ValueError(f"{name} requires both x and y values")
+    if not isinstance(x, (int, float)):
+        raise ValueError(f"{name} x value must be a number")
+    return Vector(x, y)
 
 
 class SvgElement:
@@ -58,11 +87,62 @@ class SvgElement:
 
     def attrs(self, attributes: dict[str, object]) -> "SvgElement":
         for key, value in attributes.items():
-            attr_key = key.replace("_", "-")
+            attr_key = "class" if key == "class_name" else key.replace("_", "-")
             if value is None:
                 self.element.attrib.pop(attr_key, None)
             else:
                 self.element.set(attr_key, str(value))
+        return self
+
+    def set_attr(self, name: str, value: AttributeValue) -> Self:
+        self.attrs({name: value})
+        return self
+
+    def set_id(self, value: str | None) -> Self:
+        return self.set_attr("id", value)
+
+    def set_class(self, value: str | None) -> Self:
+        return self.set_attr("class_name", value)
+
+    def set_fill(self, value: AttributeValue) -> Self:
+        return self.set_attr("fill", value)
+
+    def set_stroke(
+        self,
+        value: AttributeValue,
+        width: AttributeValue = None,
+        linecap: str | None = None,
+        linejoin: str | None = None,
+    ) -> Self:
+        attrs: dict[str, object] = {"stroke": value}
+        if width is not None:
+            attrs["stroke_width"] = width
+        if linecap is not None:
+            attrs["stroke_linecap"] = linecap
+        if linejoin is not None:
+            attrs["stroke_linejoin"] = linejoin
+        self.attrs(attrs)
+        return self
+
+    def set_style(self, value: str | Mapping[str, AttributeValue] | None) -> Self:
+        if value is None or isinstance(value, str):
+            return self.set_attr("style", value)
+        declarations = [
+            f"{key.replace('_', '-')}: {style_value}"
+            for key, style_value in value.items()
+            if style_value is not None
+        ]
+        return self.set_attr("style", "; ".join(declarations))
+
+    def set_position(self, x: PointLike | Real, y: Real | None = None) -> Self:
+        point = _coerce_point_args(x, y)
+        tag = self.element.tag.split("}")[-1]
+        attr_x, attr_y = ("cx", "cy") if tag in {"circle", "ellipse"} else ("x", "y")
+        self.attrs({attr_x: point.x, attr_y: point.y})
+        return self
+
+    def set_size(self, width: AttributeValue, height: AttributeValue) -> Self:
+        self.attrs({"width": width, "height": height})
         return self
 
     def append(self, *children: Any) -> "SvgElement":
@@ -678,12 +758,24 @@ class Animate(SvgElement):
 
 
 class Circle(SvgElement):
-    def __init__(self, **kwargs: Any):
-        pos = kwargs.pop("pos", None)
+    def __init__(
+        self,
+        *,
+        pos: PointLike | None = None,
+        cx: Real | None = None,
+        cy: Real | None = None,
+        r: Real | None = None,
+        **kwargs: Any,
+    ):
+        if cx is not None:
+            kwargs["cx"] = cx
+        if cy is not None:
+            kwargs["cy"] = cy
+        if r is not None:
+            kwargs["r"] = r
         super().__init__("circle", **kwargs)
         if pos is not None:
-            self.element.set("cx", str(pos.x))
-            self.element.set("cy", str(pos.y))
+            self.pos = _coerce_point(pos, "pos")
 
     @property
     def pos(self) -> Vector:
@@ -718,12 +810,27 @@ class Circle(SvgElement):
 
 
 class Ellipse(SvgElement):
-    def __init__(self, **kwargs: Any):
-        pos = kwargs.pop("pos", None)
+    def __init__(
+        self,
+        *,
+        pos: PointLike | None = None,
+        cx: Real | None = None,
+        cy: Real | None = None,
+        rx: Real | None = None,
+        ry: Real | None = None,
+        **kwargs: Any,
+    ):
+        if cx is not None:
+            kwargs["cx"] = cx
+        if cy is not None:
+            kwargs["cy"] = cy
+        if rx is not None:
+            kwargs["rx"] = rx
+        if ry is not None:
+            kwargs["ry"] = ry
         super().__init__("ellipse", **kwargs)
         if pos is not None:
-            self.element.set("cx", str(pos.x))
-            self.element.set("cy", str(pos.y))
+            self.pos = _coerce_point(pos, "pos")
 
     @property
     def pos(self) -> Vector:
@@ -738,12 +845,27 @@ class Ellipse(SvgElement):
 
 
 class Rect(SvgElement):
-    def __init__(self, **kwargs: Any):
-        pos = kwargs.pop("pos", None)
+    def __init__(
+        self,
+        *,
+        pos: PointLike | None = None,
+        x: Real | None = None,
+        y: Real | None = None,
+        width: Real | None = None,
+        height: Real | None = None,
+        **kwargs: Any,
+    ):
+        if x is not None:
+            kwargs["x"] = x
+        if y is not None:
+            kwargs["y"] = y
+        if width is not None:
+            kwargs["width"] = width
+        if height is not None:
+            kwargs["height"] = height
         super().__init__("rect", **kwargs)
         if pos is not None:
-            self.element.set("x", str(pos.x))
-            self.element.set("y", str(pos.y))
+            self.pos = _coerce_point(pos, "pos")
 
     @property
     def pos(self) -> Vector:
@@ -925,16 +1047,26 @@ class Polyline(SvgElement):
 
 
 class Text(SvgElement):
-    def __init__(self, initial_text: str = "", **kwargs: Any):
+    def __init__(
+        self,
+        initial_text: str = "",
+        *,
+        pos: PointLike | None = None,
+        x: Real | None = None,
+        y: Real | None = None,
+        v_space: Real | None = None,
+        **kwargs: Any,
+    ):
         # Extract Text-specific kwargs before passing to parent
-        pos = kwargs.pop("pos", None)
-        v_space = kwargs.pop("v_space", None)
+        if x is not None:
+            kwargs["x"] = x
+        if y is not None:
+            kwargs["y"] = y
 
         super().__init__("text", **kwargs)
 
         if pos is not None:
-            self.element.set("x", str(pos.x))
-            self.element.set("y", str(pos.y))
+            self.pos = _coerce_point(pos, "pos")
 
         self._v_space: float | None = v_space
         self._raw_text = initial_text

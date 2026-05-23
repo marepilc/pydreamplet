@@ -88,7 +88,7 @@ The target shape is a layered library:
   - [x] Keep `basedpyright pydreamplet` green in CI.
   - [ ] Enable stricter checks module by module for less dynamic modules first:
     `types.py`, `math.py`, `path_data.py`, `colors.py`, `scales.py`, and `utils.py`.
-  - [ ] Add typed helper APIs for common SVG attributes before tightening
+  - [x] Add typed helper APIs for common SVG attributes before tightening
     `core.py`.
   - [ ] Keep dynamic `SvgElement.__getattr__` / `__setattr__` as the documented
     escape hatch.
@@ -108,9 +108,11 @@ The target shape is a layered library:
 - [x] Define a clear public/private API boundary.
 - [x] Document backward compatibility rules for v2.x.
 - [x] Decide whether dynamic SVG attributes remain the main API or become a lower-level escape hatch.
-- [ ] Add typed constructors for common elements while keeping flexible SVG attributes available.
+- [x] Add typed constructors for common elements while keeping flexible SVG attributes available.
 - [ ] Introduce a consistent `Point`/`Vector`/tuple input policy.
-- [ ] Add convenience methods for setting position, size, stroke, fill, class, id, and style.
+  First pass supports `Vector`, `(x, y)`, and `[x, y]` for common positioned
+  elements and `set_position()`.
+- [x] Add convenience methods for setting position, size, stroke, fill, class, id, and style.
 - [ ] Make copy, append, remove, find, and find_all behavior explicit and tested.
 - [ ] Add support for SVG `defs`, gradients, patterns, masks, clip paths, and filters.
 - [ ] Add a stronger transform model:

@@ -25,6 +25,14 @@ def test_circle_pos_constructor_does_not_emit_pos_attribute():
     assert "pos=" not in str(circle)
 
 
+def test_circle_accepts_tuple_pos_and_typed_constructor_args():
+    circle = dp.Circle(pos=(10, 20), r=5, fill="red")
+
+    assert circle.pos == dp.Vector(10, 20)
+    assert circle.radius == 5
+    assert circle.element.attrib["fill"] == "red"
+
+
 def test_circle_area():
     circle = dp.Circle(cx=10, cy=20, r=5)
     assert circle.area == pytest.approx(78.54, 0.01)

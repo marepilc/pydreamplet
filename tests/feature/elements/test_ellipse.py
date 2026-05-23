@@ -9,3 +9,11 @@ def test_ellipse_pos_constructor_does_not_emit_pos_attribute():
     assert ellipse.element.attrib["cx"] == "10.0"
     assert ellipse.element.attrib["cy"] == "20.0"
     assert "pos=" not in str(ellipse)
+
+
+def test_ellipse_accepts_tuple_pos_and_typed_constructor_args():
+    ellipse = dp.Ellipse(pos=(10, 20), rx=5, ry=8)
+
+    assert ellipse.pos == dp.Vector(10, 20)
+    assert ellipse.element.attrib["rx"] == "5"
+    assert ellipse.element.attrib["ry"] == "8"

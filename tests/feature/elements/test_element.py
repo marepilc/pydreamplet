@@ -137,3 +137,47 @@ def test_has_attr():
     circle_no_class = dp.Circle(r=5)
     assert circle_no_class.has_attr("class_name") is False
     assert circle_no_class.has_attr("r") is True
+
+
+def test_common_attribute_helpers_are_chainable():
+    rect = (
+        dp.Rect(width=10, height=20)
+        .set_id("main")
+        .set_class("highlight")
+        .set_fill("red")
+        .set_stroke("black", width=2, linecap="round", linejoin="bevel")
+        .set_style({"opacity": 0.5, "stroke_width": 3, "display": None})
+    )
+
+    assert rect.element.attrib["id"] == "main"
+    assert rect.element.attrib["class"] == "highlight"
+    assert rect.element.attrib["fill"] == "red"
+    assert rect.element.attrib["stroke"] == "black"
+    assert rect.element.attrib["stroke-width"] == "2"
+    assert rect.element.attrib["stroke-linecap"] == "round"
+    assert rect.element.attrib["stroke-linejoin"] == "bevel"
+    assert rect.element.attrib["style"] == "opacity: 0.5; stroke-width: 3"
+
+
+def test_common_attribute_helpers_remove_values_with_none():
+    circle = dp.Circle(r=5).set_id("dot").set_class("marker").set_fill("blue")
+
+    circle.set_id(None).set_class(None).set_fill(None).set_style(None)
+
+    assert "id" not in circle.element.attrib
+    assert "class" not in circle.element.attrib
+    assert "fill" not in circle.element.attrib
+    assert "style" not in circle.element.attrib
+
+
+def test_common_position_and_size_helpers():
+    rect = dp.Rect().set_position((10, 20)).set_size(30, 40)
+    circle = dp.Circle(r=5).set_position([50, 60])
+
+    assert rect.pos == dp.Vector(10, 20)
+    assert rect.width == 30
+    assert rect.height == 40
+    assert circle.pos == dp.Vector(50, 60)
+    assert "x" not in circle.element.attrib
+    assert circle.element.attrib["cx"] == "50.0"
+    assert circle.element.attrib["cy"] == "60.0"

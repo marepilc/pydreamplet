@@ -1,6 +1,14 @@
 import pydreamplet as dp
 
 
+def test_text_accepts_tuple_pos_and_typed_constructor_args():
+    text = dp.Text("hello", pos=(10, 20), font_size=12)
+
+    assert text.pos == dp.Vector(10, 20)
+    assert text.content == "hello"
+    assert text.font_size == 12
+
+
 def test_text_single_line():
     text = dp.Text("Hello, World!", x=10, y=10, font_size=18)
     # Single-line should be directly in text.text and no <tspan> children.
