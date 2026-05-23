@@ -4,11 +4,6 @@ import xml.etree.ElementTree as ET
 from copy import deepcopy
 from typing import Any, overload
 
-from IPython.display import SVG as IPythonSVG
-from IPython.display import (
-    display as ipython_display,  # pyright: ignore[reportUnknownVariableType]
-)
-
 from pydreamplet.math import Vector
 
 type Real = int | float
@@ -385,6 +380,18 @@ class SVG(SvgElement):
             self.append(style_elem)
 
     def display(self) -> None:
+        try:
+            from IPython.display import SVG as IPythonSVG
+            from IPython.display import (
+                display as ipython_display,  # pyright: ignore[reportUnknownVariableType]
+            )
+        except ImportError as exc:
+            raise RuntimeError(
+                "SVG.display() requires the optional notebook dependencies. "
+                "Install them with `pip install pydreamplet[notebook]` or "
+                "`uv add pydreamplet --extra notebook`."
+            ) from exc
+
         ipython_display(IPythonSVG(self.to_string()))
 
     def save(self, filename: str, pretty_print: bool = False) -> None:

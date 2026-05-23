@@ -51,7 +51,7 @@ The target shape is a layered library:
   These constructors currently pass `pos` into `SvgElement` before converting it to
   `cx/cy` or `x/y`, which creates invalid SVG attributes such as
   `pos="Vector(x=1.0, y=2.0)"`.
-- [ ] Move IPython and ipykernel out of core runtime dependencies.
+- [x] Move IPython and ipykernel out of core runtime dependencies.
   Notebook display support should be optional and imported lazily.
 - [ ] Fix `mkdocs.yml` dark-mode typo: `mediia` should be `media`.
 - [ ] Replace broad `except Exception: pass` blocks with explicit parsing failures or
@@ -64,6 +64,10 @@ The target shape is a layered library:
   viewBox values, dimensions, and existing root attributes more robustly.
 - [ ] Replace or isolate the simplistic path coordinate parser used by `Path.w`,
   `Path.h`, and `Path.center`.
+- [ ] Improve text measurement accuracy.
+  Current typography measurement based on Pillow/fontTools is not precise enough
+  for reliable SVG layout. Evaluate replacing it with a more accurate shaping and
+  measurement backend, or make backend selection explicit.
 - [ ] Add tests for malformed SVG input, path edge cases, and non-integer viewBox values.
 
 ## Packaging And Tooling
@@ -76,6 +80,8 @@ The target shape is a layered library:
 - [ ] Remove `ipykernel` from default install.
 - [ ] Consider whether Pillow and fontTools should be optional under a `typography`
   extra if text measurement is not required by the core package.
+- [ ] Revisit typography dependencies after choosing the more accurate text
+  measurement backend.
 - [ ] Add a real `[mypy]` section to `mypy.ini`.
 - [ ] Enable stricter type checking gradually, starting with core public APIs.
 - [ ] Add Ruff configuration to `pyproject.toml`.

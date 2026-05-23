@@ -1,0 +1,33 @@
+# Changelog
+
+All notable changes for pyDreamplet 2.0 are tracked here while the `version-2`
+branch is in progress.
+
+## Unreleased
+
+### Fixed
+
+- Fixed `pos` handling in `Circle`, `Ellipse`, and `Rect` constructors.
+  Passing `pos=Vector(...)` now maps to `cx`/`cy` or `x`/`y` before SVG
+  attributes are created, so serialized output no longer includes invalid
+  `pos="Vector(...)"` attributes.
+
+### Changed
+
+- Moved notebook display dependencies out of the core runtime dependency set.
+  `ipython` and `ipykernel` are now available through the optional `notebook`
+  extra instead of being installed by default.
+- Made `SVG.display()` import IPython lazily, so importing `pydreamplet` does
+  not require notebook dependencies.
+- Updated installation documentation to show `uv` first and `pip` second,
+  including notebook extra installation examples.
+- Started tracking text measurement accuracy as a 2.0 known issue. The current
+  Pillow/fontTools-based measurement path should be replaced or made
+  backend-selectable before relying on it for precise SVG layout.
+
+### Tests
+
+- Added regression tests for `pos` constructor serialization on `Circle`,
+  `Ellipse`, and `Rect`.
+- Added regression tests proving package import does not require IPython and
+  that `SVG.display()` reports missing notebook dependencies clearly.
