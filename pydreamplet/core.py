@@ -257,6 +257,44 @@ class Transformable:
 
 
 class SVG(SvgElement):
+    @staticmethod
+    def _format_number(value: Real) -> str:
+        if isinstance(value, float) and value.is_integer():
+            return str(int(value))
+        return str(value)
+
+    @staticmethod
+    def _parse_svg_length(value: str | None) -> float | None:
+        if value is None:
+            return None
+        match = re.match(r"^\s*([+-]?(?:\d+(?:\.\d*)?|\.\d+))(?:[a-zA-Z%]*)\s*$", value)
+        if not match:
+            return None
+        return float(match.group(1))
+
+    @staticmethod
+    def _parse_viewbox(value: str | None) -> tuple[float, float, float, float] | None:
+        if value is None:
+            return None
+        parts = value.replace(",", " ").split()
+        if len(parts) != 4:
+            raise ValueError(f"viewBox must contain 4 numbers, got {len(parts)}")
+        try:
+            x, y, width, height = (float(part) for part in parts)
+        except ValueError as exc:
+            raise ValueError(f"Invalid viewBox values: {value!r}") from exc
+        return x, y, width, height
+
+    @classmethod
+    def _fallback_viewbox_from_dimensions(
+        cls, element: ET.Element
+    ) -> tuple[float, float, float, float] | None:
+        width = cls._parse_svg_length(element.get("width"))
+        height = cls._parse_svg_length(element.get("height"))
+        if width is None or height is None:
+            return None
+        return 0.0, 0.0, width, height
+
     @classmethod
     @override
     def from_element(cls, element: ET.Element):
@@ -272,8 +310,15 @@ class SVG(SvgElement):
     def from_file(cls, filename: str) -> "SVG":
         tree = ET.parse(filename)
         root = tree.getroot()
-        viewBox = root.get("viewBox", "0 0 100 100")
-        instance = cls(tuple(map(int, viewBox.split())))
+        viewbox = cls._parse_viewbox(root.get("viewBox"))
+        if viewbox is None:
+            viewbox = cls._fallback_viewbox_from_dimensions(root)
+            if viewbox is not None:
+                root.set(
+                    "viewBox",
+                    " ".join(cls._format_number(value) for value in viewbox),
+                )
+        instance = cls.__new__(cls)
         instance.element = root
         return instance
 
@@ -314,7 +359,10 @@ class SVG(SvgElement):
 
         # Determine width and height before passing kwargs to super().__init__
         if len(validated_viewbox) == 4:
-            vb = f"{validated_viewbox[0]} {validated_viewbox[1]} {validated_viewbox[2]} {validated_viewbox[3]}"
+            vb = (
+                f"{validated_viewbox[0]} {validated_viewbox[1]} "
+                f"{validated_viewbox[2]} {validated_viewbox[3]}"
+            )
             width = kwargs.pop("width", f"{validated_viewbox[2]}px")
             height = kwargs.pop("height", f"{validated_viewbox[3]}px")
         else:
@@ -333,16 +381,18 @@ class SVG(SvgElement):
         )
 
     @property
-    def w(self):
-        viewbox_str = self.element.get("viewBox", "0 0 0 0")
-        viewbox = [int(v) for v in viewbox_str.split(" ")]
-        return viewbox[2]
+    def w(self) -> float:
+        viewbox = self._parse_viewbox(self.element.get("viewBox"))
+        if viewbox is not None:
+            return viewbox[2]
+        return self._parse_svg_length(self.element.get("width")) or 0.0
 
     @property
-    def h(self):
-        viewbox_str = self.element.get("viewBox", "0 0 0 0")
-        viewbox = [int(v) for v in viewbox_str.split(" ")]
-        return viewbox[3]
+    def h(self) -> float:
+        viewbox = self._parse_viewbox(self.element.get("viewBox"))
+        if viewbox is not None:
+            return viewbox[3]
+        return self._parse_svg_length(self.element.get("height")) or 0.0
 
     def style(
         self, file_path: str, overwrite: bool = True, minify: bool = True
@@ -350,8 +400,9 @@ class SVG(SvgElement):
         """
         Add a <style> element to the SVG from an external CSS file.
 
-        If overwrite is True, any existing <style> elements are removed and the new one
-        is inserted as the first element of the SVG. Otherwise, the style element is appended.
+        If overwrite is True, any existing <style> elements are removed and the
+        new one is inserted as the first element of the SVG. Otherwise, the
+        style element is appended.
 
         If minify is True, the CSS content is minified before insertion.
         """
@@ -731,9 +782,12 @@ class Path(SvgElement):
 
     def _get_coordinates(self):
         """
-        Parse the path 'd' attribute to extract all numbers and group them into (x, y) pairs.
-        This is a simplistic parser that assumes the path string is composed of commands that use
-        coordinate pairs (e.g., "M10 20 L110 20 L110 70 L10 70 Z").
+        Parse the path 'd' attribute to extract all numbers and group them into
+        (x, y) pairs.
+
+        This is a simplistic parser that assumes the path string is composed of
+        commands that use coordinate pairs, e.g.
+        "M10 20 L110 20 L110 70 L10 70 Z".
         """
         # Find all numbers (including floats and scientific notation)
         numbers = re.findall(r"[-+]?\d*\.?\d+(?:e[-+]?\d+)?", self.d)

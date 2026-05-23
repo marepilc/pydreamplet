@@ -25,6 +25,64 @@ def test_svg_viewbox(args, expected_viewbox):
     assert root.attrib.get("viewBox") == expected_viewbox
 
 
+def test_svg_from_file_supports_decimal_viewbox(tmp_path: Path):
+    svg_file = tmp_path / "decimal.svg"
+    svg_file.write_text(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0.5 1.5 200.25 100.75" />',
+        encoding="utf-8",
+    )
+
+    svg = dp.SVG.from_file(str(svg_file))
+
+    assert svg.w == 200.25
+    assert svg.h == 100.75
+    assert svg.element.attrib["viewBox"] == "0.5 1.5 200.25 100.75"
+
+
+def test_svg_from_file_derives_viewbox_from_dimensions(tmp_path: Path):
+    svg_file = tmp_path / "dimensions.svg"
+    svg_file.write_text(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="320px" height="240px" />',
+        encoding="utf-8",
+    )
+
+    svg = dp.SVG.from_file(str(svg_file))
+
+    assert svg.w == 320
+    assert svg.h == 240
+    assert svg.element.attrib["viewBox"] == "0 0 320 240"
+
+
+def test_svg_from_file_preserves_existing_root_attributes(tmp_path: Path):
+    svg_file = tmp_path / "attrs.svg"
+    svg_file.write_text(
+        (
+            '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" '
+            'id="logo" data-name="Example" role="img" />'
+        ),
+        encoding="utf-8",
+    )
+
+    svg = dp.SVG.from_file(str(svg_file))
+
+    assert svg.element.attrib["id"] == "logo"
+    assert svg.element.attrib["data-name"] == "Example"
+    assert svg.element.attrib["role"] == "img"
+    assert svg.element.attrib["width"] == "320"
+    assert svg.element.attrib["height"] == "240"
+
+
+def test_svg_from_file_without_viewbox_or_dimensions_uses_zero_size(tmp_path: Path):
+    svg_file = tmp_path / "empty.svg"
+    svg_file.write_text('<svg xmlns="http://www.w3.org/2000/svg" />', encoding="utf-8")
+
+    svg = dp.SVG.from_file(str(svg_file))
+
+    assert svg.w == 0
+    assert svg.h == 0
+    assert "viewBox" not in svg.element.attrib
+
+
 def test_style_overwrite(tmp_path: Path):
     # Create a temporary CSS file with non-minified content.
     css_file = tmp_path / "style.css"

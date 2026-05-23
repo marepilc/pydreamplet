@@ -56,10 +56,10 @@ The target shape is a layered library:
 - [x] Fix `mkdocs.yml` dark-mode typo: `mediia` should be `media`.
 - [x] Replace broad `except Exception: pass` blocks with explicit parsing failures or
   documented fallback behavior.
-- [ ] Decide how strict unknown SVG attribute access should be.
+- [x] Decide how strict unknown SVG attribute access should be.
   The current dynamic `__getattr__`/`__setattr__` model is convenient, but it makes
   typing and API discoverability harder.
-- [ ] Improve `SVG.from_file()` parsing.
+- [x] Improve `SVG.from_file()` parsing.
   It currently assumes an integer `viewBox` and should support decimals, missing
   viewBox values, dimensions, and existing root attributes more robustly.
 - [ ] Replace or isolate the simplistic path coordinate parser used by `Path.w`,

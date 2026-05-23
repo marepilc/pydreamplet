@@ -24,6 +24,10 @@ branch is in progress.
 - Replaced broad silent exception handling in transform, typography, and color
   parsing with explicit parsing errors or documented fallback behavior.
 - Added basedpyright configuration for the current dynamic SVG API surface.
+- Decided to keep dynamic SVG attribute access for v2.0, with typed helpers and
+  documentation planned as the path to better discoverability.
+- Improved `SVG.from_file()` parsing to preserve root attributes, support
+  decimal `viewBox` values, and derive a missing `viewBox` from dimensions.
 - Updated installation documentation to show `uv` first and `pip` second,
   including notebook extra installation examples.
 - Started tracking text measurement accuracy as a 2.0 known issue. The current
