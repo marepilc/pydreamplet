@@ -29,7 +29,7 @@ Initializes a group element with optional transformation properties and a pivot 
 - `pos` *(Vector, optional)*: Position vector (default: (0, 0)).
 - `scale` *(Vector, optional)*: Scale vector (default: (1, 1)).
 - `angle` *(float)*: Rotation angle (default: 0).
-- `pivot` *(Vector, optional)*: Pivot point for rotation (default: (0, 0)).
+- `pivot` *(Vector, optional)*: Pivot point for rotation and scaling (default: (0, 0)).
 - `order` *(str)*: Transformation order (combination of 't', 'r', 's'; default: "trs").
 
 ```py
@@ -43,6 +43,8 @@ group = G(pos=Vector(10, 20), angle=30)
 **Getter:** Returns the pivot point as a Vector.
 
 **Setter:** Updates the pivot point and refreshes the transform.
+
+The pivot is used as the origin for rotation and scaling. Rotation is serialized with SVG's native `rotate(angle,cx,cy)` form. Scaling around a pivot is serialized as `translate(pivot) scale(...) translate(-pivot)`.
 
 <!--skip-->
 <!--skip-->
@@ -83,7 +85,7 @@ attrs(self, attributes: dict) -> G
 
 Sets multiple attributes on the group, including parsing transformation details.
 
-`G` uses `TransformList` when parsing a `transform` attribute. Legacy properties (`pos`, `angle`, `scale`, `pivot`, and `order`) still control translate, rotate, and scale. Other supported transform functions such as `skewX`, `skewY`, and `matrix` are preserved instead of being discarded.
+`G` uses `TransformList` when parsing a `transform` attribute. Legacy properties (`pos`, `angle`, `scale`, `pivot`, and `order`) still control translate, rotate, and scale. Other supported transform functions such as `skewX`, `skewY`, and `matrix` are preserved instead of being discarded. Pivoted scale sequences in the form `translate(pivot) scale(...) translate(-pivot)` are recognized when loading existing SVG.
 
 ### <span class="meth"></span>`from_element`
 

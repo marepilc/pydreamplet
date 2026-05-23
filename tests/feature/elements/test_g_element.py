@@ -51,6 +51,51 @@ def test_g_transformation_order(svg_300):
     assert 'transform="rotate(45) translate(20 20) scale(2 2)"' in str(svg_300)
 
 
+def test_g_pivot_applies_to_rotation_and_scale():
+    g = dp.G(pivot=dp.Vector(10, 20), angle=30, scale=dp.Vector(2, 3))
+
+    assert (
+        g.element.attrib["transform"]
+        == "rotate(30,10,20) translate(10 20) scale(2 3) translate(-10 -20)"
+    )
+
+
+def test_g_pivoted_scale_respects_transform_order():
+    g = dp.G(
+        pos=dp.Vector(5, 6),
+        scale=dp.Vector(2, 2),
+        pivot=dp.Vector(10, 20),
+        order="st",
+    )
+
+    assert (
+        g.element.attrib["transform"]
+        == "translate(10 20) scale(2 2) translate(-10 -20) translate(5 6)"
+    )
+
+
+def test_g_from_element_restores_pivot_from_pivoted_scale():
+    element = ET.Element(
+        qname("g"),
+        {"transform": "translate(10 20) scale(2 3) translate(-10 -20)"},
+    )
+
+    g = dp.G.from_element(element)
+
+    assert g.pivot == dp.Vector(10, 20)
+    assert g.scale == dp.Vector(2, 3)
+    assert (
+        g.element.attrib["transform"]
+        == "translate(10 20) scale(2 3) translate(-10 -20)"
+    )
+
+    g.pivot = dp.Vector(30, 40)
+    assert (
+        g.element.attrib["transform"]
+        == "translate(30 40) scale(2 3) translate(-30 -40)"
+    )
+
+
 def test_g_attrs_transform_raises_for_malformed_supported_transform():
     g = dp.G()
 
@@ -96,6 +141,19 @@ def test_g_from_element_preserves_transform_order_with_extra_functions():
     assert (
         g.element.attrib["transform"]
         == "translate(20 24) skewX(20) rotate(30) matrix(1 0 0 1 5 6)"
+    )
+
+
+def test_g_pivoted_scale_is_preserved_with_extra_transform_functions():
+    g = dp.G()
+    g.attrs({"transform": "skewX(20)"})
+
+    g.pivot = dp.Vector(10, 20)
+    g.scale = dp.Vector(3, 3)
+
+    assert (
+        g.element.attrib["transform"]
+        == "translate(10 20) scale(3 3) translate(-10 -20) skewX(20)"
     )
 
 

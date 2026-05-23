@@ -423,6 +423,14 @@ class Matrix2D:
         return cls(x, 0, 0, x if y is None else y, 0, 0)
 
     @classmethod
+    def scale_at(cls, x: Real, y: Real | None, cx: Real, cy: Real) -> "Matrix2D":
+        return (
+            cls.translate(cx, cy)
+            .multiply(cls.scale(x, y))
+            .multiply(cls.translate(-cx, -cy))
+        )
+
+    @classmethod
     def rotate(cls, angle: Real) -> "Matrix2D":
         radians = math.radians(angle)
         cos = math.cos(radians)
@@ -597,6 +605,23 @@ class TransformList:
             (transform for transform in self.transforms if transform.name == name),
             None,
         )
+
+    def find_scale_pivot(self) -> tuple[Vector, int] | None:
+        for index in range(len(self.transforms) - 2):
+            first = self.transforms[index]
+            second = self.transforms[index + 1]
+            third = self.transforms[index + 2]
+            if (
+                first.name == "translate"
+                and second.name == "scale"
+                and third.name == "translate"
+                and len(first.values) == 2
+                and len(third.values) == 2
+                and first.values[0] == -third.values[0]
+                and first.values[1] == -third.values[1]
+            ):
+                return Vector(first.values[0], first.values[1]), index
+        return None
 
     def replace_first(self, name: str, transform: Transform | None) -> None:
         for index, existing in enumerate(self.transforms):
@@ -968,7 +993,21 @@ class G(Transformable, SvgElement):  # pyright: ignore[reportUnsafeMultipleInher
         scale = Vector(1, 1)
         pivot = Vector(0, 0)
 
-        translate = transform_list.first("translate")
+        scale_pivot = transform_list.find_scale_pivot()
+        scale_pivot_indices: set[int] = set()
+        if scale_pivot is not None:
+            pivot = scale_pivot[0]
+            start = scale_pivot[1]
+            scale_pivot_indices = {start, start + 2}
+
+        translate = next(
+            (
+                transform
+                for index, transform in enumerate(transform_list.transforms)
+                if transform.name == "translate" and index not in scale_pivot_indices
+            ),
+            None,
+        )
         if translate is not None:
             pos = Vector(
                 translate.values[0],
@@ -1016,15 +1055,28 @@ class G(Transformable, SvgElement):  # pyright: ignore[reportUnsafeMultipleInher
         super().attrs(attributes)
         return self
 
-    def _legacy_transform(self, op: str) -> Transform | None:
+    def _legacy_transforms(self, op: str) -> list[Transform]:
         if op == "t" and self._pos != Vector(0, 0):
-            return Transform.translate(self._pos.x, self._pos.y)
+            return [Transform.translate(self._pos.x, self._pos.y)]
         if op == "r" and self._angle != 0:
             if self._pivot and (self._pivot.x != 0 or self._pivot.y != 0):
-                return Transform.rotate(self._angle, self._pivot.x, self._pivot.y)
-            return Transform.rotate(self._angle)
+                return [Transform.rotate(self._angle, self._pivot.x, self._pivot.y)]
+            return [Transform.rotate(self._angle)]
         if op == "s" and self._scale != Vector(1, 1):
-            return Transform.scale(self._scale.x, self._scale.y)
+            scale = Transform.scale(self._scale.x, self._scale.y)
+            if self._pivot and (self._pivot.x != 0 or self._pivot.y != 0):
+                return [
+                    Transform.translate(self._pivot.x, self._pivot.y),
+                    scale,
+                    Transform.translate(-self._pivot.x, -self._pivot.y),
+                ]
+            return [scale]
+        return []
+
+    def _legacy_transform(self, op: str) -> Transform | None:
+        transforms = self._legacy_transforms(op)
+        if len(transforms) == 1:
+            return transforms[0]
         return None
 
     def _has_extra_transforms(self) -> bool:
@@ -1035,15 +1087,33 @@ class G(Transformable, SvgElement):  # pyright: ignore[reportUnsafeMultipleInher
 
     def _update_transform(self):
         if self._has_extra_transforms():
-            self._transform_list.replace_first("translate", self._legacy_transform("t"))
-            self._transform_list.replace_first("rotate", self._legacy_transform("r"))
-            self._transform_list.replace_first("scale", self._legacy_transform("s"))
+            scale_transforms = self._legacy_transforms("s")
+            if len(scale_transforms) > 1:
+                extras = [
+                    transform
+                    for transform in self._transform_list.transforms
+                    if transform.name not in {"translate", "rotate", "scale"}
+                ]
+                self._transform_list = TransformList(
+                    [
+                        transform
+                        for op in self._order
+                        for transform in self._legacy_transforms(op)
+                    ]
+                    + extras
+                )
+            else:
+                self._transform_list.replace_first(
+                    "translate", self._legacy_transform("t")
+                )
+                self._transform_list.replace_first("rotate", self._legacy_transform("r"))
+                self._transform_list.replace_first("scale", self._legacy_transform("s"))
             transform = str(self._transform_list)
         else:
             transforms = [
                 transform
                 for op in self._order
-                if (transform := self._legacy_transform(op)) is not None
+                for transform in self._legacy_transforms(op)
             ]
             self._transform_list = TransformList(transforms)
             transform = str(self._transform_list)

@@ -115,11 +115,11 @@ The target shape is a layered library:
 - [x] Add convenience methods for setting position, size, stroke, fill, class, id, and style.
 - [x] Make copy, append, remove, find, and find_all behavior explicit and tested.
 - [x] Add support for SVG `defs`, gradients, patterns, masks, clip paths, and filters.
-- [ ] Add a stronger transform model:
+- [x] Add a stronger transform model:
   - [x] parse transforms
   - [x] preserve transform order
   - [x] compose transforms
-  - [ ] support pivot/origin behavior consistently
+  - [x] support pivot/origin behavior consistently
 - [ ] Improve XML namespace handling and round-trip behavior.
 
 ## Geometry And Paths

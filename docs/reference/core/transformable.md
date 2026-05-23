@@ -26,6 +26,7 @@ Convenience constructors are available:
 - `Matrix2D.identity()`
 - `Matrix2D.translate(x, y=0)`
 - `Matrix2D.scale(x, y=None)`
+- `Matrix2D.scale_at(x, y, cx, cy)`
 - `Matrix2D.rotate(angle)`
 - `Matrix2D.skew_x(angle)`
 - `Matrix2D.skew_y(angle)`

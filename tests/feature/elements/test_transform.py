@@ -18,6 +18,13 @@ def test_matrix2d_multiply_and_apply():
     assert str(matrix) == "matrix(2 0 0 3 10 20)"
 
 
+def test_matrix2d_scale_at_keeps_pivot_fixed():
+    matrix = dp.Matrix2D.scale_at(2, 3, 10, 20)
+
+    assert_matrix_close(matrix, (2, 0, 0, 3, -10, -40))
+    assert matrix.apply(10, 20) == dp.Vector(10, 20)
+
+
 def test_transform_serializes_supported_functions():
     transforms = [
         dp.Transform.translate(10, 20),
