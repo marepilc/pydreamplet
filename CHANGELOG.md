@@ -28,6 +28,8 @@ branch is in progress.
   documentation planned as the path to better discoverability.
 - Improved `SVG.from_file()` parsing to preserve root attributes, support
   decimal `viewBox` values, and derive a missing `viewBox` from dimensions.
+- Isolated path data coordinate extraction into a dedicated helper used by
+  `Path.w`, `Path.h`, and `Path.center`.
 - Updated installation documentation to show `uv` first and `pip` second,
   including notebook extra installation examples.
 - Started tracking text measurement accuracy as a 2.0 known issue. The current
@@ -41,3 +43,5 @@ branch is in progress.
 - Added regression tests proving package import does not require IPython and
   that `SVG.display()` reports missing notebook dependencies clearly.
 - Added regression tests for malformed and unsupported group transform parsing.
+- Added regression tests for path bounds with relative commands, horizontal and
+  vertical lines, curves, arcs, and repeated move coordinates.

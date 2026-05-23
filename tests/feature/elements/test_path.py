@@ -42,5 +42,42 @@ def test_path_with_single_point():
 def test_path_invalid_coordinates():
     # An odd number of coordinates should raise a ValueError
     d = "M10 20 L30"  # Missing a y coordinate for the second point.
-    with pytest.raises(ValueError):
+    with pytest.raises(ValueError, match="incomplete command parameters"):
         _ = dp.Path(d).w
+
+
+def test_path_relative_commands():
+    path = dp.Path("M10 20 h100 v50 h-100 z")
+
+    assert path.w == 100
+    assert path.h == 50
+    assert path.center == dp.Vector(60, 45)
+
+
+def test_path_curve_uses_explicit_control_and_end_points():
+    path = dp.Path("M0 0 C10 20 30 40 50 60")
+
+    assert path.w == 50
+    assert path.h == 60
+    assert path.center == dp.Vector(25, 30)
+
+
+def test_path_arc_uses_endpoint_not_radii_or_flags():
+    path = dp.Path("M0 0 A50 25 0 0 1 100 10")
+
+    assert path.w == 100
+    assert path.h == 10
+    assert path.center == dp.Vector(50, 5)
+
+
+def test_path_repeated_move_coordinates_are_treated_as_lines():
+    path = dp.Path("M10 20 110 20 110 70 10 70 Z")
+
+    assert path.w == 100
+    assert path.h == 50
+    assert path.center == dp.Vector(60, 45)
+
+
+def test_path_data_must_start_with_command():
+    with pytest.raises(ValueError, match="must start with a path command"):
+        _ = dp.Path("10 20").w

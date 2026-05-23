@@ -62,7 +62,7 @@ The target shape is a layered library:
 - [x] Improve `SVG.from_file()` parsing.
   It currently assumes an integer `viewBox` and should support decimals, missing
   viewBox values, dimensions, and existing root attributes more robustly.
-- [ ] Replace or isolate the simplistic path coordinate parser used by `Path.w`,
+- [x] Replace or isolate the simplistic path coordinate parser used by `Path.w`,
   `Path.h`, and `Path.center`.
 - [ ] Improve text measurement accuracy.
   Current typography measurement based on Pillow/fontTools is not precise enough

@@ -5,6 +5,7 @@ from copy import deepcopy
 from typing import Any, ClassVar, overload, override
 
 from pydreamplet.math import Vector
+from pydreamplet.path_data import extract_path_points
 
 type Real = int | float
 
@@ -780,24 +781,8 @@ class Path(SvgElement):
     def d(self, value: str) -> None:
         self.element.set("d", value)
 
-    def _get_coordinates(self):
-        """
-        Parse the path 'd' attribute to extract all numbers and group them into
-        (x, y) pairs.
-
-        This is a simplistic parser that assumes the path string is composed of
-        commands that use coordinate pairs, e.g.
-        "M10 20 L110 20 L110 70 L10 70 Z".
-        """
-        # Find all numbers (including floats and scientific notation)
-        numbers = re.findall(r"[-+]?\d*\.?\d+(?:e[-+]?\d+)?", self.d)
-        coords = [float(num) for num in numbers]
-        if len(coords) % 2 != 0:
-            raise ValueError(
-                "Path 'd' attribute does not contain pairs of coordinates."
-            )
-        points = [Vector(coords[i], coords[i + 1]) for i in range(0, len(coords), 2)]
-        return points
+    def _get_coordinates(self) -> list[Vector]:
+        return extract_path_points(self.d)
 
     @property
     def w(self) -> float:
