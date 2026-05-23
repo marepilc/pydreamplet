@@ -435,9 +435,9 @@ class SVG(SvgElement):
 
     def display(self) -> None:
         try:
-            from IPython.display import SVG as IPythonSVG
+            from IPython.display import SVG as IPythonSVG  # pyright: ignore[reportMissingImports]
             from IPython.display import (
-                display as ipython_display,  # pyright: ignore[reportUnknownVariableType]
+                display as ipython_display,  # pyright: ignore[reportMissingImports, reportUnknownVariableType]
             )
         except ImportError as exc:
             message = " ".join(
