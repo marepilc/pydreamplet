@@ -47,7 +47,7 @@ The target shape is a layered library:
 
 ## Known Issues To Fix Before 2.0
 
-- [ ] Fix `pos` handling in `Circle`, `Ellipse`, and `Rect`.
+- [x] Fix `pos` handling in `Circle`, `Ellipse`, and `Rect`.
   These constructors currently pass `pos` into `SvgElement` before converting it to
   `cx/cy` or `x/y`, which creates invalid SVG attributes such as
   `pos="Vector(x=1.0, y=2.0)"`.

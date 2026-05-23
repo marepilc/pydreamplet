@@ -624,9 +624,9 @@ class Animate(SvgElement):
 
 class Circle(SvgElement):
     def __init__(self, **kwargs: Any):
+        pos = kwargs.pop("pos", None)
         super().__init__("circle", **kwargs)
-        if "pos" in kwargs:
-            pos = kwargs.pop("pos")
+        if pos is not None:
             self.element.set("cx", str(pos.x))
             self.element.set("cy", str(pos.y))
 
@@ -664,9 +664,9 @@ class Circle(SvgElement):
 
 class Ellipse(SvgElement):
     def __init__(self, **kwargs: Any):
+        pos = kwargs.pop("pos", None)
         super().__init__("ellipse", **kwargs)
-        if "pos" in kwargs:
-            pos = kwargs.pop("pos")
+        if pos is not None:
             self.element.set("cx", str(pos.x))
             self.element.set("cy", str(pos.y))
 
@@ -684,9 +684,9 @@ class Ellipse(SvgElement):
 
 class Rect(SvgElement):
     def __init__(self, **kwargs: Any):
+        pos = kwargs.pop("pos", None)
         super().__init__("rect", **kwargs)
-        if "pos" in kwargs:
-            pos = kwargs.pop("pos")
+        if pos is not None:
             self.element.set("x", str(pos.x))
             self.element.set("y", str(pos.y))
 
