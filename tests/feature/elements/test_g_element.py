@@ -40,6 +40,22 @@ def test_g_element_append_remove(svg_300, two_rectangles):
     g.remove(rect2)
     assert len(list(svg_300.element)) == 0
 
+
+def test_g_pos_and_pivot_accept_point_like_values():
+    g = dp.G(pos=(10, 20), pivot=[5, 6], angle=45)
+
+    assert g.pos == dp.Vector(10, 20)
+    assert g.pivot == dp.Vector(5, 6)
+    assert g.element.attrib["transform"] == "translate(10 20) rotate(45,5,6)"
+
+    g.pos = [30, 40]
+    g.pivot = (7, 8)
+
+    assert g.pos == dp.Vector(30, 40)
+    assert g.pivot == dp.Vector(7, 8)
+    assert g.element.attrib["transform"] == "translate(30 40) rotate(45,7,8)"
+
+
 def test_g_transformation_order(svg_300):
     g = dp.G()
     g.pos = dp.Vector(20, 20)

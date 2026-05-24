@@ -700,13 +700,13 @@ class Transformable:
 
     def __init__(
         self,
-        pos: Vector | None = None,
+        pos: PointLike | None = None,
         scale: Vector | None = None,
         angle: float = 0,
         *args: Any,
         **kwargs: Any,
     ):
-        self._pos = pos if pos is not None else Vector(0, 0)
+        self._pos = _coerce_point(pos, "pos") if pos is not None else Vector(0, 0)
         self._scale = scale if scale is not None else Vector(1, 1)
         self._angle = angle
         self._update_transform()
@@ -729,8 +729,8 @@ class Transformable:
         return self._pos
 
     @pos.setter
-    def pos(self, value: Vector) -> None:
-        self._pos = value
+    def pos(self, value: PointLike) -> None:
+        self._pos = _coerce_point(value, "pos")
         self._update_transform()
 
     @property
@@ -976,16 +976,16 @@ class G(Transformable, SvgElement):  # pyright: ignore[reportUnsafeMultipleInher
 
     def __init__(
         self,
-        pos: Vector | None = None,
+        pos: PointLike | None = None,
         scale: Vector | None = None,
         angle: float = 0,
-        pivot: Vector | None = None,
+        pivot: PointLike | None = None,
         order: str = "trs",
         **kwargs: Any,
     ):
         # Set _order and _pivot before calling the base __init__ to avoid issues.
         self._order = order
-        self._pivot = pivot if pivot is not None else Vector(0, 0)
+        self._pivot = _coerce_point(pivot, "pivot") if pivot is not None else Vector(0, 0)
         self._transform_list = TransformList()
         SvgElement.__init__(self, "g", **kwargs)
         Transformable.__init__(self, pos=pos, scale=scale, angle=angle)
@@ -996,8 +996,8 @@ class G(Transformable, SvgElement):  # pyright: ignore[reportUnsafeMultipleInher
         return self._pivot
 
     @pivot.setter
-    def pivot(self, value: Vector):
-        self._pivot = value
+    def pivot(self, value: PointLike):
+        self._pivot = _coerce_point(value, "pivot")
         self._update_transform()
 
     @property
@@ -1249,9 +1249,10 @@ class Circle(SvgElement):
         )
 
     @pos.setter
-    def pos(self, value: Vector) -> None:
-        self.element.set("cx", str(value.x))
-        self.element.set("cy", str(value.y))
+    def pos(self, value: PointLike) -> None:
+        point = _coerce_point(value, "pos")
+        self.element.set("cx", str(point.x))
+        self.element.set("cy", str(point.y))
 
     @property
     def radius(self):
@@ -1304,9 +1305,10 @@ class Ellipse(SvgElement):
         )
 
     @pos.setter
-    def pos(self, value: Vector) -> None:
-        self.element.set("cx", str(value.x))
-        self.element.set("cy", str(value.y))
+    def pos(self, value: PointLike) -> None:
+        point = _coerce_point(value, "pos")
+        self.element.set("cx", str(point.x))
+        self.element.set("cy", str(point.y))
 
 
 class Rect(SvgElement):
@@ -1339,9 +1341,10 @@ class Rect(SvgElement):
         )
 
     @pos.setter
-    def pos(self, value: Vector) -> None:
-        self.element.set("x", str(value.x))
-        self.element.set("y", str(value.y))
+    def pos(self, value: PointLike) -> None:
+        point = _coerce_point(value, "pos")
+        self.element.set("x", str(point.x))
+        self.element.set("y", str(point.y))
 
     @property
     def width(self):
@@ -1556,9 +1559,10 @@ class Text(SvgElement):
         )
 
     @pos.setter
-    def pos(self, value: Vector) -> None:
-        self.element.set("x", str(value.x))
-        self.element.set("y", str(value.y))
+    def pos(self, value: PointLike) -> None:
+        point = _coerce_point(value, "pos")
+        self.element.set("x", str(point.x))
+        self.element.set("y", str(point.y))
 
     @property
     def content(self) -> str:

@@ -17,3 +17,11 @@ def test_ellipse_accepts_tuple_pos_and_typed_constructor_args():
     assert ellipse.pos == dp.Vector(10, 20)
     assert ellipse.element.attrib["rx"] == "5"
     assert ellipse.element.attrib["ry"] == "8"
+
+
+def test_ellipse_pos_setter_accepts_point_like_values():
+    ellipse = dp.Ellipse(rx=5, ry=8)
+
+    ellipse.pos = [10, 20]
+
+    assert ellipse.pos == dp.Vector(10, 20)

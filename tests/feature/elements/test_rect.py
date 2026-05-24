@@ -18,3 +18,11 @@ def test_rect_accepts_tuple_pos_and_typed_constructor_args():
     assert rect.width == 30
     assert rect.height == 40
     assert rect.element.attrib["fill"] == "red"
+
+
+def test_rect_pos_setter_accepts_point_like_values():
+    rect = dp.Rect(width=30, height=40)
+
+    rect.pos = [10, 20]
+
+    assert rect.pos == dp.Vector(10, 20)

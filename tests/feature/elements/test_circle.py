@@ -33,6 +33,14 @@ def test_circle_accepts_tuple_pos_and_typed_constructor_args():
     assert circle.element.attrib["fill"] == "red"
 
 
+def test_circle_pos_setter_accepts_point_like_values():
+    circle = dp.Circle(r=5)
+
+    circle.pos = [10, 20]
+
+    assert circle.pos == dp.Vector(10, 20)
+
+
 def test_circle_area():
     circle = dp.Circle(cx=10, cy=20, r=5)
     assert circle.area == pytest.approx(78.54, 0.01)

@@ -109,7 +109,7 @@ The target shape is a layered library:
 - [x] Document backward compatibility rules for v2.x.
 - [x] Decide whether dynamic SVG attributes remain the main API or become a lower-level escape hatch.
 - [x] Add typed constructors for common elements while keeping flexible SVG attributes available.
-- [ ] Introduce a consistent `Point`/`Vector`/tuple input policy.
+- [x] Introduce a consistent `Point`/`Vector`/tuple input policy.
   First pass supports `Vector`, `(x, y)`, and `[x, y]` for common positioned
   elements and `set_position()`.
 - [x] Add convenience methods for setting position, size, stroke, fill, class, id, and style.
