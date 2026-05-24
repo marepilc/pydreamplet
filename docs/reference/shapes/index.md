@@ -77,7 +77,7 @@ print(d_str)
 <!--skip-->
 ```py
 cardinal_spline(
-    points: list[Real] | list[tuple[Real, Real]],
+    points: Sequence[Real] | Sequence[tuple[Real, Real]],
     tension: float = 0.0,
     closed: bool = False,
 ) -> str
@@ -191,7 +191,7 @@ arc(
 ```
 
 Returns a `d`-string for an arc (a circular path) centered at `(x, y)` with the specified `radius`.
-The arc spans from `start_angle` to `end_angle` (in degrees). If the arc represents a full circle, it is drawn using two 180° arc segments.
+The arc spans from `start_angle` to `end_angle` (in degrees). A zero span returns a move-only path. A full circle, such as `0` to `360`, is drawn using two 180° arc segments.
 
 <span class="param">**Parameters**</span>
 
@@ -230,6 +230,7 @@ ring(
 
 Returns a `d`-string for a ring (donut or ring segment) centered at `(x, y)` with specified `inner_radius` and `outer_radius`.
 
+For a zero span, an empty path is returned.
 For a full ring (360°), a complete donut is drawn.
 For a partial ring:
 If `without_inner` is `False`, a full ring segment is drawn (outer arc, radial line to inner arc, inner arc, and radial line back).

@@ -136,7 +136,7 @@ The target shape is a layered library:
   - [x] segment iteration
 - [ ] Add robust bounding boxes for lines, rectangles, circles, ellipses, polygons,
   polylines, and paths.
-- [ ] Add arc and ring helpers with tested sweep/large-arc behavior.
+- [x] Add arc and ring helpers with tested sweep/large-arc behavior.
 - [ ] Add curve interpolation helpers for paths through points:
   - linear
   - step
