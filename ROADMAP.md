@@ -134,7 +134,7 @@ The target shape is a layered library:
   - [x] point at length
   - [x] tangent at length
   - [x] segment iteration
-- [ ] Add robust bounding boxes for lines, rectangles, circles, ellipses, polygons,
+- [x] Add robust bounding boxes for lines, rectangles, circles, ellipses, polygons,
   polylines, and paths.
 - [x] Add arc and ring helpers with tested sweep/large-arc behavior.
 - [ ] Add curve interpolation helpers for paths through points:

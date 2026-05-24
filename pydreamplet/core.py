@@ -195,6 +195,128 @@ def _cubic_bezier_extrema(p0: Vector, p1: Vector, p2: Vector, p3: Vector) -> lis
     return roots
 
 
+def _angle_between(unit_a: tuple[float, float], unit_b: tuple[float, float]) -> float:
+    cross = unit_a[0] * unit_b[1] - unit_a[1] * unit_b[0]
+    dot = unit_a[0] * unit_b[0] + unit_a[1] * unit_b[1]
+    return math.atan2(cross, dot)
+
+
+def _is_angle_on_arc(angle: float, start_angle: float, delta_angle: float) -> bool:
+    tau = math.tau
+    if delta_angle >= 0:
+        offset = (angle - start_angle) % tau
+        return offset <= delta_angle or math.isclose(offset, delta_angle)
+    offset = (start_angle - angle) % tau
+    return offset <= -delta_angle or math.isclose(offset, -delta_angle)
+
+
+def _svg_arc_center_parameters(
+    start: Vector,
+    end: Vector,
+    rx: float,
+    ry: float,
+    x_axis_rotation: float,
+    large_arc: bool,
+    sweep: bool,
+) -> tuple[Vector, float, float, float, float, float] | None:
+    rx = abs(rx)
+    ry = abs(ry)
+    if rx == 0 or ry == 0 or start == end:
+        return None
+
+    phi = math.radians(x_axis_rotation % 360)
+    cos_phi = math.cos(phi)
+    sin_phi = math.sin(phi)
+    dx = (start.x - end.x) / 2
+    dy = (start.y - end.y) / 2
+    x1_prime = cos_phi * dx + sin_phi * dy
+    y1_prime = -sin_phi * dx + cos_phi * dy
+
+    radius_check = x1_prime**2 / rx**2 + y1_prime**2 / ry**2
+    if radius_check > 1:
+        scale = math.sqrt(radius_check)
+        rx *= scale
+        ry *= scale
+
+    numerator = (
+        rx**2 * ry**2
+        - rx**2 * y1_prime**2
+        - ry**2 * x1_prime**2
+    )
+    denominator = rx**2 * y1_prime**2 + ry**2 * x1_prime**2
+    coefficient = 0.0
+    if denominator != 0:
+        sign = -1 if large_arc == sweep else 1
+        coefficient = sign * math.sqrt(max(0.0, numerator / denominator))
+
+    cx_prime = coefficient * (rx * y1_prime / ry)
+    cy_prime = coefficient * (-ry * x1_prime / rx)
+    center = Vector(
+        cos_phi * cx_prime - sin_phi * cy_prime + (start.x + end.x) / 2,
+        sin_phi * cx_prime + cos_phi * cy_prime + (start.y + end.y) / 2,
+    )
+
+    start_vector = ((x1_prime - cx_prime) / rx, (y1_prime - cy_prime) / ry)
+    end_vector = ((-x1_prime - cx_prime) / rx, (-y1_prime - cy_prime) / ry)
+    start_angle = math.atan2(start_vector[1], start_vector[0])
+    delta_angle = _angle_between(start_vector, end_vector)
+    if not sweep and delta_angle > 0:
+        delta_angle -= math.tau
+    elif sweep and delta_angle < 0:
+        delta_angle += math.tau
+
+    return center, rx, ry, phi, start_angle, delta_angle
+
+
+def _svg_arc_point(
+    center: Vector,
+    rx: float,
+    ry: float,
+    phi: float,
+    angle: float,
+) -> Vector:
+    cos_phi = math.cos(phi)
+    sin_phi = math.sin(phi)
+    cos_angle = math.cos(angle)
+    sin_angle = math.sin(angle)
+    return Vector(
+        center.x + rx * cos_angle * cos_phi - ry * sin_angle * sin_phi,
+        center.y + rx * cos_angle * sin_phi + ry * sin_angle * cos_phi,
+    )
+
+
+def _svg_arc_bbox_points(
+    start: Vector,
+    end: Vector,
+    rx: float,
+    ry: float,
+    x_axis_rotation: float,
+    large_arc: bool,
+    sweep: bool,
+) -> list[Vector]:
+    parameters = _svg_arc_center_parameters(
+        start, end, rx, ry, x_axis_rotation, large_arc, sweep
+    )
+    if parameters is None:
+        return [end]
+
+    center, rx, ry, phi, start_angle, delta_angle = parameters
+    points = [end]
+    cos_phi = math.cos(phi)
+    sin_phi = math.sin(phi)
+    candidate_angles = [
+        math.atan2(-ry * sin_phi, rx * cos_phi),
+        math.atan2(ry * cos_phi, rx * sin_phi),
+    ]
+
+    for angle in candidate_angles:
+        for candidate in (angle, angle + math.pi):
+            if _is_angle_on_arc(candidate, start_angle, delta_angle):
+                points.append(_svg_arc_point(center, rx, ry, phi, candidate))
+
+    return points
+
+
 class SvgElement:
     _class_registry: ClassVar[dict[str, type["SvgElement"]]] = {}
     element: ET.Element
@@ -1633,15 +1755,29 @@ class Path(SvgElement):
                 current = end
                 previous_cubic_control = None
                 previous_quadratic_control = control
+            elif command.command == "A":
+                end = Vector(command.values[5], command.values[6])
+                points.extend(
+                    _svg_arc_bbox_points(
+                        current,
+                        end,
+                        command.values[0],
+                        command.values[1],
+                        command.values[2],
+                        bool(command.values[3]),
+                        bool(command.values[4]),
+                    )
+                )
+                current = end
+                previous_cubic_control = None
+                previous_quadratic_control = None
             elif command.command == "Z":
                 current = subpath_start
                 points.append(current)
                 previous_cubic_control = None
                 previous_quadratic_control = None
             else:
-                raise ValueError(
-                    "Path bounding boxes do not support arc commands yet"
-                )
+                raise ValueError(f"Unsupported path command: {command.command}")
             previous_command = command.command
 
         return _bbox_from_points(points)

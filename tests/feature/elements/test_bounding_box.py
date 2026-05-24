@@ -105,6 +105,42 @@ def test_empty_path_bbox():
     assert dp.Path("").bbox == dp.BoundingBox(0, 0, 0, 0)
 
 
-def test_path_bbox_raises_for_arc_commands():
-    with pytest.raises(ValueError, match="arc commands"):
-        _ = dp.Path("M0 0 A10 10 0 0 1 20 20").bbox
+def test_arc_path_bbox_for_sweep_direction():
+    clockwise = dp.Path("M10 0 A10 10 0 0 1 -10 0")
+    counter_clockwise = dp.Path("M10 0 A10 10 0 0 0 -10 0")
+
+    assert clockwise.bbox == dp.BoundingBox(-10, 0, 20, 10)
+    assert counter_clockwise.bbox.x == pytest.approx(-10)
+    assert counter_clockwise.bbox.y == pytest.approx(-10)
+    assert counter_clockwise.bbox.width == pytest.approx(20)
+    assert counter_clockwise.bbox.height == pytest.approx(10)
+
+
+def test_large_arc_path_bbox_includes_axis_extrema():
+    path = dp.Path("M10 0 A10 10 0 1 1 0 -10")
+
+    assert path.bbox == dp.BoundingBox(-10, -10, 20, 20)
+
+
+def test_arc_path_bbox_scales_too_small_radii():
+    path = dp.Path("M0 0 A1 1 0 0 1 10 0")
+
+    assert path.bbox.x == pytest.approx(0)
+    assert path.bbox.y == pytest.approx(-5)
+    assert path.bbox.width == pytest.approx(10)
+    assert path.bbox.height == pytest.approx(5)
+
+
+def test_rotated_ellipse_arc_path_bbox():
+    path = dp.Path("M10 0 A20 10 90 0 1 -10 0")
+
+    assert path.bbox.x == pytest.approx(-10)
+    assert path.bbox.y == pytest.approx(0)
+    assert path.bbox.width == pytest.approx(20)
+    assert path.bbox.height == pytest.approx(20)
+
+
+def test_zero_radius_arc_path_bbox_falls_back_to_line_endpoint():
+    path = dp.Path("M0 0 A0 10 0 0 1 20 30")
+
+    assert path.bbox == dp.BoundingBox(0, 0, 20, 30)
