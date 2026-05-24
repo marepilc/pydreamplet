@@ -3,7 +3,9 @@ from typing import Any, cast
 
 from pydreamplet.shapes import (
     arc,
+    basis_spline,
     cardinal_spline,
+    catmull_rom_path,
     cross,
     linear_path,
     polygon,
@@ -57,9 +59,46 @@ def test_step_path_modes():
     )
 
 
+def test_catmull_rom_path_generates_cubic_path():
+    assert catmull_rom_path([(0, 0), (10, 20), (30, 0)]) == (
+        "M 0.00,0.00 "
+        "C 1.67,3.33 5.00,20.00 10.00,20.00 "
+        "C 15.00,20.00 26.67,3.33 30.00,0.00"
+    )
+
+
+def test_catmull_rom_path_supports_closed_paths():
+    assert catmull_rom_path([(0, 0), (10, 20), (30, 0)], closed=True) == (
+        "M 0.00,0.00 "
+        "C -3.33,3.33 5.00,20.00 10.00,20.00 "
+        "C 15.00,20.00 31.67,3.33 30.00,0.00 "
+        "C 28.33,-3.33 3.33,-3.33 0.00,0.00 Z"
+    )
+
+
+def test_basis_spline_generates_cubic_path():
+    assert basis_spline([(0, 0), (10, 20), (30, 0), (40, 10)]) == (
+        "M 0.00,0.00 "
+        "C 3.33,6.67 6.67,13.33 11.67,13.33 "
+        "C 16.67,13.33 23.33,6.67 28.33,5.00 "
+        "C 33.33,3.33 36.67,6.67 40.00,10.00"
+    )
+
+
+def test_basis_spline_supports_closed_paths():
+    assert basis_spline([(0, 0), (10, 20), (30, 0)], closed=True) == (
+        "M 6.67,3.33 "
+        "C 3.33,6.67 6.67,13.33 11.67,13.33 "
+        "C 16.67,13.33 23.33,6.67 21.67,3.33 "
+        "C 20.00,0.00 10.00,0.00 6.67,3.33 Z"
+    )
+
+
 def test_empty_curve_helpers_return_empty_path():
     assert linear_path([]) == ""
     assert step_path([]) == ""
+    assert catmull_rom_path([]) == ""
+    assert basis_spline([]) == ""
 
 
 def test_arc_distinguishes_zero_span_from_full_circle():
@@ -137,6 +176,8 @@ def test_ring_zero_span_returns_empty_path():
         (lambda: cardinal_spline([0, 0, 1], tension=0), "even number"),
         (lambda: cardinal_spline([0, 0, 10, 10], closed=True), "at least 3"),
         (lambda: cardinal_spline([0, 0, 10, 10], tension=2), "between 0 and 1"),
+        (lambda: catmull_rom_path([0, 0, 10, 10], closed=True), "at least 3"),
+        (lambda: basis_spline([0, 0, 10, 10], closed=True), "at least 3"),
     ],
 )
 def test_shape_helpers_validate_invalid_input(factory, match):

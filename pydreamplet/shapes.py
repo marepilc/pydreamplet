@@ -200,6 +200,119 @@ def step_path(
     return " ".join(parts)
 
 
+def catmull_rom_path(points: PointInput, closed: bool = False) -> str:
+    """
+    Generate an SVG Catmull-Rom spline through points.
+
+    This uses the common uniform Catmull-Rom to cubic Bezier conversion.
+    """
+    xy = _coerce_points(points)
+    n = len(xy)
+    if n == 0:
+        return ""
+    if n == 1:
+        return f"M {_format_point(xy[0][0], xy[0][1])}"
+    if n == 2 and not closed:
+        return linear_path(xy)
+    if closed and n < 3:
+        raise ValueError("closed Catmull-Rom paths require at least 3 points")
+
+    parts = [f"M {_format_point(xy[0][0], xy[0][1])}"]
+    segment_count = n if closed else n - 1
+    for i in range(segment_count):
+        p0 = xy[(i - 1) % n] if closed or i > 0 else xy[0]
+        p1 = xy[i % n]
+        p2 = xy[(i + 1) % n]
+        p3 = xy[(i + 2) % n] if closed or i + 2 < n else xy[-1]
+
+        c1 = (p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6)
+        c2 = (p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6)
+        parts.append(
+            "C "
+            f"{_format_point(c1[0], c1[1])} "
+            f"{_format_point(c2[0], c2[1])} "
+            f"{_format_point(p2[0], p2[1])}"
+        )
+
+    if closed:
+        parts.append("Z")
+    return " ".join(parts)
+
+
+def basis_spline(points: PointInput, closed: bool = False) -> str:
+    """
+    Generate a cubic basis spline path from control points.
+
+    Basis splines are smooth but do not generally pass through every control point.
+    The open variant starts at the first point and ends at the last point.
+    """
+    xy = _coerce_points(points)
+    n = len(xy)
+    if n == 0:
+        return ""
+    if n == 1:
+        return f"M {_format_point(xy[0][0], xy[0][1])}"
+    if n == 2 and not closed:
+        return linear_path(xy)
+    if closed and n < 3:
+        raise ValueError("closed basis splines require at least 3 points")
+
+    def blend(
+        p0: tuple[float, float],
+        p1: tuple[float, float],
+        p2: tuple[float, float],
+        p3: tuple[float, float],
+    ) -> tuple[tuple[float, float], tuple[float, float], tuple[float, float]]:
+        c1 = ((2 * p1[0] + p2[0]) / 3, (2 * p1[1] + p2[1]) / 3)
+        c2 = ((p1[0] + 2 * p2[0]) / 3, (p1[1] + 2 * p2[1]) / 3)
+        end = (
+            (p1[0] + 4 * p2[0] + p3[0]) / 6,
+            (p1[1] + 4 * p2[1] + p3[1]) / 6,
+        )
+        return c1, c2, end
+
+    if closed:
+        start = (
+            (xy[-1][0] + 4 * xy[0][0] + xy[1][0]) / 6,
+            (xy[-1][1] + 4 * xy[0][1] + xy[1][1]) / 6,
+        )
+        parts = [f"M {_format_point(start[0], start[1])}"]
+        for i in range(n):
+            c1, c2, end = blend(
+                xy[(i - 1) % n],
+                xy[i % n],
+                xy[(i + 1) % n],
+                xy[(i + 2) % n],
+            )
+            parts.append(
+                "C "
+                f"{_format_point(c1[0], c1[1])} "
+                f"{_format_point(c2[0], c2[1])} "
+                f"{_format_point(end[0], end[1])}"
+            )
+        parts.append("Z")
+        return " ".join(parts)
+
+    extended = [xy[0], *xy, xy[-1]]
+    parts = [f"M {_format_point(xy[0][0], xy[0][1])}"]
+    for i in range(n - 1):
+        c1, c2, end = blend(
+            extended[i],
+            extended[i + 1],
+            extended[i + 2],
+            extended[i + 3],
+        )
+        if i == n - 2:
+            end = xy[-1]
+        parts.append(
+            "C "
+            f"{_format_point(c1[0], c1[1])} "
+            f"{_format_point(c2[0], c2[1])} "
+            f"{_format_point(end[0], end[1])}"
+        )
+    return " ".join(parts)
+
+
 def cardinal_spline(
     points: PointInput,
     tension: float = 0.0,

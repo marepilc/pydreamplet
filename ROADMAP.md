@@ -140,11 +140,11 @@ The target shape is a layered library:
 - [ ] Add curve interpolation helpers for paths through points:
   - [x] linear
   - [x] step
-  - basis spline
+  - [x] basis spline
   - [x] cardinal spline
-  - Catmull-Rom
+  - [x] Catmull-Rom
   - monotone X/Y
-  - closed curves
+  - [x] closed curves
 - [ ] Add generators that return SVG path data from data points:
   - line generator
   - area generator

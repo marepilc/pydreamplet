@@ -148,6 +148,46 @@ d_str = step_path([(0, 0), (50, 100), (100, 0)], mode="mid")
 print(d_str)
 ```
 
+## <span class="func"></span>`catmull_rom_path`
+
+<!--skip-->
+```py
+catmull_rom_path(
+    points: Sequence[Real] | Sequence[Sequence[Real]],
+    closed: bool = False,
+) -> str
+```
+
+Generates a smooth Catmull-Rom spline through the provided points and returns SVG
+path data using cubic Bezier commands.
+
+```py
+from pydreamplet.shapes import catmull_rom_path
+
+d_str = catmull_rom_path([(0, 0), (50, 100), (100, 0)])
+print(d_str)
+```
+
+## <span class="func"></span>`basis_spline`
+
+<!--skip-->
+```py
+basis_spline(
+    points: Sequence[Real] | Sequence[Sequence[Real]],
+    closed: bool = False,
+) -> str
+```
+
+Generates a cubic basis spline from control points. Basis splines are smooth but
+do not generally pass through every control point.
+
+```py
+from pydreamplet.shapes import basis_spline
+
+d_str = basis_spline([(0, 0), (50, 100), (100, 0), (150, 50)])
+print(d_str)
+```
+
 ## <span class="func"></span>`polygon`
 
 <!--skip-->
