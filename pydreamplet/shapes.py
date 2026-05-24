@@ -1,8 +1,10 @@
 import math
-from typing import Sequence, cast
+from typing import Literal, Sequence, cast
 
 
 _ANGLE_TOLERANCE = 1e-9
+type PointInput = Sequence[float] | Sequence[Sequence[float]]
+type StepMode = Literal["before", "after", "mid"]
 
 
 def _format_point(x: float, y: float) -> str:
@@ -21,6 +23,30 @@ def _validate_non_negative(value: float, name: str) -> None:
 def _validate_positive(value: float, name: str) -> None:
     if value <= 0:
         raise ValueError(f"{name} must be positive")
+
+
+def _coerce_points(points: PointInput) -> list[tuple[float, float]]:
+    if not points:
+        return []
+
+    first = points[0]
+    if isinstance(first, (int, float)):
+        if len(points) % 2 != 0:
+            raise ValueError("flat points must contain an even number of values")
+        flat_points = cast(Sequence[float], points)
+        return [
+            (float(flat_points[i]), float(flat_points[i + 1]))
+            for i in range(0, len(flat_points), 2)
+        ]
+
+    point_pairs = cast(Sequence[Sequence[float]], points)
+    normalized: list[tuple[float, float]] = []
+    for point in point_pairs:
+        if len(point) != 2:
+            raise ValueError("points must contain exactly 2 coordinates each")
+        x, y = point
+        normalized.append((float(x), float(y)))
+    return normalized
 
 
 def _arc_span(start_angle: float, end_angle: float) -> tuple[float, bool, int]:
@@ -122,8 +148,60 @@ def polyline(x_coords: Sequence[float], y_coords: Sequence[float]) -> str:
     return d_string
 
 
+def linear_path(points: PointInput, closed: bool = False) -> str:
+    """
+    Generate an SVG path through points using straight line segments.
+    """
+    xy = _coerce_points(points)
+    if not xy:
+        return ""
+    d = "M " + " L ".join(_format_point(x, y) for x, y in xy)
+    if closed:
+        d += " Z"
+    return d
+
+
+def step_path(
+    points: PointInput,
+    closed: bool = False,
+    mode: StepMode = "mid",
+) -> str:
+    """
+    Generate an SVG stepped path through points.
+
+    `mode="before"` changes y before x, `mode="after"` changes x before y,
+    and `mode="mid"` changes y at the midpoint between adjacent x values.
+    """
+    if mode not in {"before", "after", "mid"}:
+        raise ValueError("mode must be 'before', 'after', or 'mid'")
+
+    xy = _coerce_points(points)
+    if not xy:
+        return ""
+
+    parts = [f"M {_format_point(xy[0][0], xy[0][1])}"]
+    for previous, current in zip(xy, xy[1:]):
+        x0, y0 = previous
+        x1, y1 = current
+        if mode == "before":
+            parts.append(f"L {_format_point(x0, y1)}")
+            parts.append(f"L {_format_point(x1, y1)}")
+        elif mode == "after":
+            parts.append(f"L {_format_point(x1, y0)}")
+            parts.append(f"L {_format_point(x1, y1)}")
+        else:
+            mid_x = (x0 + x1) / 2
+            parts.append(f"L {_format_point(mid_x, y0)}")
+            parts.append(f"L {_format_point(mid_x, y1)}")
+            parts.append(f"L {_format_point(x1, y1)}")
+
+    if closed:
+        parts.append("Z")
+    return " ".join(parts)
+
+
 def cardinal_spline(
-    points: Sequence[float] | Sequence[tuple[float, float]],
+    points: PointInput,
     tension: float = 0.0,
     closed: bool = False,
 ) -> str:
@@ -150,31 +228,11 @@ def cardinal_spline(
     str
         An SVG path 'd' string, e.g. "M x0,y0 C c1x,c1y c2x,c2y x1,y1 ..."
     """
-    # Normalize the input to a list of (float, float) pairs.
-    xy: list[tuple[float, float]] = []
+    xy = _coerce_points(points)
     if not points:
         return ""  # nothing to draw
     if not 0 <= tension <= 1:
         raise ValueError("tension must be between 0 and 1")
-
-    first = points[0]
-    if isinstance(first, (int, float)):
-        if len(points) % 2 != 0:
-            raise ValueError("flat points must contain an even number of values")
-        # We're in the flat-list branch.
-        flat_points = cast(Sequence[float], points)
-        for i in range(0, len(flat_points), 2):
-            xy.append((float(flat_points[i]), float(flat_points[i + 1])))
-    elif isinstance(first, (tuple, list)) and len(first) == 2:
-        # Input is already a list of (x, y) pairs.
-        xy = [
-            (float(x), float(y))
-            for x, y in cast(Sequence[tuple[float, float]], points)
-        ]
-    else:
-        raise ValueError(
-            "points must be either flat [x0, y0, ...] or a list of (x, y) pairs"
-        )
 
     n = len(xy)
     if n == 0:

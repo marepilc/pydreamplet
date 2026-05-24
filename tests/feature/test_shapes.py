@@ -1,6 +1,17 @@
 import pytest
+from typing import Any, cast
 
-from pydreamplet.shapes import arc, cardinal_spline, cross, polygon, polyline, ring, star
+from pydreamplet.shapes import (
+    arc,
+    cardinal_spline,
+    cross,
+    linear_path,
+    polygon,
+    polyline,
+    ring,
+    star,
+    step_path,
+)
 
 
 def test_basic_shape_generators_return_expected_path_data():
@@ -18,6 +29,37 @@ def test_basic_shape_generators_return_expected_path_data():
     assert polyline([0, 5, 10], [0, 10, 0]) == (
         "M 0.00,0.00 L 5.00,10.00 L 10.00,0.00"
     )
+
+
+def test_linear_path_accepts_flat_and_pair_points():
+    assert linear_path([0, 0, 10, 20, 30, 0]) == (
+        "M 0.00,0.00 L 10.00,20.00 L 30.00,0.00"
+    )
+    assert linear_path([(0, 0), (10, 20), (30, 0)], closed=True) == (
+        "M 0.00,0.00 L 10.00,20.00 L 30.00,0.00 Z"
+    )
+
+
+def test_step_path_modes():
+    points = [(0, 0), (10, 20), (30, 0)]
+
+    assert step_path(points) == (
+        "M 0.00,0.00 L 5.00,0.00 L 5.00,20.00 L 10.00,20.00 "
+        "L 20.00,20.00 L 20.00,0.00 L 30.00,0.00"
+    )
+    assert step_path(points, mode="before") == (
+        "M 0.00,0.00 L 0.00,20.00 L 10.00,20.00 "
+        "L 10.00,0.00 L 30.00,0.00"
+    )
+    assert step_path(points, mode="after", closed=True) == (
+        "M 0.00,0.00 L 10.00,0.00 L 10.00,20.00 "
+        "L 30.00,20.00 L 30.00,0.00 Z"
+    )
+
+
+def test_empty_curve_helpers_return_empty_path():
+    assert linear_path([]) == ""
+    assert step_path([]) == ""
 
 
 def test_arc_distinguishes_zero_span_from_full_circle():
@@ -86,6 +128,12 @@ def test_ring_zero_span_returns_empty_path():
         (lambda: cross(size=10, thickness=12), "less than or equal to size"),
         (lambda: arc(radius=0), "radius must be positive"),
         (lambda: ring(inner_radius=12, outer_radius=10), "inner_radius"),
+        (lambda: linear_path([0, 0, 1]), "even number"),
+        (lambda: step_path([(0, 0, 1)]), "exactly 2 coordinates"),
+        (
+            lambda: step_path([(0, 0), (1, 1)], mode=cast(Any, "bad")),
+            "mode must be",
+        ),
         (lambda: cardinal_spline([0, 0, 1], tension=0), "even number"),
         (lambda: cardinal_spline([0, 0, 10, 10], closed=True), "at least 3"),
         (lambda: cardinal_spline([0, 0, 10, 10], tension=2), "between 0 and 1"),

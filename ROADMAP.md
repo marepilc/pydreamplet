@@ -138,10 +138,10 @@ The target shape is a layered library:
   polylines, and paths.
 - [x] Add arc and ring helpers with tested sweep/large-arc behavior.
 - [ ] Add curve interpolation helpers for paths through points:
-  - linear
-  - step
+  - [x] linear
+  - [x] step
   - basis spline
-  - cardinal spline
+  - [x] cardinal spline
   - Catmull-Rom
   - monotone X/Y
   - closed curves

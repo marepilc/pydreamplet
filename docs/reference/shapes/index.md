@@ -106,6 +106,48 @@ d_str = cardinal_spline(
 print(d_str)
 ```
 
+## <span class="func"></span>`linear_path`
+
+<!--skip-->
+```py
+linear_path(
+    points: Sequence[Real] | Sequence[Sequence[Real]],
+    closed: bool = False,
+) -> str
+```
+
+Generates an SVG path through points using straight line segments. Points can be
+provided as a flat list (`[x0, y0, x1, y1, ...]`) or as point pairs.
+
+```py
+from pydreamplet.shapes import linear_path
+
+d_str = linear_path([(0, 0), (50, 100), (100, 0)])
+print(d_str)
+```
+
+## <span class="func"></span>`step_path`
+
+<!--skip-->
+```py
+step_path(
+    points: Sequence[Real] | Sequence[Sequence[Real]],
+    closed: bool = False,
+    mode: Literal["before", "after", "mid"] = "mid",
+) -> str
+```
+
+Generates a stepped SVG path through points. `mode="before"` changes y before x,
+`mode="after"` changes x before y, and `mode="mid"` changes y at the midpoint
+between adjacent x values.
+
+```py
+from pydreamplet.shapes import step_path
+
+d_str = step_path([(0, 0), (50, 100), (100, 0)], mode="mid")
+print(d_str)
+```
+
 ## <span class="func"></span>`polygon`
 
 <!--skip-->
