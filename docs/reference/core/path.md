@@ -122,6 +122,19 @@ print(path.tangent_at(15))  # Vector(x=0.0, y=1.0)
 
 `Path` exposes `length`, `point_at(distance)`, and `tangent_at(distance)` convenience APIs backed by the path measurement functions.
 
+### <span class="prop"></span>`bbox`
+
+Returns a `BoundingBox` for paths made from linear commands: `M`, `L`, `H`, `V`,
+and `Z`. Curves and arcs raise `ValueError` for now instead of returning a
+control-point approximation.
+
+```py
+import pydreamplet as dp
+
+path = dp.Path("M10 20 h100 v50 h-100 z")
+print(path.bbox)  # BoundingBox(x=10.0, y=20.0, width=100.0, height=50.0)
+```
+
 ### <span class="prop"></span>`d`
 
 **Getter:** Returns the path data string.

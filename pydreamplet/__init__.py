@@ -1,6 +1,7 @@
 from pydreamplet.core import (
     SVG,
     Animate,
+    BoundingBox,
     Circle,
     ClipPath,
     Defs,
@@ -41,6 +42,7 @@ from pydreamplet.path_data import (
 __all__ = [
     "SVG",
     "Animate",
+    "BoundingBox",
     "Circle",
     "ClipPath",
     "Defs",

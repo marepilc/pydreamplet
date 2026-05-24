@@ -4,6 +4,28 @@ This page documents the custom type definitions used throughout the pydreamplet 
 
 ## Core Types
 
+### `BoundingBox`
+
+Defined in `pydreamplet.core`:
+
+<!--skip-->
+```py
+BoundingBox(x: float, y: float, width: float, height: float)
+```
+
+Represents an axis-aligned bounding box. The `x` and `y` values are the top-left
+corner. The class also exposes `left`, `top`, `right`, `bottom`, and `center`
+properties.
+
+```py
+import pydreamplet as dp
+
+rect = dp.Rect(pos=(10, 20), width=30, height=40)
+box = rect.bbox
+print(box.right)   # 40.0
+print(box.center)  # Vector(x=25.0, y=40.0)
+```
+
 ### `Real`
 
 Defined in `pydreamplet.core`:

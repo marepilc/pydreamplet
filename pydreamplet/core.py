@@ -3,10 +3,11 @@ import re
 import xml.etree.ElementTree as ET
 from copy import deepcopy
 from collections.abc import Mapping
+from dataclasses import dataclass
 from typing import Any, ClassVar, Self, cast, overload, override
 
 from pydreamplet.math import Vector
-from pydreamplet.path_data import PathBuilder, extract_path_points
+from pydreamplet.path_data import PathBuilder, extract_path_points, normalize_path_commands
 from pydreamplet.path_data import path_length, point_at_length, tangent_at_length
 from pydreamplet.types import AttributeValue, NumericPair, Real
 
@@ -47,6 +48,34 @@ def _register_namespaces_from_file(filename: str) -> None:
 type PointLike = Vector | NumericPair
 
 
+@dataclass(frozen=True)
+class BoundingBox:
+    x: float
+    y: float
+    width: float
+    height: float
+
+    @property
+    def left(self) -> float:
+        return self.x
+
+    @property
+    def top(self) -> float:
+        return self.y
+
+    @property
+    def right(self) -> float:
+        return self.x + self.width
+
+    @property
+    def bottom(self) -> float:
+        return self.y + self.height
+
+    @property
+    def center(self) -> Vector:
+        return Vector(self.x + self.width / 2, self.y + self.height / 2)
+
+
 def _format_number(value: Real) -> str:
     if isinstance(value, float) and value.is_integer():
         return str(int(value))
@@ -76,6 +105,25 @@ def _coerce_point_args(
     if not isinstance(x, (int, float)):
         raise ValueError(f"{name} x value must be a number")
     return Vector(x, y)
+
+
+def _bbox_from_points(points: list[Vector]) -> BoundingBox:
+    if not points:
+        return BoundingBox(0, 0, 0, 0)
+    xs = [point.x for point in points]
+    ys = [point.y for point in points]
+    left = min(xs)
+    top = min(ys)
+    return BoundingBox(left, top, max(xs) - left, max(ys) - top)
+
+
+def _points_attribute_to_vectors(points: list[Real]) -> list[Vector]:
+    if len(points) % 2 != 0:
+        raise ValueError("points must contain an even number of coordinates")
+    return [
+        Vector(points[index], points[index + 1])
+        for index in range(0, len(points), 2)
+    ]
 
 
 class SvgElement:
@@ -1274,6 +1322,12 @@ class Circle(SvgElement):
     def area(self):
         return math.pi * self.radius**2
 
+    @property
+    def bbox(self) -> BoundingBox:
+        radius = self.radius
+        center = self.pos
+        return BoundingBox(center.x - radius, center.y - radius, radius * 2, radius * 2)
+
 
 class Ellipse(SvgElement):
     def __init__(
@@ -1309,6 +1363,13 @@ class Ellipse(SvgElement):
         point = _coerce_point(value, "pos")
         self.element.set("cx", str(point.x))
         self.element.set("cy", str(point.y))
+
+    @property
+    def bbox(self) -> BoundingBox:
+        rx = float(self.element.get("rx", 0))
+        ry = float(self.element.get("ry", 0))
+        center = self.pos
+        return BoundingBox(center.x - rx, center.y - ry, rx * 2, ry * 2)
 
 
 class Rect(SvgElement):
@@ -1353,6 +1414,16 @@ class Rect(SvgElement):
     @property
     def height(self):
         return float(self.element.get("height", 0))
+
+    @property
+    def bbox(self) -> BoundingBox:
+        x = self.pos.x
+        y = self.pos.y
+        width = self.width
+        height = self.height
+        left = min(x, x + width)
+        top = min(y, y + height)
+        return BoundingBox(left, top, abs(width), abs(height))
 
 
 class Path(SvgElement):
@@ -1408,6 +1479,30 @@ class Path(SvgElement):
 
     def tangent_at(self, distance: Real) -> Vector:
         return tangent_at_length(self.d, distance)
+
+    @property
+    def bbox(self) -> BoundingBox:
+        points: list[Vector] = []
+
+        for command in normalize_path_commands(self.d):
+            if command.command == "M":
+                points.append(Vector(command.values[0], command.values[1]))
+            elif command.command == "L":
+                points.append(Vector(command.values[0], command.values[1]))
+            elif command.command == "H":
+                previous_y = points[-1].y if points else 0
+                points.append(Vector(command.values[0], previous_y))
+            elif command.command == "V":
+                previous_x = points[-1].x if points else 0
+                points.append(Vector(previous_x, command.values[0]))
+            elif command.command == "Z":
+                continue
+            else:
+                raise ValueError(
+                    "Path bounding boxes only support linear commands: M, L, H, V, Z"
+                )
+
+        return _bbox_from_points(points)
 
 
 class Line(SvgElement):
@@ -1472,6 +1567,12 @@ class Line(SvgElement):
             angle += 360
         return angle
 
+    @property
+    def bbox(self) -> BoundingBox:
+        return _bbox_from_points(
+            [Vector(self.x1, self.y1), Vector(self.x2, self.y2)]
+        )
+
 
 class Polygon(SvgElement):
     def __init__(self, points: list[Real], **kwargs: Any):
@@ -1490,6 +1591,7 @@ class Polygon(SvgElement):
 
     def _update_element(self):
         """Update the SVG 'points' attribute correctly."""
+        _points_attribute_to_vectors(self._points)
         formatted_points = " ".join(
             [
                 f"{self._points[i]},{self._points[i + 1]}"
@@ -1497,6 +1599,10 @@ class Polygon(SvgElement):
             ]
         )
         self.element.set("points", formatted_points)
+
+    @property
+    def bbox(self) -> BoundingBox:
+        return _bbox_from_points(_points_attribute_to_vectors(self.points))
 
 
 class Polyline(SvgElement):
@@ -1516,6 +1622,7 @@ class Polyline(SvgElement):
 
     def _update_element(self):
         """Update the SVG 'points' attribute correctly."""
+        _points_attribute_to_vectors(self._points)
         formatted_points = " ".join(
             [
                 f"{self._points[i]},{self._points[i + 1]}"
@@ -1523,6 +1630,10 @@ class Polyline(SvgElement):
             ]
         )
         self.element.set("points", formatted_points)
+
+    @property
+    def bbox(self) -> BoundingBox:
+        return _bbox_from_points(_points_attribute_to_vectors(self.points))
 
 
 class Text(SvgElement):
