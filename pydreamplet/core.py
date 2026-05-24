@@ -126,6 +126,75 @@ def _points_attribute_to_vectors(points: list[Real]) -> list[Vector]:
     ]
 
 
+def _quadratic_bezier_point(
+    p0: Vector, p1: Vector, p2: Vector, t: float
+) -> Vector:
+    mt = 1 - t
+    return Vector(
+        mt * mt * p0.x + 2 * mt * t * p1.x + t * t * p2.x,
+        mt * mt * p0.y + 2 * mt * t * p1.y + t * t * p2.y,
+    )
+
+
+def _cubic_bezier_point(
+    p0: Vector, p1: Vector, p2: Vector, p3: Vector, t: float
+) -> Vector:
+    mt = 1 - t
+    return Vector(
+        mt**3 * p0.x
+        + 3 * mt * mt * t * p1.x
+        + 3 * mt * t * t * p2.x
+        + t**3 * p3.x,
+        mt**3 * p0.y
+        + 3 * mt * mt * t * p1.y
+        + 3 * mt * t * t * p2.y
+        + t**3 * p3.y,
+    )
+
+
+def _quadratic_bezier_extrema(p0: Vector, p1: Vector, p2: Vector) -> list[float]:
+    roots: list[float] = []
+    for start, control, end in ((p0.x, p1.x, p2.x), (p0.y, p1.y, p2.y)):
+        denominator = start - 2 * control + end
+        if denominator == 0:
+            continue
+        t = (start - control) / denominator
+        if 0 < t < 1:
+            roots.append(t)
+    return roots
+
+
+def _cubic_bezier_extrema(p0: Vector, p1: Vector, p2: Vector, p3: Vector) -> list[float]:
+    roots: list[float] = []
+    for start, control1, control2, end in (
+        (p0.x, p1.x, p2.x, p3.x),
+        (p0.y, p1.y, p2.y, p3.y),
+    ):
+        a = -start + 3 * control1 - 3 * control2 + end
+        b = 2 * (start - 2 * control1 + control2)
+        c = control1 - start
+
+        if a == 0:
+            if b == 0:
+                continue
+            t = -c / b
+            if 0 < t < 1:
+                roots.append(t)
+            continue
+
+        discriminant = b * b - 4 * a * c
+        if discriminant < 0:
+            continue
+        sqrt_discriminant = math.sqrt(discriminant)
+        for t in (
+            (-b + sqrt_discriminant) / (2 * a),
+            (-b - sqrt_discriminant) / (2 * a),
+        ):
+            if 0 < t < 1:
+                roots.append(t)
+    return roots
+
+
 class SvgElement:
     _class_registry: ClassVar[dict[str, type["SvgElement"]]] = {}
     element: ET.Element
@@ -1483,24 +1552,97 @@ class Path(SvgElement):
     @property
     def bbox(self) -> BoundingBox:
         points: list[Vector] = []
+        current = Vector(0, 0)
+        subpath_start = Vector(0, 0)
+        previous_cubic_control: Vector | None = None
+        previous_quadratic_control: Vector | None = None
+        previous_command = ""
 
         for command in normalize_path_commands(self.d):
             if command.command == "M":
-                points.append(Vector(command.values[0], command.values[1]))
+                current = Vector(command.values[0], command.values[1])
+                subpath_start = current
+                points.append(current)
+                previous_cubic_control = None
+                previous_quadratic_control = None
             elif command.command == "L":
-                points.append(Vector(command.values[0], command.values[1]))
+                current = Vector(command.values[0], command.values[1])
+                points.append(current)
+                previous_cubic_control = None
+                previous_quadratic_control = None
             elif command.command == "H":
-                previous_y = points[-1].y if points else 0
-                points.append(Vector(command.values[0], previous_y))
+                current = Vector(command.values[0], current.y)
+                points.append(current)
+                previous_cubic_control = None
+                previous_quadratic_control = None
             elif command.command == "V":
-                previous_x = points[-1].x if points else 0
-                points.append(Vector(previous_x, command.values[0]))
+                current = Vector(current.x, command.values[0])
+                points.append(current)
+                previous_cubic_control = None
+                previous_quadratic_control = None
+            elif command.command == "C":
+                control1 = Vector(command.values[0], command.values[1])
+                control2 = Vector(command.values[2], command.values[3])
+                end = Vector(command.values[4], command.values[5])
+                points.append(end)
+                for t in _cubic_bezier_extrema(current, control1, control2, end):
+                    points.append(_cubic_bezier_point(current, control1, control2, end, t))
+                current = end
+                previous_cubic_control = control2
+                previous_quadratic_control = None
+            elif command.command == "S":
+                if previous_command in {"C", "S"} and previous_cubic_control is not None:
+                    control1 = Vector(
+                        2 * current.x - previous_cubic_control.x,
+                        2 * current.y - previous_cubic_control.y,
+                    )
+                else:
+                    control1 = current
+                control2 = Vector(command.values[0], command.values[1])
+                end = Vector(command.values[2], command.values[3])
+                points.append(end)
+                for t in _cubic_bezier_extrema(current, control1, control2, end):
+                    points.append(_cubic_bezier_point(current, control1, control2, end, t))
+                current = end
+                previous_cubic_control = control2
+                previous_quadratic_control = None
+            elif command.command == "Q":
+                control = Vector(command.values[0], command.values[1])
+                end = Vector(command.values[2], command.values[3])
+                points.append(end)
+                for t in _quadratic_bezier_extrema(current, control, end):
+                    points.append(_quadratic_bezier_point(current, control, end, t))
+                current = end
+                previous_cubic_control = None
+                previous_quadratic_control = control
+            elif command.command == "T":
+                if (
+                    previous_command in {"Q", "T"}
+                    and previous_quadratic_control is not None
+                ):
+                    control = Vector(
+                        2 * current.x - previous_quadratic_control.x,
+                        2 * current.y - previous_quadratic_control.y,
+                    )
+                else:
+                    control = current
+                end = Vector(command.values[0], command.values[1])
+                points.append(end)
+                for t in _quadratic_bezier_extrema(current, control, end):
+                    points.append(_quadratic_bezier_point(current, control, end, t))
+                current = end
+                previous_cubic_control = None
+                previous_quadratic_control = control
             elif command.command == "Z":
-                continue
+                current = subpath_start
+                points.append(current)
+                previous_cubic_control = None
+                previous_quadratic_control = None
             else:
                 raise ValueError(
-                    "Path bounding boxes only support linear commands: M, L, H, V, Z"
+                    "Path bounding boxes do not support arc commands yet"
                 )
+            previous_command = command.command
 
         return _bbox_from_points(points)
 

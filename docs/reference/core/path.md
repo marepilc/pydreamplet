@@ -124,9 +124,10 @@ print(path.tangent_at(15))  # Vector(x=0.0, y=1.0)
 
 ### <span class="prop"></span>`bbox`
 
-Returns a `BoundingBox` for paths made from linear commands: `M`, `L`, `H`, `V`,
-and `Z`. Curves and arcs raise `ValueError` for now instead of returning a
-control-point approximation.
+Returns a `BoundingBox` for paths made from linear commands (`M`, `L`, `H`, `V`,
+`Z`) and Bezier commands (`C`, `S`, `Q`, `T`). Bezier bounds are computed from
+curve extrema, not just control points. Arc commands (`A`) raise `ValueError`
+for now instead of returning an approximate result.
 
 ```py
 import pydreamplet as dp

@@ -71,10 +71,40 @@ def test_linear_path_bbox_supports_relative_commands():
     assert path.bbox == dp.BoundingBox(10, 20, 100, 50)
 
 
+def test_quadratic_path_bbox_includes_curve_extrema():
+    path = dp.Path("M0 0 Q50 100 100 0")
+
+    assert path.bbox == dp.BoundingBox(0, 0, 100, 50)
+
+
+def test_smooth_quadratic_path_bbox_reflects_previous_control_point():
+    path = dp.Path("M0 0 Q50 100 100 0 T200 0")
+
+    assert path.bbox == dp.BoundingBox(0, -50, 200, 100)
+
+
+def test_cubic_path_bbox_includes_curve_extrema():
+    path = dp.Path("M0 0 C0 100 100 100 100 0")
+
+    assert path.bbox.x == pytest.approx(0)
+    assert path.bbox.y == pytest.approx(0)
+    assert path.bbox.width == pytest.approx(100)
+    assert path.bbox.height == pytest.approx(75)
+
+
+def test_smooth_cubic_path_bbox_reflects_previous_control_point():
+    path = dp.Path("M0 0 C0 100 100 100 100 0 S200 -100 200 0")
+
+    assert path.bbox.x == pytest.approx(0)
+    assert path.bbox.y == pytest.approx(-75)
+    assert path.bbox.width == pytest.approx(200)
+    assert path.bbox.height == pytest.approx(150)
+
+
 def test_empty_path_bbox():
     assert dp.Path("").bbox == dp.BoundingBox(0, 0, 0, 0)
 
 
-def test_path_bbox_raises_for_non_linear_commands():
-    with pytest.raises(ValueError, match="linear commands"):
-        _ = dp.Path("M0 0 C10 20 30 40 50 60").bbox
+def test_path_bbox_raises_for_arc_commands():
+    with pytest.raises(ValueError, match="arc commands"):
+        _ = dp.Path("M0 0 A10 10 0 0 1 20 20").bbox
