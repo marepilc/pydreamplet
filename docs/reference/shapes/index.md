@@ -188,6 +188,44 @@ d_str = basis_spline([(0, 0), (50, 100), (100, 0), (150, 50)])
 print(d_str)
 ```
 
+## <span class="func"></span>`monotone_x_path`
+
+<!--skip-->
+```py
+monotone_x_path(
+    points: Sequence[Real] | Sequence[Sequence[Real]],
+) -> str
+```
+
+Generates a monotone cubic path in x. Input x coordinates must be strictly
+monotonic.
+
+```py
+from pydreamplet.shapes import monotone_x_path
+
+d_str = monotone_x_path([(0, 0), (50, 100), (100, 0)])
+print(d_str)
+```
+
+## <span class="func"></span>`monotone_y_path`
+
+<!--skip-->
+```py
+monotone_y_path(
+    points: Sequence[Real] | Sequence[Sequence[Real]],
+) -> str
+```
+
+Generates a monotone cubic path in y. Input y coordinates must be strictly
+monotonic.
+
+```py
+from pydreamplet.shapes import monotone_y_path
+
+d_str = monotone_y_path([(0, 0), (100, 50), (0, 100)])
+print(d_str)
+```
+
 ## <span class="func"></span>`polygon`
 
 <!--skip-->

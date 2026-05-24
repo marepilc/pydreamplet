@@ -137,13 +137,13 @@ The target shape is a layered library:
 - [x] Add robust bounding boxes for lines, rectangles, circles, ellipses, polygons,
   polylines, and paths.
 - [x] Add arc and ring helpers with tested sweep/large-arc behavior.
-- [ ] Add curve interpolation helpers for paths through points:
+- [x] Add curve interpolation helpers for paths through points:
   - [x] linear
   - [x] step
   - [x] basis spline
   - [x] cardinal spline
   - [x] Catmull-Rom
-  - monotone X/Y
+  - [x] monotone X/Y
   - [x] closed curves
 - [ ] Add generators that return SVG path data from data points:
   - line generator

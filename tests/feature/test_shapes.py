@@ -8,6 +8,8 @@ from pydreamplet.shapes import (
     catmull_rom_path,
     cross,
     linear_path,
+    monotone_x_path,
+    monotone_y_path,
     polygon,
     polyline,
     ring,
@@ -94,11 +96,37 @@ def test_basis_spline_supports_closed_paths():
     )
 
 
+def test_monotone_x_path_generates_limited_cubic_path():
+    assert monotone_x_path([(0, 0), (10, 20), (30, 0)]) == (
+        "M 0.00,0.00 "
+        "C 3.33,6.67 6.67,20.00 10.00,20.00 "
+        "C 16.67,20.00 23.33,6.67 30.00,0.00"
+    )
+
+
+def test_monotone_x_path_handles_flat_segments():
+    assert monotone_x_path([(0, 0), (10, 0), (20, 10)]) == (
+        "M 0.00,0.00 "
+        "C 3.33,0.00 6.67,0.00 10.00,0.00 "
+        "C 13.33,0.00 16.67,6.67 20.00,10.00"
+    )
+
+
+def test_monotone_y_path_generates_limited_cubic_path():
+    assert monotone_y_path([(0, 0), (20, 10), (0, 30)]) == (
+        "M 0.00,0.00 "
+        "C 6.67,3.33 20.00,6.67 20.00,10.00 "
+        "C 20.00,16.67 6.67,23.33 0.00,30.00"
+    )
+
+
 def test_empty_curve_helpers_return_empty_path():
     assert linear_path([]) == ""
     assert step_path([]) == ""
     assert catmull_rom_path([]) == ""
     assert basis_spline([]) == ""
+    assert monotone_x_path([]) == ""
+    assert monotone_y_path([]) == ""
 
 
 def test_arc_distinguishes_zero_span_from_full_circle():
@@ -178,6 +206,8 @@ def test_ring_zero_span_returns_empty_path():
         (lambda: cardinal_spline([0, 0, 10, 10], tension=2), "between 0 and 1"),
         (lambda: catmull_rom_path([0, 0, 10, 10], closed=True), "at least 3"),
         (lambda: basis_spline([0, 0, 10, 10], closed=True), "at least 3"),
+        (lambda: monotone_x_path([(0, 0), (0, 10), (10, 20)]), "strictly"),
+        (lambda: monotone_y_path([(0, 0), (10, 0), (20, 10)]), "strictly"),
     ],
 )
 def test_shape_helpers_validate_invalid_input(factory, match):

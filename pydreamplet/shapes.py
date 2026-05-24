@@ -313,6 +313,105 @@ def basis_spline(points: PointInput, closed: bool = False) -> str:
     return " ".join(parts)
 
 
+def _monotone_tangents(values: Sequence[float], coordinates: Sequence[float]) -> list[float]:
+    n = len(values)
+    slopes: list[float] = []
+    for i in range(n - 1):
+        delta_coordinate = coordinates[i + 1] - coordinates[i]
+        if delta_coordinate == 0:
+            raise ValueError("monotone coordinates must be strictly monotonic")
+        slopes.append((values[i + 1] - values[i]) / delta_coordinate)
+
+    tangents = [0.0] * n
+    tangents[0] = slopes[0]
+    tangents[-1] = slopes[-1]
+    for i in range(1, n - 1):
+        if slopes[i - 1] * slopes[i] <= 0:
+            tangents[i] = 0
+        else:
+            tangents[i] = (slopes[i - 1] + slopes[i]) / 2
+
+    for i, slope in enumerate(slopes):
+        if slope == 0:
+            tangents[i] = 0
+            tangents[i + 1] = 0
+            continue
+        alpha = tangents[i] / slope
+        beta = tangents[i + 1] / slope
+        length = math.hypot(alpha, beta)
+        if length > 3:
+            scale = 3 / length
+            tangents[i] = scale * alpha * slope
+            tangents[i + 1] = scale * beta * slope
+    return tangents
+
+
+def monotone_x_path(points: PointInput) -> str:
+    """
+    Generate an SVG path with monotone cubic interpolation in x.
+    """
+    xy = _coerce_points(points)
+    n = len(xy)
+    if n == 0:
+        return ""
+    if n == 1:
+        return f"M {_format_point(xy[0][0], xy[0][1])}"
+    if n == 2:
+        return linear_path(xy)
+
+    x_values = [point[0] for point in xy]
+    y_values = [point[1] for point in xy]
+    tangents = _monotone_tangents(y_values, x_values)
+
+    parts = [f"M {_format_point(xy[0][0], xy[0][1])}"]
+    for i in range(n - 1):
+        x0, y0 = xy[i]
+        x1, y1 = xy[i + 1]
+        dx = x1 - x0
+        c1 = (x0 + dx / 3, y0 + tangents[i] * dx / 3)
+        c2 = (x1 - dx / 3, y1 - tangents[i + 1] * dx / 3)
+        parts.append(
+            "C "
+            f"{_format_point(c1[0], c1[1])} "
+            f"{_format_point(c2[0], c2[1])} "
+            f"{_format_point(x1, y1)}"
+        )
+    return " ".join(parts)
+
+
+def monotone_y_path(points: PointInput) -> str:
+    """
+    Generate an SVG path with monotone cubic interpolation in y.
+    """
+    xy = _coerce_points(points)
+    n = len(xy)
+    if n == 0:
+        return ""
+    if n == 1:
+        return f"M {_format_point(xy[0][0], xy[0][1])}"
+    if n == 2:
+        return linear_path(xy)
+
+    x_values = [point[0] for point in xy]
+    y_values = [point[1] for point in xy]
+    tangents = _monotone_tangents(x_values, y_values)
+
+    parts = [f"M {_format_point(xy[0][0], xy[0][1])}"]
+    for i in range(n - 1):
+        x0, y0 = xy[i]
+        x1, y1 = xy[i + 1]
+        dy = y1 - y0
+        c1 = (x0 + tangents[i] * dy / 3, y0 + dy / 3)
+        c2 = (x1 - tangents[i + 1] * dy / 3, y1 - dy / 3)
+        parts.append(
+            "C "
+            f"{_format_point(c1[0], c1[1])} "
+            f"{_format_point(c2[0], c2[1])} "
+            f"{_format_point(x1, y1)}"
+        )
+    return " ".join(parts)
+
+
 def cardinal_spline(
     points: PointInput,
     tension: float = 0.0,
