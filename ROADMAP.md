@@ -145,15 +145,15 @@ The target shape is a layered library:
   - [x] Catmull-Rom
   - [x] monotone X/Y
   - [x] closed curves
-- [ ] Add generators that return SVG path data from data points:
-  - line generator
-  - area generator
-  - radial line generator
-  - radial area generator
-  - arc generator
-  - pie angle generator
-  - symbol generator
-  - link/edge generator
+- [x] Add generators that return SVG path data from data points:
+  - [x] line generator
+  - [x] area generator
+  - [x] radial line generator
+  - [x] radial area generator
+  - [x] arc generator
+  - [x] pie angle generator
+  - [x] symbol generator
+  - [x] link/edge generator
 - [ ] Add shape generators for reusable geometric forms:
   - regular polygon
   - star
