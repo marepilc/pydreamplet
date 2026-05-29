@@ -9,14 +9,15 @@ creative coding with Python.
 pyDreamplet should remain a lightweight, expressive Python library for generating
 SVG, but version 2.0 should move beyond being only a low-level SVG wrapper. The
 goal is closer to "D3.js for Python" than to another plotting library: composable
-primitives, data-to-visual mapping, shape/path generators, layouts, and precise
-SVG control.
+primitives, data-to-visual mapping, geometric shape helpers, data-driven path
+generators, layouts, and precise SVG control.
 
 The target shape is a layered library:
 
 - A stable SVG core for elements, attributes, transforms, serialization, and import.
 - Geometry and path utilities for reliable curves, arcs, bounding boxes, and layouts.
-- Shape, line, area, symbol, arc, and curve generators inspired by D3's composable model.
+- Geometric shape helpers for reusable forms and D3-inspired data generators for
+  lines, areas, symbols, arcs, curves, and links.
 - Scales, colors, typography, and data utilities for visualization work.
 - Axis, legend, annotation, and layout primitives rather than fixed chart components.
 - Creative coding helpers for generative visuals, noise, grids, tiling, and animation.
@@ -145,7 +146,7 @@ The target shape is a layered library:
   - [x] Catmull-Rom
   - [x] monotone X/Y
   - [x] closed curves
-- [x] Add generators that return SVG path data from data points:
+- [x] Add D3-like generators that return SVG path data from data points:
   - [x] line generator
   - [x] area generator
   - [x] radial line generator
@@ -154,13 +155,13 @@ The target shape is a layered library:
   - [x] pie angle generator
   - [x] symbol generator
   - [x] link/edge generator
-- [ ] Add shape generators for reusable geometric forms:
-  - regular polygon
-  - star
-  - cross
-  - superellipse
-  - rounded polygon
-  - blob/metaball-like organic shapes
+- [x] Add geometric shape helpers for reusable forms:
+  - [x] regular polygon
+  - [x] star
+  - [x] cross
+  - [x] superellipse
+  - [x] rounded polygon
+  - [x] blob/metaball-like organic shapes
 - [ ] Add collision and label-placement utilities for infographic layouts.
 
 ## Data Visualization Primitives
@@ -168,7 +169,7 @@ The target shape is a layered library:
 - [ ] Treat complete charts as examples and recipes, not as the primary API.
 - [ ] Avoid locking the library into fixed `BarChart`, `LineChart`, or similar classes
   unless they are optional recipes built on top of lower-level primitives.
-- [ ] Introduce a D3-like generator layer for data-to-SVG conversion.
+- [x] Introduce a D3-like generator layer for data-to-SVG conversion.
 - [ ] Introduce Pythonic data binding helpers for turning sequences of data into SVG elements.
 - [ ] Add selection/grouping helpers if they can stay simple and idiomatic in Python.
 - [ ] Define layout primitives:
@@ -220,7 +221,7 @@ The target shape is a layered library:
   - component and API reference
   - runnable example search
   - SVG asset search
-  - path/shape generator documentation
+  - path generator and shape helper documentation
   - project templates
 - [ ] Keep MCP and agent skills versioned alongside documentation, so agents use the correct API.
 - [ ] Use the MCP server or skills to support documentation authoring and example generation.
@@ -237,7 +238,8 @@ The target shape is a layered library:
 - [ ] Add a v2.0 concept page explaining the D3-like layered architecture.
 - [ ] Add a gallery of examples as a primary documentation entry point.
 - [ ] Add a page for design principles and API philosophy.
-- [ ] Add a "Generators" documentation section for paths, curves, shapes, symbols, and layouts.
+- [ ] Add a "Generators" documentation section for data-driven paths, symbols, arcs, and links.
+- [ ] Add a "Shapes" documentation section for reusable geometric forms.
 - [ ] Add a "Recipes" section for full infographic examples built from primitives.
 - [ ] Add migration notes from v1.x to v2.0.
 - [ ] Add more complete reference documentation for each public class and function.
@@ -278,7 +280,7 @@ The target shape is a layered library:
 - [ ] Add tests for optional dependencies being absent.
 - [ ] Add tests for package import speed and minimal import behavior.
 - [ ] Add SVG snapshot tests for complex generated examples.
-- [ ] Add tests for path, shape, curve, and layout generators.
+- [ ] Add tests for path generators, shape helpers, curves, and layout utilities.
 - [ ] Add tests for generated full-example recipes where useful.
 - [ ] Add tests for serialization round-trips.
 - [ ] Add tests for deterministic creative coding outputs with seeds.
@@ -321,7 +323,7 @@ The target shape is a layered library:
 
 ### Milestone 3: Build D3-Like Visualization Primitives
 
-- [ ] Implement path and shape generators.
+- [x] Implement data-driven path generators and reusable geometric shape helpers.
 - [ ] Implement curve interpolation through points.
 - [ ] Implement axes, legends, labels, annotations, and layout helpers.
 - [ ] Implement recipes that demonstrate how to compose primitives into full visuals.

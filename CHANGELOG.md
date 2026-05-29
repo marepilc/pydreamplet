@@ -17,6 +17,8 @@ branch is in progress.
 - Added a first-pass `pydreamplet.generators` module for D3-like data-to-path
   generation, including line, area, radial line, radial area, arc, pie, symbol,
   and link generators.
+- Added reusable shape helpers for superellipses, rounded polygons, and
+  deterministic organic blob paths.
 - Moved notebook display dependencies out of the core runtime dependency set.
   `ipython` and `ipykernel` are now available through the optional `notebook`
   extra instead of being installed by default.
@@ -61,6 +63,8 @@ branch is in progress.
 - Added feature tests for the new generator layer, including accessor-based
   line/area generation, undefined data gaps, radial projection, pie slice
   metadata, arc paths, symbols, and link curves.
+- Added feature tests for superellipse, rounded polygon, and blob path
+  generation.
 - Added regression tests for `pos` constructor serialization on `Circle`,
   `Ellipse`, and `Rect`.
 - Added regression tests proving package import does not require IPython and

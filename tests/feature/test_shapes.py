@@ -7,14 +7,17 @@ from pydreamplet.shapes import (
     cardinal_spline,
     catmull_rom_path,
     cross,
+    blob,
     linear_path,
     monotone_x_path,
     monotone_y_path,
     polygon,
     polyline,
     ring,
+    rounded_polygon,
     star,
     step_path,
+    superellipse,
 )
 
 
@@ -32,6 +35,40 @@ def test_basic_shape_generators_return_expected_path_data():
     )
     assert polyline([0, 5, 10], [0, 10, 0]) == (
         "M 0.00,0.00 L 5.00,10.00 L 10.00,0.00"
+    )
+
+
+def test_superellipse_generates_closed_path():
+    assert superellipse(rx=10, ry=5, exponent=2, n=4) == (
+        "M 10.00,0.00 L 0.00,5.00 L -10.00,0.00 L 0.00,-5.00 Z"
+    )
+
+
+def test_rounded_polygon_uses_quadratic_corners():
+    assert rounded_polygon([(0, 0), (10, 0), (10, 10), (0, 10)], radius=2) == (
+        "M 0.00,2.00 "
+        "Q 0.00,0.00 2.00,0.00 "
+        "L 8.00,0.00 "
+        "Q 10.00,0.00 10.00,2.00 "
+        "L 10.00,8.00 "
+        "Q 10.00,10.00 8.00,10.00 "
+        "L 2.00,10.00 "
+        "Q 0.00,10.00 0.00,8.00 Z"
+    )
+
+
+def test_rounded_polygon_with_zero_radius_returns_linear_path():
+    assert rounded_polygon([(0, 0), (10, 0), (10, 10)], radius=0) == (
+        "M 0.00,0.00 L 10.00,0.00 L 10.00,10.00 Z"
+    )
+
+
+def test_blob_generates_deterministic_organic_path():
+    assert blob(radius=10, variance=0, n=4, smooth=False) == (
+        "M 10.00,0.00 L 0.00,10.00 L -10.00,0.00 L 0.00,-10.00 Z"
+    )
+    assert blob(radius=10, variance=0.2, n=5, seed=2, smooth=False) == (
+        "M 9.36,0.00 L 3.21,9.88 L -8.78,6.38 L -7.34,-5.33 L 3.55,-10.92 Z"
     )
 
 
@@ -192,6 +229,14 @@ def test_ring_zero_span_returns_empty_path():
         (lambda: star(n=1, inner_radius=5, outer_radius=10), "n must be at least 2"),
         (lambda: polyline([], []), "at least one point"),
         (lambda: polygon(0, 0, 10, 2), "n must be at least 3"),
+        (lambda: superellipse(rx=0, ry=10), "rx must be positive"),
+        (lambda: superellipse(rx=10, ry=10, exponent=0), "exponent"),
+        (lambda: superellipse(rx=10, ry=10, n=3), "n must be at least 4"),
+        (lambda: rounded_polygon([(0, 0), (10, 0)], radius=2), "at least 3"),
+        (lambda: rounded_polygon([(0, 0), (10, 0), (10, 10)], radius=-1), "radius"),
+        (lambda: blob(radius=0), "radius must be positive"),
+        (lambda: blob(radius=10, variance=-1), "variance"),
+        (lambda: blob(radius=10, n=2), "n must be at least 3"),
         (lambda: cross(size=10, thickness=12), "less than or equal to size"),
         (lambda: arc(radius=0), "radius must be positive"),
         (lambda: ring(inner_radius=12, outer_radius=10), "inner_radius"),

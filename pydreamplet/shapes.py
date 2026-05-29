@@ -535,6 +535,139 @@ def polygon(x: float, y: float, radius: float, n: int, angle: float = 0) -> str:
     return "M " + " L ".join(points) + " Z"
 
 
+def superellipse(
+    x: float = 0,
+    y: float = 0,
+    *,
+    rx: float,
+    ry: float,
+    exponent: float = 4,
+    n: int = 64,
+    angle: float = 0,
+) -> str:
+    """
+    Returns a closed superellipse path centered at (x, y).
+
+    `exponent=2` produces an ellipse-like shape. Larger values produce squarer
+    sides, while values between 0 and 2 produce pinched diamond-like shapes.
+    """
+    _validate_positive(rx, "rx")
+    _validate_positive(ry, "ry")
+    _validate_positive(exponent, "exponent")
+    if n < 4:
+        raise ValueError("n must be at least 4")
+
+    rotation = math.radians(angle)
+    cos_rotation = math.cos(rotation)
+    sin_rotation = math.sin(rotation)
+    power = 2 / exponent
+    points: list[tuple[float, float]] = []
+
+    for i in range(n):
+        theta = 2 * math.pi * i / n
+        cos_theta = math.cos(theta)
+        sin_theta = math.sin(theta)
+        px = rx * math.copysign(abs(cos_theta) ** power, cos_theta)
+        py = ry * math.copysign(abs(sin_theta) ** power, sin_theta)
+        rotated_x = px * cos_rotation - py * sin_rotation
+        rotated_y = px * sin_rotation + py * cos_rotation
+        points.append((x + rotated_x, y + rotated_y))
+
+    return linear_path(points, closed=True)
+
+
+def rounded_polygon(
+    points: PointInput,
+    *,
+    radius: float,
+) -> str:
+    """
+    Generate a closed polygon path with quadratic rounded corners.
+    """
+    _validate_non_negative(radius, "radius")
+    xy = _coerce_points(points)
+    if len(xy) < 3:
+        raise ValueError("rounded polygons require at least 3 points")
+
+    if radius == 0:
+        return linear_path(xy, closed=True)
+
+    corner_points: list[tuple[tuple[float, float], tuple[float, float], tuple[float, float]]] = []
+    n = len(xy)
+    for i, current in enumerate(xy):
+        previous = xy[(i - 1) % n]
+        following = xy[(i + 1) % n]
+        in_length = math.dist(previous, current)
+        out_length = math.dist(current, following)
+        offset = min(radius, in_length / 2, out_length / 2)
+        if math.isclose(offset, 0, abs_tol=_ANGLE_TOLERANCE):
+            corner_points.append((current, current, current))
+            continue
+
+        start = (
+            current[0] + (previous[0] - current[0]) * offset / in_length,
+            current[1] + (previous[1] - current[1]) * offset / in_length,
+        )
+        end = (
+            current[0] + (following[0] - current[0]) * offset / out_length,
+            current[1] + (following[1] - current[1]) * offset / out_length,
+        )
+        corner_points.append((start, current, end))
+
+    first_start, first_corner, first_end = corner_points[0]
+    parts = [f"M {_format_point(first_start[0], first_start[1])}"]
+    parts.append(
+        f"Q {_format_point(first_corner[0], first_corner[1])} "
+        f"{_format_point(first_end[0], first_end[1])}"
+    )
+    for start, corner, end in corner_points[1:]:
+        parts.append(f"L {_format_point(start[0], start[1])}")
+        parts.append(
+            f"Q {_format_point(corner[0], corner[1])} {_format_point(end[0], end[1])}"
+        )
+    parts.append("Z")
+    return " ".join(parts)
+
+
+def blob(
+    x: float = 0,
+    y: float = 0,
+    *,
+    radius: float,
+    variance: float = 0.25,
+    n: int = 12,
+    seed: int = 0,
+    smooth: bool = True,
+) -> str:
+    """
+    Generate a deterministic organic closed shape.
+
+    The shape is produced from sinusoidal radius variation rather than random
+    state, so the same parameters always generate the same path.
+    """
+    _validate_positive(radius, "radius")
+    _validate_non_negative(variance, "variance")
+    if n < 3:
+        raise ValueError("n must be at least 3")
+
+    amplitude = min(variance, 1.0)
+    points: list[tuple[float, float]] = []
+    for i in range(n):
+        theta = 2 * math.pi * i / n
+        wave = (
+            math.sin(theta * 2 + seed * 1.713)
+            + 0.5 * math.sin(theta * 3 - seed * 0.927)
+            + 0.25 * math.cos(theta * 5 + seed * 0.313)
+        )
+        normalized = wave / 1.75
+        r = radius * (1 + amplitude * normalized)
+        points.append((x + r * math.cos(theta), y + r * math.sin(theta)))
+
+    if smooth:
+        return catmull_rom_path(points, closed=True)
+    return linear_path(points, closed=True)
+
+
 def cross(
     x: float = 0, y: float = 0, *, size: float, thickness: float, angle: float = 0
 ) -> str:
