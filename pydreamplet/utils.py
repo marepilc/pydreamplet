@@ -1,11 +1,14 @@
 from collections.abc import Sequence
+from dataclasses import dataclass
 from math import ceil, floor, log10
 from math import pi as PI
 from typing import Any, Literal, TypedDict
 
+from pydreamplet.core import BoundingBox
 from pydreamplet.types import Real
 
 type Precedence = Literal["first", "last"] | None
+type Bounds = tuple[Real, Real] | None
 
 
 class Pool(TypedDict):
@@ -14,6 +17,21 @@ class Pool(TypedDict):
     low: float
     high: float
     value: float
+
+
+@dataclass(frozen=True)
+class LabelPlacement:
+    anchor: float
+    position: float
+    size: float
+
+    @property
+    def start(self) -> float:
+        return self.position - self.size / 2
+
+    @property
+    def end(self) -> float:
+        return self.position + self.size / 2
 
 
 def math_round(x: Real) -> int:
@@ -254,3 +272,116 @@ def force_distance(values: Sequence[Real], distance: Real) -> list[Real]:
     for sorted_index, (orig_index, _) in enumerate(sorted_pairs):
         result[orig_index] = x_sorted[sorted_index]
     return result
+
+
+def bboxes_overlap(
+    a: BoundingBox,
+    b: BoundingBox,
+    padding: Real = 0,
+) -> bool:
+    """
+    Return True when two bounding boxes overlap.
+
+    `padding` expands both boxes by the same amount before testing. Touching
+    edges are treated as non-overlapping, which is useful for label layout.
+    """
+    if padding < 0:
+        raise ValueError("padding must be non-negative")
+
+    return not (
+        a.right + padding <= b.left - padding
+        or b.right + padding <= a.left - padding
+        or a.bottom + padding <= b.top - padding
+        or b.bottom + padding <= a.top - padding
+    )
+
+
+def resolve_collisions_1d(
+    anchors: Sequence[Real],
+    sizes: Sequence[Real],
+    *,
+    gap: Real = 0,
+    bounds: Bounds = None,
+) -> list[float]:
+    """
+    Adjust centered 1D items so their extents do not overlap.
+
+    The returned positions preserve input order and stay close to `anchors`
+    using a deterministic forward/backward relaxation pass. `sizes` are full
+    widths or heights, depending on the axis being solved.
+    """
+    if len(anchors) != len(sizes):
+        raise ValueError("anchors and sizes must have the same length")
+    if gap < 0:
+        raise ValueError("gap must be non-negative")
+    if any(size < 0 for size in sizes):
+        raise ValueError("sizes must be non-negative")
+    if bounds is not None and bounds[0] > bounds[1]:
+        raise ValueError("bounds minimum must be less than or equal to maximum")
+
+    indexed = sorted(
+        (
+            (index, float(anchor), float(size))
+            for index, (anchor, size) in enumerate(zip(anchors, sizes))
+        ),
+        key=lambda item: item[1],
+    )
+    if not indexed:
+        return []
+
+    positions = [anchor for _, anchor, _ in indexed]
+    float_sizes = [size for _, _, size in indexed]
+    float_gap = float(gap)
+
+    if bounds is not None:
+        min_bound, max_bound = float(bounds[0]), float(bounds[1])
+        positions[0] = max(positions[0], min_bound + float_sizes[0] / 2)
+    else:
+        min_bound = max_bound = 0.0
+
+    for i in range(1, len(positions)):
+        min_position = (
+            positions[i - 1] + float_sizes[i - 1] / 2 + float_sizes[i] / 2 + float_gap
+        )
+        positions[i] = max(positions[i], min_position)
+
+    if bounds is not None:
+        overflow = positions[-1] + float_sizes[-1] / 2 - max_bound
+        if overflow > 0:
+            positions = [position - overflow for position in positions]
+
+        positions[-1] = min(positions[-1], max_bound - float_sizes[-1] / 2)
+        for i in range(len(positions) - 2, -1, -1):
+            max_position = (
+                positions[i + 1]
+                - float_sizes[i + 1] / 2
+                - float_sizes[i] / 2
+                - float_gap
+            )
+            positions[i] = min(positions[i], max_position)
+        positions[0] = max(positions[0], min_bound + float_sizes[0] / 2)
+
+    result = [0.0] * len(indexed)
+    for sorted_index, (original_index, _, _) in enumerate(indexed):
+        result[original_index] = positions[sorted_index]
+    return result
+
+
+def place_labels_1d(
+    anchors: Sequence[Real],
+    sizes: Sequence[Real],
+    *,
+    gap: Real = 0,
+    bounds: Bounds = None,
+) -> list[LabelPlacement]:
+    """
+    Return label placement records for non-overlapping 1D labels.
+
+    This is a convenience wrapper around `resolve_collisions_1d` that includes
+    original anchors and computed label extents in the result.
+    """
+    positions = resolve_collisions_1d(anchors, sizes, gap=gap, bounds=bounds)
+    return [
+        LabelPlacement(float(anchor), position, float(size))
+        for anchor, position, size in zip(anchors, positions, sizes)
+    ]

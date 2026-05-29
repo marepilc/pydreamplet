@@ -19,6 +19,8 @@ branch is in progress.
   and link generators.
 - Added reusable shape helpers for superellipses, rounded polygons, and
   deterministic organic blob paths.
+- Added collision and label-placement helpers for infographic layouts, including
+  bounding-box overlap checks and one-dimensional label spacing.
 - Moved notebook display dependencies out of the core runtime dependency set.
   `ipython` and `ipykernel` are now available through the optional `notebook`
   extra instead of being installed by default.
@@ -65,6 +67,8 @@ branch is in progress.
   metadata, arc paths, symbols, and link curves.
 - Added feature tests for superellipse, rounded polygon, and blob path
   generation.
+- Added feature tests for collision detection and one-dimensional label
+  placement helpers.
 - Added regression tests for `pos` constructor serialization on `Circle`,
   `Ellipse`, and `Rect`.
 - Added regression tests proving package import does not require IPython and

@@ -162,7 +162,7 @@ The target shape is a layered library:
   - [x] superellipse
   - [x] rounded polygon
   - [x] blob/metaball-like organic shapes
-- [ ] Add collision and label-placement utilities for infographic layouts.
+- [x] Add collision and label-placement utilities for infographic layouts.
 
 ## Data Visualization Primitives
 
