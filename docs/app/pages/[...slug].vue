@@ -39,6 +39,10 @@ const navigation = [
       {
         title: 'Reference overview',
         path: '/reference'
+      },
+      {
+        title: 'SVG',
+        path: '/reference/svg'
       }
     ]
   }

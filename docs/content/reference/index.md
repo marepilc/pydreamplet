@@ -5,16 +5,17 @@ description: API reference for pyDreamplet primitives, helpers, and SVG output.
 
 # Reference
 
-This section will collect focused API notes for pyDreamplet.
+This section collects focused API notes for pyDreamplet primitives and output helpers.
 
-For now, use it as a map for the first reference pages we should add next:
+Start here when you already know the basic drawing flow and need exact constructor shapes, properties, or output behavior.
 
-- SVG elements and containers
+## Pages
+
+- [SVG](/reference/svg) - root document, viewBox, dimensions, saving, and loading.
+
+## Planned next
+
+- Elements and containers
 - Attributes, styles, and transforms
 - Paths and shape helpers
 - Scales and data-driven geometry
-- Saving and displaying SVG output
-
-## Current entry point
-
-Start with [Getting started](/getting-started) for installation and the first generated SVG.
