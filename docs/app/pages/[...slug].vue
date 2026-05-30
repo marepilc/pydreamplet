@@ -1,7 +1,6 @@
 <script setup lang="ts">
 const route = useRoute()
 const path = route.path === '' ? '/' : route.path
-const colorMode = useColorMode()
 const mobileNavigationOpen = ref(false)
 
 const navigation = [
@@ -88,14 +87,6 @@ useSeoMeta({
   description: page.value.description
 })
 
-const isDark = computed({
-  get() {
-    return colorMode.value === 'dark'
-  },
-  set(value) {
-    colorMode.preference = value ? 'dark' : 'light'
-  }
-})
 </script>
 
 <template>
@@ -121,18 +112,7 @@ const isDark = computed({
         </div>
 
         <div class="flex items-center gap-1">
-          <ClientOnly>
-            <UButton
-              :icon="isDark ? 'i-lucide-moon' : 'i-lucide-sun'"
-              color="neutral"
-              variant="ghost"
-              :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
-              @click="isDark = !isDark"
-            />
-            <template #fallback>
-              <div class="size-8" />
-            </template>
-          </ClientOnly>
+          <ThemeToggle />
 
           <USlideover
             v-model:open="mobileNavigationOpen"

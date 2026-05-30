@@ -1,18 +1,7 @@
 <script setup lang="ts">
-const colorMode = useColorMode()
-
 useSeoMeta({
   title: 'pyDreamplet',
   description: 'A Python toolkit for precise SVG graphics, creative coding, and custom data visualization.'
-})
-
-const isDark = computed({
-  get() {
-    return colorMode.value === 'dark'
-  },
-  set(value) {
-    colorMode.preference = value ? 'dark' : 'light'
-  }
 })
 
 const highlights = [
@@ -55,18 +44,7 @@ const highlights = [
           </NuxtLink>
         </nav>
 
-        <ClientOnly>
-          <UButton
-            :icon="isDark ? 'i-lucide-moon' : 'i-lucide-sun'"
-            color="neutral"
-            variant="ghost"
-            :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
-            @click="isDark = !isDark"
-          />
-          <template #fallback>
-            <div class="size-8" />
-          </template>
-        </ClientOnly>
+        <ThemeToggle />
       </div>
     </header>
 
