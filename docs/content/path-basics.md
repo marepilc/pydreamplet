@@ -118,5 +118,5 @@ local direction at that distance.
 
 ## Next
 
-The next guide page should cover transforms, grouping, and coordinate systems
-in more depth.
+Continue with [Transform basics](/transform-basics) to move, rotate, and scale
+elements with groups.
