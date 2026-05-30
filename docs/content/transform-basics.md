@@ -59,7 +59,7 @@ relative to the group origin.
 Set `angle` on a group to rotate everything inside it.
 
 ```python
-needle = dp.G(angle=-28)
+needle = dp.G(angle=-45)
 origin.append(needle)
 
 needle.append(
@@ -105,7 +105,7 @@ When the pivot needs to be somewhere else, set `pivot=(x, y)` explicitly.
 `"trs"`, which applies translation, then rotation, then scale.
 
 ```python
-badge = dp.G(pos=(430, 96), angle=18, scale=dp.Vector(1.2, 1.2), order="trs")
+badge = dp.G(pos=(svg.w / 2, svg.h / 2), angle=-45, scale=dp.Vector(1.2, 1.2), order="trs")
 badge.append(dp.Rect(x=-42, y=-24, width=84, height=48, rx=10, fill="#95cf20"))
 badge.append(
     dp.Text(
