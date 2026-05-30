@@ -106,9 +106,7 @@ const isDark = computed({
       <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
         <div class="flex items-center gap-6">
           <NuxtLink to="/" class="flex items-center gap-2 text-sm font-semibold tracking-wide">
-            <span class="flex size-8 items-center justify-center rounded-md bg-teal-700 dark:bg-teal-500">
-              <img src="/brand/hummingbird.svg" alt="" class="h-5 w-5" aria-hidden="true">
-            </span>
+            <HummingbirdLogo class="h-5 w-6 text-teal-700 dark:text-teal-300" />
             <span>pyDreamplet</span>
           </NuxtLink>
           <nav class="hidden items-center gap-5 text-sm text-neutral-600 dark:text-neutral-300 md:flex">
@@ -125,7 +123,7 @@ const isDark = computed({
         <div class="flex items-center gap-1">
           <ClientOnly>
             <UButton
-              :icon="isDark ? 'i-lucide-sun' : 'i-lucide-moon'"
+              :icon="isDark ? 'i-lucide-moon' : 'i-lucide-sun'"
               color="neutral"
               variant="ghost"
               :aria-label="isDark ? 'Switch to light mode' : 'Switch to dark mode'"
