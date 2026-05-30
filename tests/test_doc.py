@@ -557,16 +557,16 @@ x = 1  # Only this should be extracted
     def test_documentation_code_blocks(self):
         """Test actual documentation files for code block execution."""
         project_root = Path(__file__).parent.parent
-        docs_dir = project_root / "docs"
+        docs_dir = project_root / "legacy_docs"
         
         if not docs_dir.exists():
-            pytest.skip("docs directory not found")
+            pytest.skip("legacy_docs directory not found")
 
         extractor = DocTestExtractor(verbose=False)
         markdown_files = extractor.find_markdown_files([docs_dir])
         
         if not markdown_files:
-            pytest.skip("No markdown files found in docs")
+            pytest.skip("No markdown files found in legacy_docs")
 
         failed_blocks = []
         total_blocks = 0

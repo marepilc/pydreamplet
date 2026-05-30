@@ -2,6 +2,7 @@ site_name: pyDreamplet
 site_url: https://marepilc.github.io/pydreamplet/
 site_description: pyDreamplet is a Python library for SVG manipulation.
 site_author: Marek Pilczuk
+docs_dir: legacy_docs
 repo_url: https://github.com/marepilc/pydreamplet
 repo_name: marepilc/pydreamplet
 nav:
