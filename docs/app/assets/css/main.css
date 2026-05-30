@@ -2,7 +2,7 @@
 @import "@nuxt/ui";
 
 @theme {
-  --font-sans: ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Proza Libre", ui-sans-serif, system-ui, sans-serif;
 }
 
 .docs-content h1 {

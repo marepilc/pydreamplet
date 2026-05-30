@@ -76,5 +76,5 @@ attributes, append them to a parent, and export the result.
 
 ## Next
 
-The next chunk should cover the basic drawing workflow in more detail: canvas
-size, coordinates, common shapes, styling, display, and saving.
+Continue with [Drawing basics](/drawing-basics) for canvas size, coordinates,
+common shapes, styling, display, and saving.

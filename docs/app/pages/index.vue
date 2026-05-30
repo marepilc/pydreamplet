@@ -49,6 +49,9 @@ const highlights = [
           <NuxtLink to="/getting-started">
             Getting started
           </NuxtLink>
+          <NuxtLink to="/drawing-basics">
+            Drawing basics
+          </NuxtLink>
           <NuxtLink to="/reference">
             Reference
           </NuxtLink>

@@ -3,6 +3,35 @@ const route = useRoute()
 const path = route.path === '' ? '/' : route.path
 const colorMode = useColorMode()
 
+const navigation = [
+  {
+    title: 'Guide',
+    icon: 'i-lucide-book-open',
+    path: '/getting-started',
+    children: [
+      {
+        title: 'Getting started',
+        path: '/getting-started'
+      },
+      {
+        title: 'Drawing basics',
+        path: '/drawing-basics'
+      }
+    ]
+  },
+  {
+    title: 'Reference',
+    icon: 'i-lucide-library',
+    path: '/reference',
+    children: [
+      {
+        title: 'Reference overview',
+        path: '/reference'
+      }
+    ]
+  }
+]
+
 const { data: page } = await useAsyncData(`docs:${path}`, () => {
   return queryCollection('docs').path(path).first()
 })
@@ -44,6 +73,7 @@ const isDark = computed({
           </NuxtLink>
           <nav class="hidden items-center gap-5 text-sm text-neutral-600 dark:text-neutral-300 md:flex">
             <NuxtLink to="/getting-started">Getting started</NuxtLink>
+            <NuxtLink to="/drawing-basics">Drawing basics</NuxtLink>
             <NuxtLink to="/reference">Reference</NuxtLink>
           </nav>
         </div>
@@ -64,19 +94,15 @@ const isDark = computed({
     </header>
 
     <div class="mx-auto grid max-w-7xl grid-cols-1 gap-10 px-6 py-10 lg:grid-cols-[220px_minmax(0,1fr)]">
-      <aside class="hidden border-r border-neutral-200 pr-8 text-sm dark:border-neutral-800 lg:block">
-        <nav class="sticky top-26 flex flex-col gap-2">
-          <NuxtLink class="rounded-md px-3 py-2 font-medium text-neutral-950 dark:text-white" to="/">
-            Documentation
-          </NuxtLink>
-          <NuxtLink class="rounded-md px-3 py-2 font-medium text-neutral-950 dark:text-white" to="/getting-started">
-            Getting started
-          </NuxtLink>
-          <NuxtLink class="rounded-md px-3 py-2 font-medium text-neutral-950 dark:text-white" to="/reference">
-            Reference
-          </NuxtLink>
-        </nav>
-      </aside>
+      <UPageAside>
+        <UContentNavigation
+          :navigation="navigation"
+          type="single"
+          highlight
+          color="neutral"
+          variant="link"
+        />
+      </UPageAside>
 
       <article class="docs-content max-w-3xl">
         <ContentRenderer :value="page" />
