@@ -96,4 +96,5 @@ svg.display()
 
 ## Next
 
-The next guide page should cover paths and reusable shape construction.
+Continue with [Path basics](/path-basics) to build custom contours with
+`Path` and `PathBuilder`.

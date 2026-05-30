@@ -17,6 +17,10 @@ const navigation = [
       {
         title: 'Drawing basics',
         path: '/drawing-basics'
+      },
+      {
+        title: 'Path basics',
+        path: '/path-basics'
       }
     ]
   },
@@ -41,6 +45,10 @@ const topNavigation = [
   {
     title: 'Drawing basics',
     path: '/drawing-basics'
+  },
+  {
+    title: 'Path basics',
+    path: '/path-basics'
   },
   {
     title: 'Reference',
