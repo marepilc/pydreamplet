@@ -41,7 +41,7 @@
   margin-top: 0.25rem;
 }
 
-.docs-content code {
+.docs-content :not(pre) > code {
   border-radius: 0.25rem;
   background: var(--ui-bg-elevated);
   padding: 0.125rem 0.25rem;
@@ -62,7 +62,11 @@
   display: block;
   background: transparent;
   padding: 0;
-  color: var(--ui-text);
+  color: inherit;
   font-size: 0.875rem;
   line-height: 1.7;
+}
+
+.docs-content pre.shiki .line {
+  min-height: 1.7em;
 }

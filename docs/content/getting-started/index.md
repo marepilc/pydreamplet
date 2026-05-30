@@ -15,23 +15,23 @@ canvas, draw a shape, and save the result.
 
 Install the core package with `uv`:
 
-```shell
+```bash
 uv add pydreamplet
 ```
 
 Or with `pip`:
 
-```shell
+```bash
 pip install pydreamplet
 ```
 
 For notebook display support, install the optional notebook extra:
 
-```shell
+```bash
 uv add "pydreamplet[notebook]"
 ```
 
-```shell
+```bash
 pip install "pydreamplet[notebook]"
 ```
 
