@@ -21,12 +21,14 @@ import pydreamplet as dp
 ## Signatures
 
 ```python
-dp.SVG(width, height, **kwargs)
-dp.SVG(x, y, width, height, **kwargs)
-dp.SVG(viewbox, **kwargs)
+dp.SVG(width: Real, height: Real, **kwargs)
+dp.SVG(x: Real, y: Real, width: Real, height: Real, **kwargs)
+dp.SVG(viewbox: tuple[Real, ...] | list[Real], **kwargs)
 ```
 
 `viewbox` can be a tuple or list with either two or four numeric values.
+
+In the public type aliases, `Real` means `int | float` and `AttributeValue` means `str | int | float | None`.
 
 ```python
 dp.SVG((540, 360))
@@ -37,12 +39,12 @@ dp.SVG([0, 0, 540, 360])
 
 | Parameter | Type | Required | Description |
 | --- | --- | --- | --- |
-| `width` | `int | float` | yes, in the 2-value form | The viewBox width. Also used as the default SVG `width` attribute with a `px` suffix. |
-| `height` | `int | float` | yes, in the 2-value form | The viewBox height. Also used as the default SVG `height` attribute with a `px` suffix. |
-| `x` | `int | float` | yes, in the 4-value form | The minimum x coordinate of the viewBox. |
-| `y` | `int | float` | yes, in the 4-value form | The minimum y coordinate of the viewBox. |
-| `viewbox` | `tuple | list` | yes, in the sequence form | A 2-item or 4-item sequence. |
-| `**kwargs` | `Any` | no | Additional SVG attributes. Underscores are converted to hyphens, except known namespace prefixes. |
+| `width` | `Real` | yes, in the 2-value form | The viewBox width. Also used as the default SVG `width` attribute with a `px` suffix. |
+| `height` | `Real` | yes, in the 2-value form | The viewBox height. Also used as the default SVG `height` attribute with a `px` suffix. |
+| `x` | `Real` | yes, in the 4-value form | The minimum x coordinate of the viewBox. |
+| `y` | `Real` | yes, in the 4-value form | The minimum y coordinate of the viewBox. |
+| `viewbox` | `tuple/list of Real` | yes, in the sequence form | A 2-item or 4-item sequence. |
+| `**kwargs` | `Any` | no | Additional SVG attributes. Underscores are converted to hyphens, except known namespace prefixes. Values are serialized to SVG attributes. |
 
 The constructor accepts only two or four viewBox values. Passing any other count raises `ValueError`.
 
@@ -138,7 +140,7 @@ print(svg.w)      # 300.0
 print(svg.width)  # 900
 ```
 
-If the SVG has no valid `viewBox`, `w` falls back to the numeric part of the `width` attribute. If that cannot be parsed, it returns `0.0`.
+If the SVG has no `viewBox`, `w` falls back to the numeric part of the `width` attribute. If that cannot be parsed, it returns `0.0`. A malformed `viewBox` raises `ValueError`.
 
 ### `h`
 
@@ -155,7 +157,7 @@ print(svg.h)       # 200.0
 print(svg.height)  # 600
 ```
 
-If the SVG has no valid `viewBox`, `h` falls back to the numeric part of the `height` attribute. If that cannot be parsed, it returns `0.0`.
+If the SVG has no `viewBox`, `h` falls back to the numeric part of the `height` attribute. If that cannot be parsed, it returns `0.0`. A malformed `viewBox` raises `ValueError`.
 
 ## Attribute Handling
 
@@ -213,7 +215,7 @@ print(svg.id)        # 001
 ### `from_element`
 
 ```python
-dp.SVG.from_element(element)
+dp.SVG.from_element(element: xml.etree.ElementTree.Element) -> dp.SVG
 ```
 
 Creates an `SVG` wrapper around an existing `xml.etree.ElementTree.Element`.
@@ -398,7 +400,7 @@ svg.attrs({"role": None})
 ### `set_attr`
 
 ```python
-svg.set_attr(name: str, value) -> dp.SVG
+svg.set_attr(name: str, value: AttributeValue) -> dp.SVG
 ```
 
 Sets a single attribute and returns the SVG instance.
@@ -435,7 +437,7 @@ svg.set_class("responsive")
 ### `set_fill`
 
 ```python
-svg.set_fill(value) -> dp.SVG
+svg.set_fill(value: AttributeValue) -> dp.SVG
 ```
 
 Sets the `fill` attribute on the root SVG element.
@@ -449,7 +451,12 @@ For most drawings, fill is usually set on child shapes instead of the root.
 ### `set_stroke`
 
 ```python
-svg.set_stroke(value, width=None, linecap=None, linejoin=None) -> dp.SVG
+svg.set_stroke(
+    value: AttributeValue,
+    width: AttributeValue = None,
+    linecap: str | None = None,
+    linejoin: str | None = None,
+) -> dp.SVG
 ```
 
 Sets `stroke` and optional stroke-related attributes on the root SVG element.
@@ -463,7 +470,7 @@ This writes `stroke`, `stroke-width`, `stroke-linecap`, and `stroke-linejoin`.
 ### `set_style`
 
 ```python
-svg.set_style(value: str | dict | None) -> dp.SVG
+svg.set_style(value: str | Mapping[str, AttributeValue] | None) -> dp.SVG
 ```
 
 Sets the inline `style` attribute. A string is used directly.
@@ -487,7 +494,7 @@ Passing `None` removes the inline `style` attribute.
 ### `set_position`
 
 ```python
-svg.set_position(x, y=None) -> dp.SVG
+svg.set_position(x: PointLike | Real, y: Real | None = None) -> dp.SVG
 ```
 
 Sets `x` and `y` attributes on the root SVG element. If the first argument is a point-like object, `y` can be omitted.
@@ -501,7 +508,7 @@ This is usually more useful for nested SVG fragments than for the top-level docu
 ### `set_size`
 
 ```python
-svg.set_size(width, height) -> dp.SVG
+svg.set_size(width: AttributeValue, height: AttributeValue) -> dp.SVG
 ```
 
 Sets the rendered `width` and `height` attributes. It does not change the `viewBox`.
@@ -615,7 +622,7 @@ Returns a deep copy of the SVG wrapper and the underlying ElementTree element. M
 base = dp.SVG(200, 200)
 variant = base.copy()
 
-variant.width = "400px"
+variant.width = 400
 ```
 
 ## Common Patterns
