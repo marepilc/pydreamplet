@@ -25,6 +25,12 @@ from pydreamplet.core import (
     Transform,
     TransformList,
 )
+from pydreamplet.creative import (
+    circle_points,
+    grid_points,
+    noise_points,
+    random_points,
+)
 from pydreamplet.generators import (
     ArcGenerator,
     AreaGenerator,
@@ -99,9 +105,12 @@ __all__ = [
     "Vector",
     "arc_generator",
     "area_generator",
+    "circle_points",
+    "grid_points",
     "iter_path_segments",
     "line_generator",
     "link_generator",
+    "noise_points",
     "normalize_path_commands",
     "normalize_path_data",
     "path_length",
@@ -110,6 +119,7 @@ __all__ = [
     "parse_path_data",
     "radial_area_generator",
     "radial_line_generator",
+    "random_points",
     "symbol_generator",
     "tangent_at_length",
 ]

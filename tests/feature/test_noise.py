@@ -34,6 +34,13 @@ def test_setter_adjustments():
     assert n.value <= 8, "Noise value did not adjust to the new maximum."
 
 
+def test_random_walk_noise_is_deterministic_with_seed():
+    n1 = Noise(0, 10, 0.5, seed=123)
+    n2 = Noise(0, 10, 0.5, seed=123)
+
+    assert [n1.value for _ in range(5)] == [n2.value for _ in range(5)]
+
+
 # ────────────────────────────────────────────────────────────
 # Tests for Simplex Noise 1D
 # ────────────────────────────────────────────────────────────

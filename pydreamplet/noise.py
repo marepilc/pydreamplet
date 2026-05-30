@@ -7,11 +7,19 @@ from typing import Callable
 # Noise Value Generator (Random Walk)
 # ────────────────────────────────────────────────────────────
 class Noise:
-    def __init__(self, min_val: float, max_val: float, noise_range: float):
+    def __init__(
+        self,
+        min_val: float,
+        max_val: float,
+        noise_range: float,
+        *,
+        seed: int | None = None,
+    ):
         self._min = min_val
         self._max = max_val
+        self._random = random.Random(seed) if seed is not None else random
         self.noise_range = noise_range
-        self._value = random.uniform(min_val, max_val)
+        self._value = self._random.uniform(min_val, max_val)
 
     @property
     def min(self) -> float:
@@ -72,7 +80,7 @@ class Noise:
         elif max0 > self._max:
             max0 = self._max
             min0 = max0 - self._range
-        self._value = random.uniform(min0, max0)
+        self._value = self._random.uniform(min0, max0)
 
 
 # ────────────────────────────────────────────────────────────

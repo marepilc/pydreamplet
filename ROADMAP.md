@@ -164,67 +164,17 @@ The target shape is a layered library:
   - [x] blob/metaball-like organic shapes
 - [x] Add collision and label-placement utilities for infographic layouts.
 
-## Data Visualization Primitives
-
-- [ ] Treat complete charts as examples and recipes, not as the primary API.
-- [ ] Avoid locking the library into fixed `BarChart`, `LineChart`, or similar classes
-  unless they are optional recipes built on top of lower-level primitives.
-- [x] Introduce a D3-like generator layer for data-to-SVG conversion.
-- [ ] Introduce Pythonic data binding helpers for turning sequences of data into SVG elements.
-- [ ] Add selection/grouping helpers if they can stay simple and idiomatic in Python.
-- [ ] Define layout primitives:
-  - margin box
-  - plotting frame
-  - stack layout
-  - pack layout
-  - treemap layout
-  - force layout
-  - chord/ribbon layout
-  - grid layout
-  - radial layout
-- [ ] Add axis generation as composable primitives using scales and tick helpers.
-- [ ] Add legend generation as composable primitives.
-- [ ] Add annotation helpers:
-  - callouts
-  - leader lines
-  - brackets
-  - ranges
-  - highlighted regions
-- [ ] Add map/geography primitives if they can be kept lightweight:
-  - load bundled SVG maps
-  - map regions by id
-  - project points onto known SVG coordinate spaces
-  - generate choropleth-like fills without becoming a full GIS package
-- [ ] Add color palettes designed for categorical and sequential data.
-- [ ] Add accessibility helpers for titles, descriptions, roles, and readable SVG metadata.
-- [ ] Add examples that show real infographic workflows built from primitives.
-
 ## Creative Coding Layer
 
-- [ ] Expand noise utilities with deterministic seeding examples.
-- [ ] Add generative grid helpers.
+- [x] Expand noise utilities with deterministic seeding support.
+- [x] Add generative grid helpers.
 - [ ] Add tiling and pattern helpers.
-- [ ] Add point cloud and distribution generators.
+- [x] Add point cloud and distribution generators.
 - [ ] Add parametric curve helpers.
-- [ ] Add polar/radial helper functions.
+- [x] Add polar/radial helper functions.
 - [ ] Add particle/flow field examples.
 - [ ] Add animation examples based on native SVG animation.
 - [ ] Add reusable creative presets that remain editable as plain SVG.
-
-## Agentic Coding And MCP Ecosystem
-
-- [ ] Treat agentic tooling as a separate ecosystem layer, not as part of the core runtime.
-- [ ] Create a Codex/agent skill for generating pyDreamplet examples from short creative briefs.
-- [ ] Create an agent skill for converting sketches or chart descriptions into pyDreamplet code.
-- [ ] Create an agent skill for debugging generated SVG output and suggesting simplifications.
-- [ ] Consider an MCP server exposing:
-  - component and API reference
-  - runnable example search
-  - SVG asset search
-  - path generator and shape helper documentation
-  - project templates
-- [ ] Keep MCP and agent skills versioned alongside documentation, so agents use the correct API.
-- [ ] Use the MCP server or skills to support documentation authoring and example generation.
 
 ## Documentation
 
@@ -286,6 +236,62 @@ The target shape is a layered library:
 - [ ] Add tests for deterministic creative coding outputs with seeds.
 - [ ] Add CI matrix for supported Python versions.
 
+## Data Visualization Primitives
+
+These primitives are intentionally deferred until after the creative coding layer
+and Nuxt Content documentation migration.
+
+- [ ] Treat complete charts as examples and recipes, not as the primary API.
+- [ ] Avoid locking the library into fixed `BarChart`, `LineChart`, or similar classes
+  unless they are optional recipes built on top of lower-level primitives.
+- [x] Introduce a D3-like generator layer for data-to-SVG conversion.
+- [ ] Introduce Pythonic data binding helpers for turning sequences of data into SVG elements.
+- [ ] Add selection/grouping helpers if they can stay simple and idiomatic in Python.
+- [ ] Define layout primitives:
+  - margin box
+  - plotting frame
+  - stack layout
+  - pack layout
+  - treemap layout
+  - force layout
+  - chord/ribbon layout
+  - grid layout
+  - radial layout
+- [ ] Add axis generation as composable primitives using scales and tick helpers.
+- [ ] Add legend generation as composable primitives.
+- [ ] Add annotation helpers:
+  - callouts
+  - leader lines
+  - brackets
+  - ranges
+  - highlighted regions
+- [ ] Add map/geography primitives if they can be kept lightweight:
+  - load bundled SVG maps
+  - map regions by id
+  - project points onto known SVG coordinate spaces
+  - generate choropleth-like fills without becoming a full GIS package
+- [ ] Add color palettes designed for categorical and sequential data.
+- [ ] Add accessibility helpers for titles, descriptions, roles, and readable SVG metadata.
+- [ ] Add examples that show real infographic workflows built from primitives.
+
+## Agentic Coding And MCP Ecosystem
+
+This ecosystem work is intentionally deferred until the core library direction
+and Nuxt Content documentation are in stronger shape.
+
+- [ ] Treat agentic tooling as a separate ecosystem layer, not as part of the core runtime.
+- [ ] Create a Codex/agent skill for generating pyDreamplet examples from short creative briefs.
+- [ ] Create an agent skill for converting sketches or chart descriptions into pyDreamplet code.
+- [ ] Create an agent skill for debugging generated SVG output and suggesting simplifications.
+- [ ] Consider an MCP server exposing:
+  - component and API reference
+  - runnable example search
+  - SVG asset search
+  - path generator and shape helper documentation
+  - project templates
+- [ ] Keep MCP and agent skills versioned alongside documentation, so agents use the correct API.
+- [ ] Use the MCP server or skills to support documentation authoring and example generation.
+
 ## Release Readiness For 2.0
 
 - [ ] Define the v2.0 public API.
@@ -317,30 +323,45 @@ The target shape is a layered library:
 - [x] Write the public API design document.
 - [x] Decide module boundaries.
 - [x] Define compatibility rules.
-- [ ] Design the generator, layout, scale, axis, legend, and annotation layers.
-- [ ] Create one complete vertical slice, such as a polished custom infographic built
-  from primitives rather than a fixed chart class.
+- [ ] Design the creative coding helper layer around composable SVG primitives.
+- [ ] Define the Nuxt Content documentation structure and page taxonomy.
+- [ ] Create one complete vertical slice, such as a polished creative coding example
+  with reusable helpers and matching documentation.
 
-### Milestone 3: Build D3-Like Visualization Primitives
+### Milestone 3: Build The Creative Coding Layer
 
-- [x] Implement data-driven path generators and reusable geometric shape helpers.
-- [ ] Implement curve interpolation through points.
-- [ ] Implement axes, legends, labels, annotations, and layout helpers.
-- [ ] Implement recipes that demonstrate how to compose primitives into full visuals.
-- [ ] Add real-world infographic examples.
-- [ ] Add SVG snapshots for examples.
+- [x] Expand noise utilities with deterministic seeding support.
+- [x] Add generative grid helpers.
+- [ ] Add tiling and pattern helpers.
+- [x] Add point cloud and distribution generators.
+- [ ] Add parametric curve helpers.
+- [x] Add polar/radial helper functions.
+- [ ] Add particle/flow field and native SVG animation examples.
+- [ ] Add reusable creative presets that remain editable as plain SVG.
 
-### Milestone 4: Documentation And Agent Tooling
+### Milestone 4: Migrate Documentation To Nuxt Content
 
 - [ ] Prepare current docs for migration.
 - [ ] Build the Nuxt Content documentation site.
 - [ ] Port current pages and assets.
 - [ ] Add custom example/gallery components.
-- [ ] Add generator and recipe documentation.
-- [ ] Decide whether to ship agent skills or an MCP server as a separate package/repo.
+- [ ] Add creative coding, generator, shapes, and recipe documentation.
 - [ ] Deploy the new docs site.
 
-### Milestone 5: 2.0 Release
+### Milestone 5: Deferred Visualization Primitives
+
+- [ ] Implement axes, legends, labels, annotations, and layout helpers.
+- [ ] Implement recipes that demonstrate how to compose primitives into full visuals.
+- [ ] Add real-world infographic examples.
+- [ ] Add SVG snapshots for examples.
+
+### Milestone 6: Deferred Agentic And MCP Ecosystem
+
+- [ ] Decide whether to ship agent skills or an MCP server as a separate package/repo.
+- [ ] Create agent skills for examples, chart descriptions, and SVG debugging.
+- [ ] Consider an MCP server for docs, examples, assets, and project templates.
+
+### Milestone 7: 2.0 Release
 
 - [ ] Finish migration guide.
 - [ ] Run full test, typecheck, build, and docs validation.
