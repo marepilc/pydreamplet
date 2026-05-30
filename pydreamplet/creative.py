@@ -156,6 +156,123 @@ def circle_points(
     return points
 
 
+def wave_points(
+    count: int,
+    width: Real,
+    *,
+    amplitude: Real,
+    frequency: Real = 1,
+    phase: Real = 0,
+    origin: NumericPair = (0, 0),
+) -> list[Vector]:
+    """Return points along a sine wave."""
+    _validate_count("count", count)
+
+    origin_x, origin_y = _pair(origin)
+    denominator = count - 1 if count > 1 else 1
+    points: list[Vector] = []
+    for index in range(count):
+        x = float(width) * index / denominator
+        angle = math.tau * float(frequency) * index / denominator + math.radians(
+            float(phase)
+        )
+        y = math.sin(angle) * float(amplitude)
+        points.append(_clean_vector(origin_x + x, origin_y + y))
+    return points
+
+
+def spiral_points(
+    count: int,
+    *,
+    start_radius: Real = 0,
+    end_radius: Real,
+    turns: Real = 1,
+    center: NumericPair = (0, 0),
+    start_angle: Real = 0,
+) -> list[Vector]:
+    """Return points along an Archimedean spiral."""
+    _validate_count("count", count)
+    _validate_non_negative("start_radius", float(start_radius))
+    _validate_non_negative("end_radius", float(end_radius))
+
+    center_x, center_y = _pair(center)
+    denominator = count - 1 if count > 1 else 1
+    points: list[Vector] = []
+    for index in range(count):
+        t = index / denominator
+        radius = float(start_radius) + (float(end_radius) - float(start_radius)) * t
+        angle = math.radians(float(start_angle)) + math.tau * float(turns) * t
+        points.append(
+            _clean_vector(
+                center_x + math.cos(angle) * radius,
+                center_y + math.sin(angle) * radius,
+            )
+        )
+    return points
+
+
+def lissajous_points(
+    count: int,
+    *,
+    x_radius: Real,
+    y_radius: Real,
+    a: Real = 3,
+    b: Real = 2,
+    delta: Real = 90,
+    center: NumericPair = (0, 0),
+    include_endpoint: bool = False,
+) -> list[Vector]:
+    """Return points along a Lissajous curve."""
+    _validate_count("count", count)
+    _validate_non_negative("x_radius", float(x_radius))
+    _validate_non_negative("y_radius", float(y_radius))
+
+    center_x, center_y = _pair(center)
+    denominator = count - 1 if include_endpoint and count > 1 else count
+    delta_radians = math.radians(float(delta))
+
+    points: list[Vector] = []
+    for index in range(count):
+        t = math.tau * index / denominator
+        points.append(
+            _clean_vector(
+                center_x + math.sin(float(a) * t + delta_radians) * float(x_radius),
+                center_y + math.sin(float(b) * t) * float(y_radius),
+            )
+        )
+    return points
+
+
+def phyllotaxis_points(
+    count: int,
+    *,
+    spacing: Real = 1,
+    angle: Real = 137.50776405,
+    center: NumericPair = (0, 0),
+    start_index: int = 0,
+) -> list[Vector]:
+    """Return points arranged with a sunflower-like phyllotaxis spiral."""
+    _validate_count("count", count)
+    if spacing < 0:
+        raise ValueError("spacing must be non-negative")
+    if start_index < 0:
+        raise ValueError("start_index must be non-negative")
+
+    center_x, center_y = _pair(center)
+    points: list[Vector] = []
+    for offset in range(count):
+        index = start_index + offset
+        radius = float(spacing) * math.sqrt(index)
+        theta = math.radians(float(angle) * index)
+        points.append(
+            _clean_vector(
+                center_x + math.cos(theta) * radius,
+                center_y + math.sin(theta) * radius,
+            )
+        )
+    return points
+
+
 def noise_points(
     columns: int,
     rows: int,

@@ -169,9 +169,9 @@ The target shape is a layered library:
 - [x] Expand noise utilities with deterministic seeding support.
 - [x] Add generative grid helpers.
 - [x] Add tiling helpers.
-- [ ] Add pattern helpers.
+- [x] Add pattern helpers.
 - [x] Add point cloud and distribution generators.
-- [ ] Add parametric curve helpers.
+- [x] Add parametric curve helpers.
 - [x] Add polar/radial helper functions.
 - [ ] Add particle/flow field examples.
 - [ ] Add animation examples based on native SVG animation.
@@ -334,9 +334,9 @@ and Nuxt Content documentation are in stronger shape.
 - [x] Expand noise utilities with deterministic seeding support.
 - [x] Add generative grid helpers.
 - [x] Add tiling helpers.
-- [ ] Add pattern helpers.
+- [x] Add pattern helpers.
 - [x] Add point cloud and distribution generators.
-- [ ] Add parametric curve helpers.
+- [x] Add parametric curve helpers.
 - [x] Add polar/radial helper functions.
 - [ ] Add particle/flow field and native SVG animation examples.
 - [ ] Add reusable creative presets that remain editable as plain SVG.

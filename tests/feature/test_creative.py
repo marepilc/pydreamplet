@@ -6,9 +6,13 @@ from pydreamplet.creative import (
     circle_points,
     grid_points,
     hex_tiles,
+    lissajous_points,
     noise_points,
+    phyllotaxis_points,
     random_points,
+    spiral_points,
     square_tiles,
+    wave_points,
 )
 
 
@@ -93,6 +97,52 @@ def test_noise_points_pair_grid_points_with_simplex_values():
     ]
     assert [value for _point, value in values] == pytest.approx(
         [0.5, 0.5371459619387864, 0.6732551823336207, 0.4938600705783195]
+    )
+
+
+def test_wave_points_generate_sine_pattern():
+    points = wave_points(5, 40, amplitude=10, frequency=1)
+
+    assert [point.xy for point in points] == pytest.approx(
+        [(0.0, 0.0), (10.0, 10.0), (20.0, 0.0), (30.0, -10.0), (40.0, 0.0)]
+    )
+
+
+def test_spiral_points_generate_archimedean_spiral():
+    points = spiral_points(5, end_radius=20, turns=1)
+
+    assert [point.xy for point in points] == pytest.approx(
+        [(0.0, 0.0), (0.0, 5.0), (-10.0, 0.0), (0.0, -15.0), (20.0, 0.0)]
+    )
+
+
+def test_lissajous_points_generate_parametric_curve():
+    points = lissajous_points(
+        5,
+        x_radius=10,
+        y_radius=5,
+        a=1,
+        b=2,
+        delta=0,
+        include_endpoint=True,
+    )
+
+    assert [point.xy for point in points] == pytest.approx(
+        [(0.0, 0.0), (10.0, 0.0), (0.0, 0.0), (-10.0, 0.0), (0.0, 0.0)]
+    )
+
+
+def test_phyllotaxis_points_generate_radial_distribution():
+    points = phyllotaxis_points(5, spacing=4, angle=90)
+
+    assert [point.xy for point in points] == pytest.approx(
+        [
+            (0.0, 0.0),
+            (0.0, 4.0),
+            (-5.656854249492381, 0.0),
+            (0.0, -6.928203230275509),
+            (8.0, 0.0),
+        ]
     )
 
 
@@ -192,6 +242,16 @@ def test_hex_tiles_generate_flat_offset_grid():
         lambda: circle_points(0, 10),
         lambda: circle_points(1, -1),
         lambda: circle_points(1, 10, radius_jitter=-1),
+        lambda: wave_points(0, 10, amplitude=1),
+        lambda: spiral_points(0, end_radius=1),
+        lambda: spiral_points(1, start_radius=-1, end_radius=1),
+        lambda: spiral_points(1, end_radius=-1),
+        lambda: lissajous_points(0, x_radius=1, y_radius=1),
+        lambda: lissajous_points(1, x_radius=-1, y_radius=1),
+        lambda: lissajous_points(1, x_radius=1, y_radius=-1),
+        lambda: phyllotaxis_points(0),
+        lambda: phyllotaxis_points(1, spacing=-1),
+        lambda: phyllotaxis_points(1, start_index=-1),
         lambda: square_tiles(0, 1, 10, 10),
         lambda: square_tiles(1, 0, 10, 10),
         lambda: square_tiles(2, 1, 10, 10, gap=20),
