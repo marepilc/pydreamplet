@@ -25,6 +25,10 @@ const navigation = [
       {
         title: 'Transform basics',
         path: '/transform-basics'
+      },
+      {
+        title: 'Text basics',
+        path: '/text-basics'
       }
     ]
   },
@@ -57,6 +61,10 @@ const topNavigation = [
   {
     title: 'Transform basics',
     path: '/transform-basics'
+  },
+  {
+    title: 'Text basics',
+    path: '/text-basics'
   },
   {
     title: 'Reference',

@@ -130,4 +130,5 @@ translation, rotation, and non-uniform scale are combined.
 
 ## Next
 
-Continue with text basics to place, align, and measure SVG text.
+Continue with [Text basics](/text-basics) to place, align, and measure SVG
+text.
