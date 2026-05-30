@@ -50,22 +50,6 @@ const topNavigation = [
     path: '/getting-started'
   },
   {
-    title: 'Drawing basics',
-    path: '/drawing-basics'
-  },
-  {
-    title: 'Path basics',
-    path: '/path-basics'
-  },
-  {
-    title: 'Transform basics',
-    path: '/transform-basics'
-  },
-  {
-    title: 'Text basics',
-    path: '/text-basics'
-  },
-  {
     title: 'Reference',
     path: '/reference'
   }
