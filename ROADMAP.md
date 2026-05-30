@@ -173,9 +173,7 @@ The target shape is a layered library:
 - [x] Add point cloud and distribution generators.
 - [x] Add parametric curve helpers.
 - [x] Add polar/radial helper functions.
-- [ ] Add particle/flow field examples.
-- [ ] Add animation examples based on native SVG animation.
-- [ ] Add reusable creative presets that remain editable as plain SVG.
+- [ ] Park reusable creative presets until the documentation migration is further along.
 
 ## Documentation
 
@@ -192,6 +190,7 @@ The target shape is a layered library:
 - [ ] Add a "Generators" documentation section for data-driven paths, symbols, arcs, and links.
 - [ ] Add a "Shapes" documentation section for reusable geometric forms.
 - [ ] Add a "Recipes" section for full infographic examples built from primitives.
+- [ ] Add creative coding examples for flow fields and native SVG animation.
 - [ ] Add migration notes from v1.x to v2.0.
 - [ ] Add more complete reference documentation for each public class and function.
 - [ ] Add visual regression or snapshot strategy for generated SVG examples.
@@ -200,6 +199,7 @@ The target shape is a layered library:
 ## Nuxt Content Documentation Migration
 
 - [ ] Keep the existing MkDocs site until the Nuxt Content site reaches feature parity.
+- [x] Create the initial Nuxt Content and Nuxt UI documentation shell.
 - [ ] Inventory all current Markdown pages and assets.
 - [ ] Add frontmatter to documentation pages:
   - `title`
@@ -338,16 +338,16 @@ and Nuxt Content documentation are in stronger shape.
 - [x] Add point cloud and distribution generators.
 - [x] Add parametric curve helpers.
 - [x] Add polar/radial helper functions.
-- [ ] Add particle/flow field and native SVG animation examples.
-- [ ] Add reusable creative presets that remain editable as plain SVG.
+- [ ] Park reusable creative presets until the documentation migration is further along.
 
 ### Milestone 4: Migrate Documentation To Nuxt Content
 
 - [ ] Prepare current docs for migration.
+- [x] Create the initial Nuxt Content and Nuxt UI documentation shell.
 - [ ] Build the Nuxt Content documentation site.
 - [ ] Port current pages and assets.
 - [ ] Add custom example/gallery components.
-- [ ] Add creative coding, generator, shapes, and recipe documentation.
+- [ ] Add creative coding examples, generator, shapes, and recipe documentation.
 - [ ] Deploy the new docs site.
 
 ### Milestone 5: Deferred Visualization Primitives
