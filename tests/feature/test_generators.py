@@ -143,7 +143,7 @@ def test_link_generator_supports_linear_and_orthogonal_cubic_links():
         (lambda: PieGenerator()([1, -1]), "non-negative"),
         (lambda: SymbolGenerator(symbol="square", size=-1)(), "non-negative"),
         (
-            lambda: LineGenerator(curve="monotone-x")(
+            lambda: LineGenerator[tuple[int, int]](curve="monotone-x")(
                 [(0, 0), (0, 10), (10, 20)]
             ),
             "strictly",
