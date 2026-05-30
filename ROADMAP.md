@@ -168,7 +168,8 @@ The target shape is a layered library:
 
 - [x] Expand noise utilities with deterministic seeding support.
 - [x] Add generative grid helpers.
-- [ ] Add tiling and pattern helpers.
+- [x] Add tiling helpers.
+- [ ] Add pattern helpers.
 - [x] Add point cloud and distribution generators.
 - [ ] Add parametric curve helpers.
 - [x] Add polar/radial helper functions.
@@ -332,7 +333,8 @@ and Nuxt Content documentation are in stronger shape.
 
 - [x] Expand noise utilities with deterministic seeding support.
 - [x] Add generative grid helpers.
-- [ ] Add tiling and pattern helpers.
+- [x] Add tiling helpers.
+- [ ] Add pattern helpers.
 - [x] Add point cloud and distribution generators.
 - [ ] Add parametric curve helpers.
 - [x] Add polar/radial helper functions.

@@ -26,10 +26,13 @@ from pydreamplet.core import (
     TransformList,
 )
 from pydreamplet.creative import (
+    Tile,
     circle_points,
     grid_points,
+    hex_tiles,
     noise_points,
     random_points,
+    square_tiles,
 )
 from pydreamplet.generators import (
     ArcGenerator,
@@ -100,6 +103,7 @@ __all__ = [
     "SvgElement",
     "Text",
     "TextOnPath",
+    "Tile",
     "Transform",
     "TransformList",
     "Vector",
@@ -107,6 +111,7 @@ __all__ = [
     "area_generator",
     "circle_points",
     "grid_points",
+    "hex_tiles",
     "iter_path_segments",
     "line_generator",
     "link_generator",
@@ -120,6 +125,7 @@ __all__ = [
     "radial_area_generator",
     "radial_line_generator",
     "random_points",
+    "square_tiles",
     "symbol_generator",
     "tangent_at_length",
 ]

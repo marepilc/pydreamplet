@@ -5,8 +5,10 @@ import pytest
 from pydreamplet.creative import (
     circle_points,
     grid_points,
+    hex_tiles,
     noise_points,
     random_points,
+    square_tiles,
 )
 
 
@@ -94,6 +96,93 @@ def test_noise_points_pair_grid_points_with_simplex_values():
     )
 
 
+def test_square_tiles_fit_rectangular_area_with_gap():
+    tiles = square_tiles(2, 2, 22, 12, gap=(2, 4))
+
+    assert [(tile.index, tile.row, tile.column) for tile in tiles] == [
+        (0, 0, 0),
+        (1, 0, 1),
+        (2, 1, 0),
+        (3, 1, 1),
+    ]
+    assert [tile.center.xy for tile in tiles] == [
+        (5.0, 2.0),
+        (17.0, 2.0),
+        (5.0, 10.0),
+        (17.0, 10.0),
+    ]
+    assert [point.xy for point in tiles[0].corners] == [
+        (0.0, 0.0),
+        (10.0, 0.0),
+        (10.0, 4.0),
+        (0.0, 4.0),
+    ]
+
+
+def test_square_tiles_support_origin_and_padding():
+    tiles = square_tiles(1, 1, 20, 10, origin=(5, 7), padding=(2, 1))
+
+    assert tiles[0].center.xy == (15.0, 12.0)
+    assert [point.xy for point in tiles[0].corners] == [
+        (7.0, 8.0),
+        (23.0, 8.0),
+        (23.0, 16.0),
+        (7.0, 16.0),
+    ]
+
+
+def test_hex_tiles_generate_pointy_offset_grid():
+    tiles = hex_tiles(2, 2, 10)
+
+    assert [(tile.index, tile.row, tile.column) for tile in tiles] == [
+        (0, 0, 0),
+        (1, 0, 1),
+        (2, 1, 0),
+        (3, 1, 1),
+    ]
+    assert [tile.center.xy for tile in tiles] == pytest.approx(
+        [
+            (0.0, 0.0),
+            (17.32050807568877, 0.0),
+            (8.660254037844386, 15.0),
+            (25.980762113533157, 15.0),
+        ]
+    )
+    expected_corners = [
+        (0.0, -10.0),
+        (8.660254037844387, -5.0),
+        (8.660254037844387, 5.0),
+        (0.0, 10.0),
+        (-8.660254037844387, 5.0),
+        (-8.660254037844387, -5.0),
+    ]
+    for point, expected in zip(tiles[0].corners, expected_corners, strict=True):
+        assert point.xy == pytest.approx(expected)
+
+
+def test_hex_tiles_generate_flat_offset_grid():
+    tiles = hex_tiles(2, 2, 10, orientation="flat")
+
+    assert [tile.center.xy for tile in tiles] == pytest.approx(
+        [
+            (0.0, 0.0),
+            (15.0, 8.660254037844386),
+            (0.0, 17.32050807568877),
+            (15.0, 25.980762113533157),
+        ]
+    )
+    expected_corners = [
+        (10.0, 0.0),
+        (5.0, 8.660254037844386),
+        (-5.0, 8.660254037844387),
+        (-10.0, 0.0),
+        (-5.0, -8.660254037844386),
+        (5.0, -8.660254037844386),
+    ]
+    for point, expected in zip(tiles[0].corners, expected_corners, strict=True):
+        assert point.xy == pytest.approx(expected)
+
+
 @pytest.mark.parametrize(
     "factory",
     [
@@ -103,6 +192,13 @@ def test_noise_points_pair_grid_points_with_simplex_values():
         lambda: circle_points(0, 10),
         lambda: circle_points(1, -1),
         lambda: circle_points(1, 10, radius_jitter=-1),
+        lambda: square_tiles(0, 1, 10, 10),
+        lambda: square_tiles(1, 0, 10, 10),
+        lambda: square_tiles(2, 1, 10, 10, gap=20),
+        lambda: hex_tiles(0, 1, 10),
+        lambda: hex_tiles(1, 1, 0),
+        lambda: hex_tiles(1, 1, 10, gap=-1),
+        lambda: hex_tiles(1, 1, 10, orientation="diagonal"),  # type: ignore[arg-type]
     ],
 )
 def test_creative_helpers_validate_invalid_input(factory):
