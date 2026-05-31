@@ -9,13 +9,19 @@ This section collects focused API notes for pyDreamplet primitives and output he
 
 Start here when you already know the basic drawing flow and need exact constructor shapes, properties, or output behavior.
 
-## Pages
+## Core
 
 - [SVG](/reference/svg) - root document, viewBox, dimensions, saving, and loading.
+- [SvgElement](/reference/svg-element) - shared attribute, child, search, copy, and serialization API.
+
+## Drawing Elements
+
+- [Shapes](/reference/shapes) - `Circle`, `Ellipse`, `Rect`, `Line`, `Polygon`, and `Polyline`.
+- [Definitions](/reference/definitions) - `Defs`, gradients, stops, patterns, masks, clip paths, and filters.
 
 ## Planned next
 
-- Elements and containers
-- Attributes, styles, and transforms
 - Paths and shape helpers
+- Text and text-on-path
+- Groups, transforms, and animation
 - Scales and data-driven geometry

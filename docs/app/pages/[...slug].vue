@@ -43,6 +43,18 @@ const navigation = [
       {
         title: 'SVG',
         path: '/reference/svg'
+      },
+      {
+        title: 'SvgElement',
+        path: '/reference/svg-element'
+      },
+      {
+        title: 'Shapes',
+        path: '/reference/shapes'
+      },
+      {
+        title: 'Definitions',
+        path: '/reference/definitions'
       }
     ]
   }
