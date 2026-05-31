@@ -39,6 +39,17 @@ filter_node = dp.SvgElement("feDropShadow", dx=0, dy=4, stdDeviation=3)
 | `tag` | `str` | yes | Local SVG tag name, without the SVG namespace. |
 | `**kwargs` | `Any` | no | SVG attributes. Names are normalized in the same way as `attrs()`. |
 
+## Type Names
+
+The signatures on this page use the same type names as the current source:
+
+| Type | Meaning |
+| --- | --- |
+| `Real` | `int | float` |
+| `AttributeValue` | `str | int | float | None` |
+| `PointLike` | `Vector | tuple[Real, Real] | list[Real]` |
+| `Self` | The concrete element type the method was called on. |
+
 `SvgElement` creates namespaced SVG elements, so serializing an element includes
 the root SVG namespace when needed.
 
@@ -274,4 +285,3 @@ dp.SvgElement.from_element(element: xml.etree.ElementTree.Element) -> SvgElement
 pyDreamplet registers its built-in SVG classes at import time. You only need
 `register()` when you create your own wrapper class and want `find()` or
 `find_all()` to return that class for a custom tag.
-

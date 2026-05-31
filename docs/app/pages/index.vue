@@ -41,7 +41,10 @@ const highlights = [
           </NuxtLink>
         </nav>
 
-        <ThemeToggle />
+        <div class="flex items-center gap-1">
+          <SearchButton />
+          <ThemeToggle />
+        </div>
       </div>
     </header>
 

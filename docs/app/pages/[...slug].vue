@@ -112,6 +112,7 @@ useSeoMeta({
         </div>
 
         <div class="flex items-center gap-1">
+          <SearchButton />
           <ThemeToggle />
 
           <USlideover
