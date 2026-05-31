@@ -17,11 +17,12 @@ Start here when you already know the basic drawing flow and need exact construct
 ## Drawing Elements
 
 - [Shapes](/reference/shapes) - `Circle`, `Ellipse`, `Rect`, `Line`, `Polygon`, and `Polyline`.
+- [Paths](/reference/paths) - `Path`, `PathBuilder`, parsing, normalization, linear measurement, and bounding boxes.
 - [Definitions](/reference/definitions) - `Defs`, gradients, stops, patterns, masks, clip paths, and filters.
 
 ## Planned next
 
-- Paths and shape helpers
 - Text and text-on-path
 - Groups, transforms, and animation
+- Shape helpers
 - Scales and data-driven geometry

@@ -53,6 +53,10 @@ const navigation = [
         path: '/reference/shapes'
       },
       {
+        title: 'Paths',
+        path: '/reference/paths'
+      },
+      {
         title: 'Definitions',
         path: '/reference/definitions'
       }
