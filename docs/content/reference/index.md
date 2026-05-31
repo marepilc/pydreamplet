@@ -18,11 +18,12 @@ Start here when you already know the basic drawing flow and need exact construct
 
 - [Shapes](/reference/shapes) - `Circle`, `Ellipse`, `Rect`, `Line`, `Polygon`, and `Polyline`.
 - [Paths](/reference/paths) - `Path`, `PathBuilder`, parsing, normalization, linear measurement, and bounding boxes.
+- [Transforms](/reference/transforms) - `G`, `Transform`, `TransformList`, and `Matrix2D`.
+- [Text](/reference/text) - `Text`, multiline `tspan` output, `TextOnPath`, and font-size behavior.
 - [Definitions](/reference/definitions) - `Defs`, gradients, stops, patterns, masks, clip paths, and filters.
 
 ## Planned next
 
-- Text and text-on-path
-- Groups, transforms, and animation
+- Animation
 - Shape helpers
 - Scales and data-driven geometry

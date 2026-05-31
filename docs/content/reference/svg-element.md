@@ -45,9 +45,9 @@ The signatures on this page use the same type names as the current source:
 
 | Type | Meaning |
 | --- | --- |
-| `Real` | `int | float` |
-| `AttributeValue` | `str | int | float | None` |
-| `PointLike` | `Vector | tuple[Real, Real] | list[Real]` |
+| `Real` | `int \| float` |
+| `AttributeValue` | `str \| int \| float \| None` |
+| `PointLike` | `Vector \| tuple[Real, Real] \| list[Real]` |
 | `Self` | The concrete element type the method was called on. |
 
 `SvgElement` creates namespaced SVG elements, so serializing an element includes

@@ -57,6 +57,14 @@ const navigation = [
         path: '/reference/paths'
       },
       {
+        title: 'Transforms',
+        path: '/reference/transforms'
+      },
+      {
+        title: 'Text',
+        path: '/reference/text'
+      },
+      {
         title: 'Definitions',
         path: '/reference/definitions'
       }

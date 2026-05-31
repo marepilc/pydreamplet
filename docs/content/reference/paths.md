@@ -25,7 +25,7 @@ import pydreamplet as dp
 
 | Type | Meaning |
 | --- | --- |
-| `Real` | `int | float` |
+| `Real` | `int \| float` |
 | `Vector` | `pydreamplet.math.Vector` |
 
 ## Path
