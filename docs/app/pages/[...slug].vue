@@ -65,6 +65,10 @@ const navigation = [
         path: '/reference/text'
       },
       {
+        title: 'Animation',
+        path: '/reference/animation'
+      },
+      {
         title: 'Definitions',
         path: '/reference/definitions'
       }

@@ -20,10 +20,10 @@ Start here when you already know the basic drawing flow and need exact construct
 - [Paths](/reference/paths) - `Path`, `PathBuilder`, parsing, normalization, linear measurement, and bounding boxes.
 - [Transforms](/reference/transforms) - `G`, `Transform`, `TransformList`, and `Matrix2D`.
 - [Text](/reference/text) - `Text`, multiline `tspan` output, `TextOnPath`, and font-size behavior.
+- [Animation](/reference/animation) - `Animate`, keyframe values, duration, and repeat count.
 - [Definitions](/reference/definitions) - `Defs`, gradients, stops, patterns, masks, clip paths, and filters.
 
 ## Planned next
 
-- Animation
 - Shape helpers
 - Scales and data-driven geometry
