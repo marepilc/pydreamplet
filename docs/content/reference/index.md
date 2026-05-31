@@ -28,7 +28,8 @@ Start here when you already know the basic drawing flow and need exact construct
 - [Shape helpers](/reference/shape-helpers) - path `d` string helpers for stars, curves, rings, and organic shapes.
 - [Vector](/reference/vector) - 2D coordinates, arithmetic, magnitude, direction, normalization, and limiting.
 - [Colors](/reference/colors) - top-level color conversion, blending, random color, and palette helpers.
+- [Typography](/reference/typography) - system font lookup and HarfBuzz/fontTools text measurement.
 
 ## Planned next
 
-- Typography, noise, and utilities
+- Noise and utilities

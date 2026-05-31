@@ -95,6 +95,10 @@ const navigation = [
       {
         title: 'Colors',
         path: '/reference/colors'
+      },
+      {
+        title: 'Typography',
+        path: '/reference/typography'
       }
     ]
   }

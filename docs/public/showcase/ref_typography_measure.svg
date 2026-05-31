@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="140" viewBox="0 0 300 140">
+  <rect x="32" y="50.84" width="181.41" height="34.83" fill="none" stroke="#14b8a6" stroke-width="2" stroke-dasharray="5 4"/>
+  <line x1="32" y1="78" x2="213.41" y2="78" stroke="#f83898" stroke-width="2"/>
+  <text x="32" y="78" font-family="Arial, sans-serif" font-size="32" font-weight="400" fill="currentColor">pyDreamplet</text>
+  <text x="32" y="116" font-size="12" fill="currentColor">181.4 x 34.8</text>
+</svg>
