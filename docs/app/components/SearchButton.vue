@@ -10,6 +10,14 @@ type DocSearchResult = {
   }
 }
 
+withDefaults(defineProps<{
+  label?: string
+  fullLabel?: boolean
+}>(), {
+  label: 'Search',
+  fullLabel: false
+})
+
 const open = ref(false)
 const query = ref('')
 const results = ref<DocSearchResult[]>([])
@@ -115,11 +123,11 @@ function handleShortcut(event: KeyboardEvent) {
     <UButton
       icon="i-lucide-search"
       color="neutral"
-      variant="ghost"
+      variant="outline"
       aria-label="Search documentation"
       @click="openSearch"
     >
-      <span class="hidden sm:inline">Search</span>
+      <span :class="fullLabel ? 'inline' : 'hidden sm:inline'">{{ label }}</span>
     </UButton>
 
     <template #body>
