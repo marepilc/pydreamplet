@@ -25,9 +25,9 @@ Start here when you already know the basic drawing flow and need exact construct
 - [Scales](/reference/scales) - numeric, categorical, color, square-root, and circle-area scales.
 - [Creative helpers](/reference/creative) - top-level point and tile layout helpers.
 - [Path generators](/reference/generators) - data-driven line, area, radial, pie, arc, symbol, and link path generators.
+- [Shape helpers](/reference/shape-helpers) - path `d` string helpers for stars, curves, rings, and organic shapes.
 
 ## Planned next
 
-- Shape helpers
 - Vector math
 - Colors, typography, noise, and utilities

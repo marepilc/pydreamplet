@@ -83,6 +83,10 @@ const navigation = [
       {
         title: 'Path generators',
         path: '/reference/generators'
+      },
+      {
+        title: 'Shape helpers',
+        path: '/reference/shape-helpers'
       }
     ]
   }

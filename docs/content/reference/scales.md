@@ -1,6 +1,6 @@
 ---
 title: Scales
-description: Reference for data scale classes in pydreamplet.scales.
+description: Reference for data scale classes exported from pydreamplet.
 navigation:
   title: Scales
 category: reference
@@ -11,26 +11,24 @@ category: reference
 Scales map data values into visual values such as positions, widths, radii, or
 colors.
 
-Scales are not exported from top-level `pydreamplet`. Import them from the
-`pydreamplet.scales` module.
+Scale classes are exported from top-level `pydreamplet`.
 
 ```python
-from pydreamplet.scales import BandScale, CircleScale, ColorScale, LinearScale
+import pydreamplet as dp
 ```
 
 ## Visual Example
 
 ```python
 import pydreamplet as dp
-from pydreamplet.scales import BandScale, CircleScale, ColorScale, LinearScale
 
 values = [12, 35, 24, 50]
 labels = ["A", "B", "C", "D"]
 
-x = BandScale(labels, (30, 310), padding=0.2)
-y = LinearScale((0, 50), (150, 30))
-color = ColorScale((0, 50), ("#14b8a6", "#f83898"))
-radius = CircleScale((0, 50), (8, 24))
+x = dp.BandScale(labels, (30, 310), padding=0.2)
+y = dp.LinearScale((0, 50), (150, 30))
+color = dp.ColorScale((0, 50), ("#14b8a6", "#f83898"))
+radius = dp.CircleScale((0, 50), (8, 24))
 
 svg = dp.SVG(340, 180)
 svg.append(dp.Line(24, 150, 320, 150, stroke="#94a3b8", stroke_width=2))
@@ -62,7 +60,7 @@ Maps a numeric value linearly from `domain` to `output_range`.
 | `output_range` | `NumericPair` | Reassigning recalculates the slope. |
 
 ```python
-scale = LinearScale((0, 10), (0, 100))
+scale = dp.LinearScale((0, 10), (0, 100))
 
 assert scale.map(5) == 50
 assert scale.invert(50) == 5
@@ -92,7 +90,7 @@ Maps distinct categorical values to band start positions.
 | `outer_padding` | `float` | Defaults to `padding`. |
 
 ```python
-scale = BandScale(["a", "b", "c"], (0, 300), padding=0.1)
+scale = dp.BandScale(["a", "b", "c"], (0, 300), padding=0.1)
 
 x = scale.map("b")
 width = scale.bandwidth
@@ -130,7 +128,7 @@ Maps categories to output values in order. If the domain is longer than the
 output range, output values repeat cyclically.
 
 ```python
-scale = OrdinalScale(["a", "b", "c"], ["red", "blue"])
+scale = dp.OrdinalScale(["a", "b", "c"], ["red", "blue"])
 
 assert scale.map("a") == "red"
 assert scale.map("c") == "red"
@@ -145,7 +143,7 @@ ColorScale(domain: NumericPair, output_range: tuple[str, str] | list[str])
 Interpolates between two hex colors and clamps values outside the domain.
 
 ```python
-scale = ColorScale((0, 100), ("#000000", "#ffffff"))
+scale = dp.ColorScale((0, 100), ("#000000", "#ffffff"))
 
 assert scale.map(50) == "#7f7f7f"
 assert scale.map(150) == "#ffffff"
@@ -164,7 +162,7 @@ Maps through a square-root transform. It is useful when a square side length
 should represent area.
 
 ```python
-scale = SquareScale((0, 100), (0, 10))
+scale = dp.SquareScale((0, 100), (0, 10))
 
 assert scale.map(25) == 5
 ```
@@ -180,7 +178,7 @@ CircleScale(domain: NumericPair, output_range: NumericPair)
 Maps values to circle radii so the circle area changes linearly with the input.
 
 ```python
-scale = CircleScale((0, 100), (5, 10))
+scale = dp.CircleScale((0, 100), (5, 10))
 
 radius = scale.map(50)
 ```
