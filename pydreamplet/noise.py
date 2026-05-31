@@ -15,9 +15,13 @@ class Noise:
         *,
         seed: int | None = None,
     ):
+        if min_val > max_val:
+            raise ValueError("min_val must be less than or equal to max_val")
+
         self._min = min_val
         self._max = max_val
         self._random = random.Random(seed) if seed is not None else random
+        self._range = 0.0
         self.noise_range = noise_range
         self._value = self._random.uniform(min_val, max_val)
 
@@ -27,6 +31,9 @@ class Noise:
 
     @min.setter
     def min(self, value: float) -> None:
+        if value > self._max:
+            raise ValueError("min cannot be greater than max")
+
         old_relative = self.noise_range
         if self._value < value:
             self._value = value
@@ -39,6 +46,9 @@ class Noise:
 
     @max.setter
     def max(self, value: float) -> None:
+        if value < self._min:
+            raise ValueError("max cannot be less than min")
+
         old_relative = self.noise_range
         if self._value > value:
             self._value = value
@@ -53,8 +63,10 @@ class Noise:
 
     @noise_range.setter
     def noise_range(self, value: float) -> None:
-        if 0 < value < 1:
-            self._range = value * (self._max - self._min)
+        if not 0 <= value <= 1:
+            raise ValueError("noise_range must be between 0 and 1")
+
+        self._range = value * (self._max - self._min)
 
     @property
     def value(self) -> float:
@@ -103,6 +115,10 @@ class NoiseBase:
         return p + p
 
     def _seeded_random(self, seed: int) -> Callable[[], float]:
+        seed %= 2147483647
+        if seed <= 0:
+            seed += 2147483646
+
         def random_func() -> float:
             nonlocal seed
             seed = (seed * 16807) % 2147483647

@@ -99,6 +99,18 @@ const navigation = [
       {
         title: 'Typography',
         path: '/reference/typography'
+      },
+      {
+        title: 'Noise',
+        path: '/reference/noise'
+      },
+      {
+        title: 'Utilities',
+        path: '/reference/utilities'
+      },
+      {
+        title: 'Markers',
+        path: '/reference/markers'
       }
     ]
   }

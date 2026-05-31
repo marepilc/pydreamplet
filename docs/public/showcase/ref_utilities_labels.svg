@@ -1,0 +1,29 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="150" viewBox="0 0 300 150">
+  <line stroke="currentColor" opacity="0.3" x1="24" y1="114" x2="276" y2="114"/>
+  <line stroke="currentColor" opacity="0.35" x1="42" y1="114" x2="42.0" y2="78"/>
+  <circle fill="#f83898" cx="42" cy="114" r="3"/>
+  <rect rx="4" fill="#14b8a6" opacity="0.24" stroke="#14b8a6" stroke-width="1.5" x="24.0" y="60" width="36.0" height="24"/>
+  <text font-size="11" text-anchor="middle" fill="currentColor" x="42.0" y="76">42</text>
+  <line stroke="currentColor" opacity="0.35" x1="55" y1="114" x2="80.0" y2="78"/>
+  <circle fill="#f83898" cx="55" cy="114" r="3"/>
+  <rect rx="4" fill="#14b8a6" opacity="0.24" stroke="#14b8a6" stroke-width="1.5" x="62.0" y="60" width="36.0" height="24"/>
+  <text font-size="11" text-anchor="middle" fill="currentColor" x="80.0" y="76">55</text>
+  <line stroke="currentColor" opacity="0.35" x1="68" y1="114" x2="120.0" y2="78"/>
+  <circle fill="#f83898" cx="68" cy="114" r="3"/>
+  <rect rx="4" fill="#14b8a6" opacity="0.24" stroke="#14b8a6" stroke-width="1.5" x="102.0" y="60" width="36.0" height="24"/>
+  <text font-size="11" text-anchor="middle" fill="currentColor" x="120.0" y="76">68</text>
+  <line stroke="currentColor" opacity="0.35" x1="128" y1="114" x2="164.0" y2="78"/>
+  <circle fill="#f83898" cx="128" cy="114" r="3"/>
+  <rect rx="4" fill="#14b8a6" opacity="0.24" stroke="#14b8a6" stroke-width="1.5" x="142.0" y="60" width="44.0" height="24"/>
+  <text font-size="11" text-anchor="middle" fill="currentColor" x="164.0" y="76">128</text>
+  <line stroke="currentColor" opacity="0.35" x1="136" y1="114" x2="212.0" y2="78"/>
+  <circle fill="#f83898" cx="136" cy="114" r="3"/>
+  <rect rx="4" fill="#14b8a6" opacity="0.24" stroke="#14b8a6" stroke-width="1.5" x="190.0" y="60" width="44.0" height="24"/>
+  <text font-size="11" text-anchor="middle" fill="currentColor" x="212.0" y="76">136</text>
+  <line stroke="currentColor" opacity="0.35" x1="206" y1="114" x2="257.0" y2="78"/>
+  <circle fill="#f83898" cx="206" cy="114" r="3"/>
+  <rect rx="4" fill="#14b8a6" opacity="0.24" stroke="#14b8a6" stroke-width="1.5" x="238.0" y="60" width="38.0" height="24"/>
+  <text font-size="11" text-anchor="middle" fill="currentColor" x="257.0" y="76">206</text>
+  <text font-size="12" fill="currentColor" x="24" y="134">anchor positions</text>
+  <text font-size="12" fill="currentColor" x="58" y="45">resolved label positions</text>
+</svg>

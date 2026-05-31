@@ -29,7 +29,10 @@ Start here when you already know the basic drawing flow and need exact construct
 - [Vector](/reference/vector) - 2D coordinates, arithmetic, magnitude, direction, normalization, and limiting.
 - [Colors](/reference/colors) - top-level color conversion, blending, random color, and palette helpers.
 - [Typography](/reference/typography) - system font lookup and HarfBuzz/fontTools text measurement.
+- [Noise](/reference/noise) - bounded random-walk values and deterministic simplex noise.
+- [Utilities](/reference/utilities) - numeric, angle, tick, pie, sampling, and collision helpers.
+- [Markers](/reference/markers) - SVG marker elements and predefined arrow, tick, and symbol path constants.
 
 ## Planned next
 
-- Noise and utilities
+- Audit remaining reference coverage
