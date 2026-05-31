@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="260" height="170" viewBox="0 0 260 170">
+  <line x1="56" y1="124" x2="164" y2="124" stroke="#64748b" stroke-width="1" stroke-dasharray="4 5" opacity="0.75"/>
+  <line x1="56" y1="124" x2="164" y2="52" stroke="#14b8a6" stroke-width="3" stroke-linecap="round"/>
+  <path d="M 164.00,52.00 L 151.26,54.77 L 156.81,63.09 Z" fill="#14b8a6"/>
+  <circle cx="56" cy="124" r="4" fill="#14b8a6"/>
+  <circle cx="164" cy="52" r="4" fill="#14b8a6"/>
+  <text x="28" y="143" font-size="12" fill="currentColor">origin</text>
+  <text x="172" y="48" font-size="12" fill="currentColor">tip</text>
+  <text x="154" y="106" font-size="12" fill="currentColor">length 129.8</text>
+  <text x="154" y="124" font-size="12" fill="currentColor">unit 0.83, -0.55</text>
+</svg>

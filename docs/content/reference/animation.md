@@ -28,28 +28,29 @@ that name to the generated `attributeName` attribute.
 
 ```python
 svg = dp.SVG(360, 180)
-svg.append(dp.Rect(x=0, y=0, width=360, height=180, fill="#f8fafc"))
-svg.append(dp.Line(90, 90, 270, 90, stroke="#cbd5e1", stroke_width=3, stroke_dasharray="8 8"))
+svg.append(dp.Line(90, 90, 270, 90, stroke="currentColor", stroke_width=3, stroke_dasharray="8 8", opacity=0.35))
 
 circle = dp.Circle(
     cx=90,
     cy=90,
     r=24,
-    fill="#14b8a6",
-    stroke="#0f766e",
+    fill="currentColor",
+    opacity=0.7,
+    stroke="currentColor",
     stroke_width=4,
 )
 
 circle.append(
     dp.Animate("cx", values=[90, 270, 90], dur="3s"),
     dp.Animate("r", values=[24, 38, 24], dur="3s"),
-    dp.Animate("fill", values=["#14b8a6", "#f83898", "#14b8a6"], dur="3s"),
+    dp.Animate("opacity", values=[0.45, 1, 0.45], dur="3s"),
 )
 
 svg.append(circle)
 ```
 
-<img src="/showcase/ref_animation_animate.svg" alt="Animated SVG circle moving, growing, and changing fill color" class="mt-6 w-full rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800" />
+::svg-preview{src="/showcase/ref_animation_animate.svg" alt="Animated SVG circle moving, growing, and changing opacity"}
+::
 
 ## Constructor Parameters
 

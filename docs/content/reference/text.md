@@ -132,7 +132,6 @@ value of `font-size`; if that cannot be parsed, it falls back to `16`.
 
 ```python
 svg = dp.SVG(320, 160)
-svg.append(dp.Rect(x=0, y=0, width=320, height=160, fill="#f8fafc"))
 
 text = dp.Text(
     "Hello,\nWorld!",
@@ -140,14 +139,15 @@ text = dp.Text(
     y=58,
     font_size=32,
     v_space=40,
-    fill="#1b313b",
+    fill="currentColor",
     font_weight=700,
 )
 
 svg.append(text)
 ```
 
-<img src="/showcase/ref_text_multiline.svg" alt="Multiline SVG text split into two tspan lines" class="mt-6 w-full rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800" />
+::svg-preview{src="/showcase/ref_text_multiline.svg" alt="Multiline SVG text split into two tspan lines"}
+::
 
 Assigning new content removes any existing child elements before writing the new
 content.
@@ -204,13 +204,12 @@ Creates a `<text>` element with a nested `<textPath>`.
 
 ```python
 svg = dp.SVG(360, 180)
-svg.append(dp.Rect(x=0, y=0, width=360, height=180, fill="#f8fafc"))
 
 path = dp.Path(
     id="curve",
     d="M40 120 C95 30 265 30 320 120",
     fill="none",
-    stroke="#0f766e",
+    stroke="currentColor",
     stroke_width=3,
 )
 
@@ -221,7 +220,7 @@ label = dp.TextOnPath(
         "startOffset": "50%",
         "text_anchor": "middle",
     },
-    fill="#be185d",
+    fill="currentColor",
     font_size=24,
     font_weight=700,
 )
@@ -229,7 +228,8 @@ label = dp.TextOnPath(
 svg.append(path).append(label)
 ```
 
-<img src="/showcase/ref_text_on_path.svg" alt="Text rendered along a curved SVG path" class="mt-6 w-full rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800" />
+::svg-preview{src="/showcase/ref_text_on_path.svg" alt="Text rendered along a curved SVG path"}
+::
 
 If `path_id` already starts with `#`, it is used unchanged.
 

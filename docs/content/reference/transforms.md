@@ -49,12 +49,11 @@ The constructor also accepts normal SVG attributes through `**kwargs`.
 
 ```python
 svg = dp.SVG(360, 180)
-svg.append(dp.Rect(x=0, y=0, width=360, height=180, fill="#f8fafc"))
 
 group = dp.G(pos=(180, 90), angle=25, scale=dp.Vector(1.25, 1.25))
-group.append(dp.Rect(x=-45, y=-28, width=90, height=56, rx=8, fill="#14b8a6", opacity=0.82))
-group.append(dp.Line(-70, 0, 70, 0, stroke="#1b313b", stroke_width=2, opacity=0.45))
-group.append(dp.Text("G", x=0, y=6, fill="#111827", font_size=28, font_weight=800, text_anchor="middle"))
+group.append(dp.Rect(x=-45, y=-28, width=90, height=56, rx=8, fill="currentColor", opacity=0.18))
+group.append(dp.Line(-70, 0, 70, 0, stroke="currentColor", stroke_width=2, opacity=0.45))
+group.append(dp.Text("G", x=0, y=6, fill="currentColor", font_size=28, font_weight=800, text_anchor="middle"))
 
 svg.append(group)
 
@@ -62,7 +61,8 @@ print(group.transform)
 # translate(180 90) rotate(25) scale(1.25 1.25)
 ```
 
-<img src="/showcase/ref_transforms_group.svg" alt="SVG group translated, rotated, and scaled" class="mt-6 w-full rounded-lg border border-neutral-200 bg-white p-4 dark:border-neutral-800" />
+::svg-preview{src="/showcase/ref_transforms_group.svg" alt="SVG group translated, rotated, and scaled"}
+::
 
 ### Group Properties
 

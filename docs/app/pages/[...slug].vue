@@ -87,6 +87,14 @@ const navigation = [
       {
         title: 'Shape helpers',
         path: '/reference/shape-helpers'
+      },
+      {
+        title: 'Vector',
+        path: '/reference/vector'
+      },
+      {
+        title: 'Colors',
+        path: '/reference/colors'
       }
     ]
   }

@@ -26,8 +26,9 @@ Start here when you already know the basic drawing flow and need exact construct
 - [Creative helpers](/reference/creative) - top-level point and tile layout helpers.
 - [Path generators](/reference/generators) - data-driven line, area, radial, pie, arc, symbol, and link path generators.
 - [Shape helpers](/reference/shape-helpers) - path `d` string helpers for stars, curves, rings, and organic shapes.
+- [Vector](/reference/vector) - 2D coordinates, arithmetic, magnitude, direction, normalization, and limiting.
+- [Colors](/reference/colors) - top-level color conversion, blending, random color, and palette helpers.
 
 ## Planned next
 
-- Vector math
-- Colors, typography, noise, and utilities
+- Typography, noise, and utilities

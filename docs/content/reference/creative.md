@@ -23,16 +23,17 @@ import pydreamplet as dp
 svg = dp.SVG(360, 180)
 
 for point in dp.phyllotaxis_points(90, spacing=6, center=(95, 90)):
-    svg.append(dp.Circle(cx=point.x, cy=point.y, r=2.8, fill="#14b8a6"))
+    svg.append(dp.Circle(cx=point.x, cy=point.y, r=2.8, fill="currentColor"))
 
 for tile in dp.hex_tiles(5, 3, 14, origin=(220, 42), gap=4):
     points = []
     for corner in tile.corners:
         points.extend(corner.xy)
-    svg.append(dp.Polygon(points, fill="none", stroke="#f83898", stroke_width=2))
+    svg.append(dp.Polygon(points, fill="none", stroke="currentColor", stroke_width=2, opacity=0.65))
 ```
 
-<img src="/showcase/ref_creative_helpers.svg" alt="Phyllotaxis points next to a hex tile grid." class="my-6 w-full rounded-md border border-neutral-200 bg-white dark:border-neutral-800" />
+::svg-preview{src="/showcase/ref_creative_helpers.svg" alt="Phyllotaxis points next to a hex tile grid."}
+::
 
 ## Tile
 

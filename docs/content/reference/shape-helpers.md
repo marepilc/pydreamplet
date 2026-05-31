@@ -25,16 +25,17 @@ import pydreamplet as dp
 svg = dp.SVG(420, 190)
 
 svg.append(
-    dp.Path(dp.star(58, 58, n=5, inner_radius=18, outer_radius=40, angle=-90), fill="#f83898"),
-    dp.Path(dp.superellipse(155, 58, rx=48, ry=34, exponent=4, n=48), fill="#14b8a6"),
-    dp.Path(dp.rounded_polygon([(245, 22), (320, 36), (306, 106), (232, 100)], radius=14), fill="#38bdf8"),
-    dp.Path(dp.blob(372, 64, radius=38, variance=0.22, n=10, seed=5), fill="#95cf20"),
-    dp.Path(dp.ring(96, 142, inner_radius=20, outer_radius=42, start_angle=-35, end_angle=250), fill="#f59e0b"),
-    dp.Path(dp.cross(210, 142, size=74, thickness=22, angle=35), fill="#64748b"),
+    dp.Path(dp.star(58, 58, n=5, inner_radius=18, outer_radius=40, angle=-90), fill="currentColor"),
+    dp.Path(dp.superellipse(155, 58, rx=48, ry=34, exponent=4, n=48), fill="currentColor", opacity=0.68),
+    dp.Path(dp.rounded_polygon([(245, 22), (320, 36), (306, 106), (232, 100)], radius=14), fill="none", stroke="currentColor", stroke_width=4),
+    dp.Path(dp.blob(372, 64, radius=38, variance=0.22, n=10, seed=5), fill="currentColor", opacity=0.35),
+    dp.Path(dp.ring(96, 142, inner_radius=20, outer_radius=42, start_angle=-35, end_angle=250), fill="currentColor", opacity=0.45),
+    dp.Path(dp.cross(210, 142, size=74, thickness=22, angle=35), fill="none", stroke="currentColor", stroke_width=4),
 )
 ```
 
-<img src="/showcase/ref_shape_helpers.svg" alt="Star, superellipse, rounded polygon, blob, ring, and cross paths." class="my-6 w-full rounded-md border border-neutral-200 bg-white dark:border-neutral-800" />
+::svg-preview{src="/showcase/ref_shape_helpers.svg" alt="Star, superellipse, rounded polygon, blob, ring, and cross paths."}
+::
 
 ## Point Input
 

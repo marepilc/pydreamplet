@@ -33,20 +33,21 @@ symbols = [
 ]
 
 svg = dp.SVG(330, 180)
-svg.append(dp.Path(area(points), fill="#ccfbf1"))
-svg.append(dp.Path(line(points), fill="none", stroke="#0f766e", stroke_width=4))
+svg.append(dp.Path(area(points), fill="currentColor", opacity=0.16))
+svg.append(dp.Path(line(points), fill="none", stroke="currentColor", stroke_width=4))
 
 for item in symbols:
     svg.append(
         dp.Path(
             symbol(item),
-            fill="#f83898",
+            fill="currentColor",
             transform=f"translate({item['x']} {item['y']})",
         )
     )
 ```
 
-<img src="/showcase/ref_path_generators.svg" alt="Area, line, and symbol paths generated from data." class="my-6 w-full rounded-md border border-neutral-200 bg-white dark:border-neutral-800" />
+::svg-preview{src="/showcase/ref_path_generators.svg" alt="Area, line, and symbol paths generated from data."}
+::
 
 ## Curves
 

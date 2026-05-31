@@ -31,18 +31,19 @@ color = dp.ColorScale((0, 50), ("#14b8a6", "#f83898"))
 radius = dp.CircleScale((0, 50), (8, 24))
 
 svg = dp.SVG(340, 180)
-svg.append(dp.Line(24, 150, 320, 150, stroke="#94a3b8", stroke_width=2))
+svg.append(dp.Line(24, 150, 320, 150, stroke="currentColor", stroke_width=2, opacity=0.35))
 
 for label, value in zip(labels, values):
     cx = x.map(label) + x.bandwidth / 2
     cy = y.map(value)
     svg.append(
         dp.Circle(cx=cx, cy=cy, r=radius.map(value), fill=color.map(value), opacity=0.9),
-        dp.Text(label, x=cx, y=168, font_size=14, text_anchor="middle", fill="#334155"),
+        dp.Text(label, x=cx, y=168, font_size=14, text_anchor="middle", fill="currentColor"),
     )
 ```
 
-<img src="/showcase/ref_scales_bubbles.svg" alt="Bubble chart generated from band, linear, color, and circle scales." class="my-6 w-full rounded-md border border-neutral-200 bg-white dark:border-neutral-800" />
+::svg-preview{src="/showcase/ref_scales_bubbles.svg" alt="Bubble chart generated from band, linear, color, and circle scales."}
+::
 
 ## LinearScale
 
