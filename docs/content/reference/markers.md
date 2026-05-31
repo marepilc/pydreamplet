@@ -146,21 +146,76 @@ assert marker.id_ref == "url(#arrow)"
 
 The module exports these path data constants:
 
-- `ARROW`
-- `ARROW_BASIC`
-- `ARROW_CONCAVE`
-- `ARROW_CONVEX`
-- `ARROW_SIMPLE`
-- `CROSS`
-- `DIAMOND`
-- `DOT`
-- `SQUARE`
-- `TICK_BOTTOM`
-- `TICK_HORIZONTAL`
-- `TICK_LEFT`
-- `TICK_RIGHT`
-- `TICK_TOP`
-- `TICK_VERTICAL`
+<table>
+  <thead>
+    <tr>
+      <th>Name</th>
+      <th>Shape</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td><code>ARROW</code></td>
+      <td><svg width="48" height="32" viewBox="0 0 10 10" aria-label="ARROW marker shape"><path d="M2.499 5 L1.565 1.7 L8.435 5 L1.565 8.3 Z" fill="currentColor"/></svg></td>
+    </tr>
+    <tr>
+      <td><code>ARROW_BASIC</code></td>
+      <td><svg width="48" height="32" viewBox="0 0 10 10" aria-label="ARROW_BASIC marker shape"><path d="M0 1.91 10 5 0 8.09V1.91Z" fill="currentColor"/></svg></td>
+    </tr>
+    <tr>
+      <td><code>ARROW_CONCAVE</code></td>
+      <td><svg width="48" height="32" viewBox="0 0 10 10" aria-label="ARROW_CONCAVE marker shape"><path d="M0 8.09a22.48 22.48 0 0 0 0-6.18C2.862 3.396 6.241 4.382 10 5c-3.759.618-7.138 1.604-10 3.09Z" fill="currentColor"/></svg></td>
+    </tr>
+    <tr>
+      <td><code>ARROW_CONVEX</code></td>
+      <td><svg width="48" height="32" viewBox="0 0 10 10" aria-label="ARROW_CONVEX marker shape"><path d="M.505 5 0 1.91C1.453 1.908 6.391 2.989 10 5 6.391 7.011 1.453 8.092 0 8.09L.505 5Z" fill="currentColor"/></svg></td>
+    </tr>
+    <tr>
+      <td><code>ARROW_SIMPLE</code></td>
+      <td><svg width="48" height="32" viewBox="0 0 10 10" aria-label="ARROW_SIMPLE marker shape"><path d="M3.596 5 .768 2.172 2.182.757 6.424 5 2.182 9.243.768 7.828 3.596 5Z" fill="currentColor"/></svg></td>
+    </tr>
+    <tr>
+      <td><code>CROSS</code></td>
+      <td><svg width="48" height="32" viewBox="0 0 10 10" aria-label="CROSS marker shape"><path d="M1.667 3.333L3.333 1.667L5 3.333L6.667 1.667L8.333 3.333L6.667 5L8.333 6.667L6.667 8.333L5 6.667L3.333 8.333L1.667 6.667L3.333 5L1.667 3.333Z" fill="currentColor"/></svg></td>
+    </tr>
+    <tr>
+      <td><code>DIAMOND</code></td>
+      <td><svg width="48" height="32" viewBox="0 0 10 10" aria-label="DIAMOND marker shape"><path d="M5 1.91 8.09 5 5 8.09 1.91 5 5 1.91Z" fill="currentColor"/></svg></td>
+    </tr>
+    <tr>
+      <td><code>DOT</code></td>
+      <td><svg width="48" height="32" viewBox="0 0 10 10" aria-label="DOT marker shape"><path d="M 9.09 5 A 4.09 4.09 0 1 0 0.91 5 A 4.09 4.09 0 1 0 9.09 5 Z" fill="currentColor"/></svg></td>
+    </tr>
+    <tr>
+      <td><code>SQUARE</code></td>
+      <td><svg width="48" height="32" viewBox="0 0 10 10" aria-label="SQUARE marker shape"><path d="M1.91 1.91h6.18v6.18H1.91z" fill="currentColor"/></svg></td>
+    </tr>
+    <tr>
+      <td><code>TICK_BOTTOM</code></td>
+      <td><svg width="48" height="32" viewBox="0 0 10 10" aria-label="TICK_BOTTOM marker shape"><path d="M4 5h2v5H4z" fill="currentColor"/></svg></td>
+    </tr>
+    <tr>
+      <td><code>TICK_HORIZONTAL</code></td>
+      <td><svg width="48" height="32" viewBox="0 0 10 10" aria-label="TICK_HORIZONTAL marker shape"><path d="M2.5 4h5v2h-5z" fill="currentColor"/></svg></td>
+    </tr>
+    <tr>
+      <td><code>TICK_LEFT</code></td>
+      <td><svg width="48" height="32" viewBox="0 0 10 10" aria-label="TICK_LEFT marker shape"><path d="M0 4h5v2H0z" fill="currentColor"/></svg></td>
+    </tr>
+    <tr>
+      <td><code>TICK_RIGHT</code></td>
+      <td><svg width="48" height="32" viewBox="0 0 10 10" aria-label="TICK_RIGHT marker shape"><path d="M5 4h5v2H5z" fill="currentColor"/></svg></td>
+    </tr>
+    <tr>
+      <td><code>TICK_TOP</code></td>
+      <td><svg width="48" height="32" viewBox="0 0 10 10" aria-label="TICK_TOP marker shape"><path d="M4 0h2v5H4z" fill="currentColor"/></svg></td>
+    </tr>
+    <tr>
+      <td><code>TICK_VERTICAL</code></td>
+      <td><svg width="48" height="32" viewBox="0 0 10 10" aria-label="TICK_VERTICAL marker shape"><path d="M4 2.5h2v5H4z" fill="currentColor"/></svg></td>
+    </tr>
+  </tbody>
+</table>
 
 Use them as the `d` argument for `Marker`.
 

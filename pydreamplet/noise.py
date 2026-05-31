@@ -141,8 +141,6 @@ class NoiseBase:
 class SimplexNoise(NoiseBase):
     def __init__(self, seed: int | None = None):
         super().__init__(seed)
-        # For 1D, the gradient can be either 1 or -1.
-        self.grad3 = [1, -1]
 
     def noise(self, x: float, frequency: float = 1, amplitude: float = 1) -> float:
         x *= frequency
@@ -164,13 +162,17 @@ class SimplexNoise(NoiseBase):
             t1 *= t1
             n1 = t1 * t1 * self._grad(self.permutation[i1 & 255], x1)
 
-        # rawNoise is roughly in [-1, 1]
-        raw_noise = 0.5 * (n0 + n1)
+        # Scale to roughly [-1, 1], then map to [0, amplitude].
+        raw_noise = 0.395 * (n0 + n1)
         # Map [-1, 1] -> [0, 1] then scale by amplitude
         return amplitude * ((raw_noise + 1) / 2)
 
     def _grad(self, hash_val: int, x: float) -> float:
-        return self.grad3[hash_val & 1] * x
+        h = hash_val & 15
+        grad = 1.0 + (h & 7)
+        if h & 8:
+            grad = -grad
+        return grad * x
 
 
 # ────────────────────────────────────────────────────────────
