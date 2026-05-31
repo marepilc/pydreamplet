@@ -1,0 +1,188 @@
+---
+title: Scales
+description: Reference for data scale classes in pydreamplet.scales.
+navigation:
+  title: Scales
+category: reference
+---
+
+# Scales
+
+Scales map data values into visual values such as positions, widths, radii, or
+colors.
+
+Scales are not exported from top-level `pydreamplet`. Import them from the
+`pydreamplet.scales` module.
+
+```python
+from pydreamplet.scales import BandScale, CircleScale, ColorScale, LinearScale
+```
+
+## Visual Example
+
+```python
+import pydreamplet as dp
+from pydreamplet.scales import BandScale, CircleScale, ColorScale, LinearScale
+
+values = [12, 35, 24, 50]
+labels = ["A", "B", "C", "D"]
+
+x = BandScale(labels, (30, 310), padding=0.2)
+y = LinearScale((0, 50), (150, 30))
+color = ColorScale((0, 50), ("#14b8a6", "#f83898"))
+radius = CircleScale((0, 50), (8, 24))
+
+svg = dp.SVG(340, 180)
+svg.append(dp.Line(24, 150, 320, 150, stroke="#94a3b8", stroke_width=2))
+
+for label, value in zip(labels, values):
+    cx = x.map(label) + x.bandwidth / 2
+    cy = y.map(value)
+    svg.append(
+        dp.Circle(cx=cx, cy=cy, r=radius.map(value), fill=color.map(value), opacity=0.9),
+        dp.Text(label, x=cx, y=168, font_size=14, text_anchor="middle", fill="#334155"),
+    )
+```
+
+<img src="/showcase/ref_scales_bubbles.svg" alt="Bubble chart generated from band, linear, color, and circle scales." class="my-6 w-full rounded-md border border-neutral-200 bg-white dark:border-neutral-800" />
+
+## LinearScale
+
+```python
+LinearScale(domain: NumericPair, output_range: NumericPair)
+```
+
+Maps a numeric value linearly from `domain` to `output_range`.
+
+| Member | Type | Notes |
+| --- | --- | --- |
+| `map(value)` | `float -> float` | Maps from domain to output range. |
+| `invert(value)` | `float -> float` | Maps from output range back to domain. |
+| `domain` | `NumericPair` | Reassigning recalculates the slope. |
+| `output_range` | `NumericPair` | Reassigning recalculates the slope. |
+
+```python
+scale = LinearScale((0, 10), (0, 100))
+
+assert scale.map(5) == 50
+assert scale.invert(50) == 5
+```
+
+## BandScale
+
+```python
+BandScale(
+    domain: list[Any] | tuple[Any, ...] | Iterable[Any],
+    output_range: NumericPair,
+    padding: float = 0.1,
+    outer_padding: float | None = None,
+)
+```
+
+Maps distinct categorical values to band start positions.
+
+| Member | Type | Notes |
+| --- | --- | --- |
+| `map(value)` | `Any -> float` | Raises `ValueError` for unknown values. |
+| `bandwidth` | `float` | Computed width of one band. |
+| `step` | `float` | Distance between band starts. |
+| `domain` | `list[Any]` | Values must be distinct on construction. |
+| `output_range` | `NumericPair` | Output interval. |
+| `padding` | `float` | Inner padding multiplier. |
+| `outer_padding` | `float` | Defaults to `padding`. |
+
+```python
+scale = BandScale(["a", "b", "c"], (0, 300), padding=0.1)
+
+x = scale.map("b")
+width = scale.bandwidth
+```
+
+## PointScale
+
+```python
+PointScale(
+    domain: list[Any] | tuple[Any, ...] | Iterable[Any],
+    output_range: NumericPair,
+    padding: float = 0.5,
+)
+```
+
+Maps distinct categorical values to discrete points.
+
+| Member | Type | Notes |
+| --- | --- | --- |
+| `map(value)` | `Any -> float \| None` | Returns `None` for unknown values. |
+| `domain` | `list[Any]` | Must contain at least one distinct value. |
+| `output_range` | `NumericPair` | Output interval. |
+| `padding` | `float` | Padding at both range ends. |
+
+## OrdinalScale
+
+```python
+OrdinalScale(
+    domain: list[Any] | tuple[Any, ...] | Iterable[Any],
+    output_range: list[Any] | tuple[Any, ...] | Sequence[Any],
+)
+```
+
+Maps categories to output values in order. If the domain is longer than the
+output range, output values repeat cyclically.
+
+```python
+scale = OrdinalScale(["a", "b", "c"], ["red", "blue"])
+
+assert scale.map("a") == "red"
+assert scale.map("c") == "red"
+```
+
+## ColorScale
+
+```python
+ColorScale(domain: NumericPair, output_range: tuple[str, str] | list[str])
+```
+
+Interpolates between two hex colors and clamps values outside the domain.
+
+```python
+scale = ColorScale((0, 100), ("#000000", "#ffffff"))
+
+assert scale.map(50) == "#7f7f7f"
+assert scale.map(150) == "#ffffff"
+```
+
+`output_range` must contain exactly two colors. Domain endpoints must be
+distinct.
+
+## SquareScale
+
+```python
+SquareScale(domain: NumericPair, output_range: NumericPair)
+```
+
+Maps through a square-root transform. It is useful when a square side length
+should represent area.
+
+```python
+scale = SquareScale((0, 100), (0, 10))
+
+assert scale.map(25) == 5
+```
+
+Domain values must be non-negative and distinct after square-root conversion.
+
+## CircleScale
+
+```python
+CircleScale(domain: NumericPair, output_range: NumericPair)
+```
+
+Maps values to circle radii so the circle area changes linearly with the input.
+
+```python
+scale = CircleScale((0, 100), (5, 10))
+
+radius = scale.map(50)
+```
+
+Domain endpoints must be distinct.

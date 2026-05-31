@@ -71,6 +71,18 @@ const navigation = [
       {
         title: 'Definitions',
         path: '/reference/definitions'
+      },
+      {
+        title: 'Scales',
+        path: '/reference/scales'
+      },
+      {
+        title: 'Creative helpers',
+        path: '/reference/creative'
+      },
+      {
+        title: 'Path generators',
+        path: '/reference/generators'
       }
     ]
   }
