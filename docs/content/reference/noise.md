@@ -17,6 +17,10 @@ Noise classes are imported from `pydreamplet.noise`.
 from pydreamplet.noise import Noise, SimplexNoise, SimplexNoise2D, SimplexNoise3D
 ```
 
+`NoiseBase` is the shared base class for the simplex implementations. It owns
+seeded permutation generation and helper math; user code normally instantiates
+`SimplexNoise`, `SimplexNoise2D`, or `SimplexNoise3D` instead.
+
 ## Visual Example
 
 This example samples `SimplexNoise2D` over a small grid. Each noise value drives

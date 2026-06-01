@@ -350,3 +350,23 @@ not treated as points.
 
 This is a convenience model for placement. Use `Path.bbox` when you need a
 geometric bounding box.
+
+### `extract_path_points`
+
+```python
+from pydreamplet.path_data import extract_path_points
+
+extract_path_points(path_data: str) -> list[Vector]
+```
+
+Returns the explicit coordinate points used by `Path.w`, `Path.h`, and
+`Path.center`. It is not exported from top-level `pydreamplet`.
+
+```python
+from pydreamplet.path_data import extract_path_points
+
+points = extract_path_points("M10 20 H30 V40")
+
+print([point.xy for point in points])
+# [(10.0, 20.0), (30.0, 20.0), (30.0, 40.0)]
+```

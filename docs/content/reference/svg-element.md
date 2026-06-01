@@ -60,6 +60,20 @@ print(str(node))
 # <rect xmlns="http://www.w3.org/2000/svg" x="10" y="20" width="80" height="40" />
 ```
 
+The `pydreamplet.core` module also exposes namespace constants and helpers used
+by the wrapper layer:
+
+| Name | Meaning |
+| --- | --- |
+| `SVG_NS` | SVG namespace URI. |
+| `XML_NS` | XML namespace URI. |
+| `XLINK_NS` | XLink namespace URI. |
+| `qname(tag)` | Expands an SVG tag name to ElementTree namespace form. |
+| `ns_attr(prefix, name)` | Expands an XML or XLink attribute name. |
+
+These helpers are useful when mixing pyDreamplet wrappers with raw
+`xml.etree.ElementTree` elements.
+
 ## Attribute Names
 
 Keyword and dictionary attribute names use Python identifiers. pyDreamplet maps
@@ -175,6 +189,27 @@ rect.set_style({
     "paint_order": "stroke",
     "vector_effect": "non-scaling-stroke",
 })
+```
+
+### `normalize_attrs`
+
+```python
+dp.SvgElement.normalize_attrs(attrs: dict[str, object]) -> dict[str, object]
+```
+
+Returns a new attribute dictionary with Python-friendly names converted to SVG
+attribute names. It is the same normalization used by constructors,
+`attrs()`, and `set_attr()`.
+
+```python
+attrs = dp.SvgElement.normalize_attrs({
+    "stroke_width": 2,
+    "class_name": "mark",
+    "xlink_href": "#shape",
+})
+
+print(attrs)
+# {'stroke-width': 2, 'class': 'mark', '{http://www.w3.org/1999/xlink}href': '#shape'}
 ```
 
 ## Children

@@ -41,7 +41,10 @@ not, it inserts a new one as the first child.
 
 ## Definition References
 
-Gradient, pattern, mask, clip path, and filter wrappers inherit `id_ref`.
+Gradient, pattern, mask, clip path, and filter wrappers inherit from
+`SvgDefinition`, the shared base class for reusable SVG resources. Its public
+surface is intentionally small: it adds the `id_ref` property used when another
+element references the resource.
 
 ```python
 gradient = dp.LinearGradient(id="accent")
@@ -261,4 +264,3 @@ svg.append(
     )
 )
 ```
-

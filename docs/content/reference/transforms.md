@@ -18,6 +18,10 @@ pyDreamplet exposes two layers for SVG transforms:
 Use `G` for normal drawing composition. Use the lower-level classes when you
 need to parse, inspect, compose, or apply transforms numerically.
 
+`Transformable` is the internal mixin that gives `G` its transform convenience
+properties. It is not a separate element constructor; create a `G` when you need
+a transformable SVG container.
+
 ## Import
 
 ```python
@@ -257,12 +261,24 @@ transform is not `None`, it is appended.
 
 `to_matrix()` composes the transforms in list order.
 
+`find_scale_pivot()` detects the first
+`translate(cx cy) scale(...) translate(-cx -cy)` sequence and returns
+`(Vector(cx, cy), index)`, or `None` when no such sequence exists. This is used
+by `G` when it parses pivoted scale transforms.
+
 ```python
 transform_list = dp.TransformList.parse("translate(10 20) rotate(90) scale(2)")
 matrix = transform_list.to_matrix()
 
 print(matrix.apply(1, 0))
 # Vector(x=10.0, y=22.0)
+```
+
+```python
+pivoted = dp.TransformList.parse("translate(10 20) scale(2) translate(-10 -20)")
+
+print(pivoted.find_scale_pivot())
+# (Vector(x=10.0, y=20.0), 0)
 ```
 
 ## Matrix2D
