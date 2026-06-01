@@ -187,37 +187,39 @@ The target shape is a layered library:
 - [ ] Add a v2.0 concept page explaining the D3-like layered architecture.
 - [ ] Add a gallery of examples as a primary documentation entry point.
 - [ ] Add a page for design principles and API philosophy.
-- [ ] Add a "Generators" documentation section for data-driven paths, symbols, arcs, and links.
-- [ ] Add a "Shapes" documentation section for reusable geometric forms.
-- [ ] Add a "Recipes" section for full infographic examples built from primitives.
-- [ ] Add creative coding examples for flow fields and native SVG animation.
+- [x] Add a "Generators" documentation section for data-driven paths, symbols, arcs, and links.
+- [x] Add a "Shapes" documentation section for reusable geometric forms.
+- [x] Add tutorials for full examples built from primitives.
+- [ ] Add a broader "Recipes" section for full infographic examples built from primitives.
+- [x] Add introductory native SVG animation examples.
+- [ ] Add creative coding examples for flow fields.
 - [ ] Add migration notes from v1.x to v2.0.
-- [ ] Add more complete reference documentation for each public class and function.
+- [x] Add more complete reference documentation for each public class and function.
 - [ ] Add visual regression or snapshot strategy for generated SVG examples.
-- [ ] Ensure every major feature has a runnable example.
+- [x] Ensure every major feature has at least one documented example.
 
 ## Nuxt Content Documentation Migration
 
 - [ ] Keep the existing MkDocs site until the Nuxt Content site reaches feature parity.
 - [x] Create the initial Nuxt Content and Nuxt UI documentation shell.
-- [ ] Inventory all current Markdown pages and assets.
-- [ ] Add frontmatter to documentation pages:
+- [x] Inventory all current Markdown pages and assets.
+- [x] Add frontmatter to documentation pages:
   - `title`
   - `description`
   - `navigation`
   - `category`
-  - `version`
-- [ ] Move reusable static assets into a Nuxt-compatible structure.
-- [ ] Convert MkDocs-specific Markdown syntax to Nuxt Content/MDC equivalents.
-- [ ] Build custom documentation components:
-  - example preview
+  - `version` remains deferred until versioned docs are introduced.
+- [x] Move reusable static assets into a Nuxt-compatible structure.
+- [x] Convert MkDocs-specific Markdown syntax to Nuxt Content/MDC equivalents.
+- [x] Build a custom SVG preview component.
+- [ ] Build additional custom documentation components:
   - code/result split view
-  - SVG preview
   - API signature block
   - parameter table
   - gallery item
-- [ ] Decide whether API reference pages are handwritten, generated, or hybrid.
-- [ ] Add search.
+- [x] Decide whether API reference pages are handwritten, generated, or hybrid.
+  Current reference pages are handwritten and audited against the current source.
+- [x] Add search.
 - [ ] Add versioned documentation support.
 - [ ] Add deployment pipeline for the Nuxt documentation site.
 - [ ] Preserve existing documentation URLs where possible, or add redirects.
@@ -342,12 +344,14 @@ and Nuxt Content documentation are in stronger shape.
 
 ### Milestone 4: Migrate Documentation To Nuxt Content
 
-- [ ] Prepare current docs for migration.
+- [x] Prepare current docs for migration.
 - [x] Create the initial Nuxt Content and Nuxt UI documentation shell.
-- [ ] Build the Nuxt Content documentation site.
-- [ ] Port current pages and assets.
-- [ ] Add custom example/gallery components.
-- [ ] Add creative coding examples, generator, shapes, and recipe documentation.
+- [x] Build the Nuxt Content documentation site.
+- [x] Port current pages and assets.
+- [x] Add a custom SVG preview component.
+- [ ] Add custom gallery and richer code/result components.
+- [x] Add generator, shapes, reference, and tutorial documentation.
+- [ ] Add broader creative coding examples and recipe documentation.
 - [ ] Deploy the new docs site.
 
 ### Milestone 5: Deferred Visualization Primitives

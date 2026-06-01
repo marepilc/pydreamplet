@@ -196,6 +196,15 @@ useSeoMeta({
 
         <div class="flex items-center gap-1">
           <SearchButton label="Search docs" full-label />
+          <UButton
+            to="https://github.com/marepilc/pydreamplet"
+            target="_blank"
+            rel="noopener noreferrer"
+            icon="i-lucide-github"
+            color="neutral"
+            variant="ghost"
+            aria-label="Open pyDreamplet on GitHub"
+          />
           <ThemeToggle />
 
           <USlideover

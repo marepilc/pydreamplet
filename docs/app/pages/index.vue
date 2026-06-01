@@ -36,6 +36,9 @@ const highlights = [
           <NuxtLink to="/getting-started">
             Getting started
           </NuxtLink>
+          <NuxtLink to="/tutorials">
+            Tutorials
+          </NuxtLink>
           <NuxtLink to="/reference">
             Reference
           </NuxtLink>
@@ -43,6 +46,15 @@ const highlights = [
 
         <div class="flex items-center gap-1">
           <SearchButton />
+          <UButton
+            to="https://github.com/marepilc/pydreamplet"
+            target="_blank"
+            rel="noopener noreferrer"
+            icon="i-lucide-github"
+            color="neutral"
+            variant="ghost"
+            aria-label="Open pyDreamplet on GitHub"
+          />
           <ThemeToggle />
         </div>
       </div>

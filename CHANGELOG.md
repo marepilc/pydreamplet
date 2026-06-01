@@ -11,6 +11,11 @@ branch is in progress.
   Passing `pos=Vector(...)` now maps to `cx`/`cy` or `x`/`y` before SVG
   attributes are created, so serialized output no longer includes invalid
   `pos="Vector(...)"` attributes.
+- Fixed `Noise` validation so invalid bounds and `noise_range` values fail
+  explicitly, while zero and full-range noise windows are handled correctly.
+- Fixed seeded noise permutation generation for `seed=0`.
+- Brought one-dimensional simplex noise closer to the classic simplex gradient
+  formulation and restored a useful `[0, amplitude]` output range.
 
 ### Changed
 
@@ -59,6 +64,15 @@ branch is in progress.
   intended module layers for v2.x.
 - Clarified that v2.0 may intentionally break v1.x compatibility when the change
   improves the long-term API.
+- Expanded the top-level `pydreamplet` import surface for commonly used public
+  APIs while keeping specialized modules available for focused imports.
+- Migrated the documentation to a Nuxt Content/Nuxt UI site with a home page,
+  getting started guides, searchable reference pages, tutorials, SVG previews,
+  generated assets, dark/light theme support, and top-level navigation.
+- Ported the legacy layered SVG art tutorial and blog examples into the new
+  Tutorials section, updating code for the current API.
+- Added visual examples across the reference section so API pages show what the
+  documented code produces.
 
 ### Tests
 
@@ -80,3 +94,6 @@ branch is in progress.
 - Added typography coverage for measuring a `Text` element directly.
 - Added regression tests for malformed SVG files, invalid and non-integer
   `viewBox` values, decimal dimensions, and path data edge cases.
+- Added public API import tests for the expanded top-level import surface.
+- Added noise regression tests for `noise_range`, invalid bounds, seeded
+  permutation generation, and simplex output behavior.
