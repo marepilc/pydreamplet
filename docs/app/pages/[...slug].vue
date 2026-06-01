@@ -32,6 +32,29 @@ const navigation = [
     ]
   },
   {
+    title: 'Tutorials',
+    icon: 'i-lucide-graduation-cap',
+    path: '/tutorials',
+    children: [
+      {
+        title: 'Tutorials overview',
+        path: '/tutorials'
+      },
+      {
+        title: 'Layered SVG art',
+        path: '/tutorials/layered-svg-art'
+      },
+      {
+        title: 'Line chart',
+        path: '/tutorials/line-chart'
+      },
+      {
+        title: 'Waffle chart',
+        path: '/tutorials/waffle-chart'
+      }
+    ]
+  },
+  {
     title: 'Reference',
     icon: 'i-lucide-library',
     path: '/reference',
@@ -120,6 +143,10 @@ const topNavigation = [
   {
     title: 'Getting started',
     path: '/getting-started'
+  },
+  {
+    title: 'Tutorials',
+    path: '/tutorials'
   },
   {
     title: 'Reference',

@@ -123,6 +123,48 @@ width, height = measurer.measure_text(label)
 Measurements are layout estimates. Browser rendering can differ slightly
 between operating systems, fonts, and SVG viewers.
 
+## Measured Layout
+
+Use the measured width and height to align other elements around a label. This
+example draws a rectangle centered on text whose anchor is also centered.
+
+```python
+from pydreamplet.typography import TypographyMeasurer, get_system_font_path
+
+font_path = get_system_font_path("Arial", 700)
+if font_path is None:
+    raise RuntimeError("Arial is not available on this system.")
+
+label = dp.Text(
+    "pyDreamplet",
+    x=0,
+    y=0,
+    font_family="Arial",
+    font_size=42,
+    font_weight=700,
+    fill="currentColor",
+    text_anchor="middle",
+    alignment_baseline="middle",
+)
+
+width, height = TypographyMeasurer(font_path=font_path).measure_text(label)
+
+group = dp.G(pos=(svg.w / 2, svg.h / 2))
+group.append(
+    dp.Rect(
+        x=-width / 2,
+        y=-height / 2,
+        width=width,
+        height=height,
+        fill="none",
+        stroke="#14b8a6",
+        stroke_width=2,
+    ),
+    label,
+)
+svg.append(group)
+```
+
 ## Next
 
 Continue with the reference section for API-level details.

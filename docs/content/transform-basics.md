@@ -54,6 +54,28 @@ origin.append(
 The group is centered on the canvas, but its children still use coordinates
 relative to the group origin.
 
+## Vector Placement
+
+Many shape constructors accept `pos`, and `G.pos` is a `Vector`. Vector math is
+useful when you want to build geometry around a local origin.
+
+```python
+circle_pos = dp.Vector(110, 0)
+origin.append(dp.Circle(pos=circle_pos, r=12, fill="#14b8a6"))
+```
+
+`Vector.direction` is expressed in degrees. Updating it rotates the vector while
+keeping its magnitude, which makes radial placement concise.
+
+```python
+for _ in range(4):
+    circle_pos.direction += 72
+    origin.append(dp.Circle(pos=circle_pos, r=12, fill="#14b8a6"))
+```
+
+This is the same pattern used for radial marks, circular layouts, and animated
+designs where each element starts from a rotated copy of the same vector.
+
 ## Rotation
 
 Set `angle` on a group to rotate everything inside it.
