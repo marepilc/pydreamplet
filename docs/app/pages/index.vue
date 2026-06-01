@@ -82,6 +82,9 @@ const highlights = [
             <UButton to="/getting-started" icon="i-lucide-play" size="lg">
               Getting started
             </UButton>
+            <UButton to="/tutorials" icon="i-lucide-graduation-cap" color="neutral" variant="outline" size="lg">
+              Tutorials
+            </UButton>
             <UButton to="/reference" icon="i-lucide-book-open" color="neutral" variant="outline" size="lg">
               API reference
             </UButton>
