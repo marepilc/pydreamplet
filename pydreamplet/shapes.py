@@ -813,12 +813,11 @@ def ring(
     For a partial ring (angle != 360°):
       - If without_inner is False, a full ring segment is drawn (outer arc,
         radial line from outer_end to inner_end, inner arc, and radial line back).
-      - If without_inner is True, the inner arc is omitted. Instead a single closed path is drawn:
+      - If without_inner is True, the inner arc is omitted. Instead an open path is drawn:
           1. Move to inner_start.
           2. Draw a radial line from inner_start to outer_start.
           3. Draw the outer arc from outer_start to outer_end.
           4. Draw a radial line from outer_end to inner_end.
-          5. Close the path (which draws a chord from inner_end back to inner_start).
     """
     _validate_non_negative(inner_radius, "inner_radius")
     _validate_positive(outer_radius, "outer_radius")
@@ -862,7 +861,7 @@ def ring(
             f"M {_format_point(inner_start[0], inner_start[1])} "
             f"L {_format_point(outer_start[0], outer_start[1])} "
             f"A {outer_radius:.2f} {outer_radius:.2f} 0 {large_arc_flag} {sweep_flag} {_format_point(outer_end[0], outer_end[1])} "
-            f"L {_format_point(inner_end[0], inner_end[1])} Z"
+            f"L {_format_point(inner_end[0], inner_end[1])} "
         )
     else:
         d = (

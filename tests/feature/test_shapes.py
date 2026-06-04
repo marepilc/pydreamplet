@@ -187,7 +187,7 @@ def test_arc_uses_sweep_and_large_arc_flags_from_angle_span():
     )
 
 
-def test_ring_without_inner_returns_closed_path():
+def test_ring_without_inner_returns_open_path():
     path_data = ring(
         inner_radius=5,
         outer_radius=10,
@@ -200,7 +200,7 @@ def test_ring_without_inner_returns_closed_path():
         "M 5.00,0.00 "
         "L 10.00,0.00 "
         "A 10.00 10.00 0 0 1 0.00,10.00 "
-        "L 0.00,5.00 Z"
+        "L 0.00,5.00 "
     )
 
 

@@ -210,8 +210,8 @@ Creates a donut or ring segment. A zero span returns an empty string.
 `inner_radius` must be non-negative, `outer_radius` must be positive, and
 `inner_radius <= outer_radius`.
 
-For partial rings, `without_inner=True` omits the inner arc and closes the shape
-with a chord.
+For partial rings, `without_inner=True` omits the inner arc and leaves the path
+open.
 
 ## Example Output
 
