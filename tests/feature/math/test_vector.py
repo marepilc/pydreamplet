@@ -179,19 +179,19 @@ def test_repr(vector_3_4):
 # Test error conditions for unsupported operand types
 def test_invalid_addition(vector_3_4):
     with pytest.raises(TypeError):
-        vector_3_4 + 5
+        _ = vector_3_4 + 5
 
 
 def test_invalid_subtraction(vector_3_4):
     with pytest.raises(TypeError):
-        vector_3_4 - "a"
+        _ = vector_3_4 - "a"
 
 
 def test_invalid_multiplication(vector_3_4):
     with pytest.raises(TypeError):
-        vector_3_4 * "a"
+        _ = vector_3_4 * "a"
 
 
 def test_invalid_division(vector_3_4):
     with pytest.raises(TypeError):
-        vector_3_4 / "a"
+        _ = vector_3_4 / "a"

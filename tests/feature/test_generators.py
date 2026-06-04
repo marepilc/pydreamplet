@@ -1,3 +1,5 @@
+from typing import Literal, TypedDict
+
 import pytest
 
 from pydreamplet.generators import (
@@ -6,10 +8,26 @@ from pydreamplet.generators import (
     LineGenerator,
     LinkGenerator,
     PieGenerator,
+    PieSlice,
     RadialAreaGenerator,
     RadialLineGenerator,
     SymbolGenerator,
 )
+
+
+class XYDatum(TypedDict):
+    x: int
+    y: int
+
+
+class SymbolDatum(TypedDict):
+    symbol: Literal["triangle"]
+    size: int
+
+
+class LinkDatum(TypedDict):
+    source: tuple[int, int]
+    target: tuple[int, int]
 
 
 def test_line_generator_uses_default_pair_accessors():
@@ -29,8 +47,8 @@ def test_line_generator_splits_undefined_segments():
 
 
 def test_line_generator_supports_accessors_and_curves():
-    data = [{"x": 0, "y": 0}, {"x": 10, "y": 20}, {"x": 30, "y": 0}]
-    generator = LineGenerator(
+    data: list[XYDatum] = [{"x": 0, "y": 0}, {"x": 10, "y": 20}, {"x": 30, "y": 0}]
+    generator = LineGenerator[XYDatum](
         x=lambda item, _index: item["x"],
         y=lambda item, _index: item["y"],
         curve="step",
@@ -52,7 +70,7 @@ def test_area_generator_closes_upper_and_lower_points():
 
 
 def test_radial_line_generator_projects_degrees_to_cartesian_points():
-    generator = RadialLineGenerator(
+    generator = RadialLineGenerator[tuple[int, int]](
         angle=lambda item, _index: item[0],
         radius=lambda item, _index: item[1],
     )
@@ -63,7 +81,7 @@ def test_radial_line_generator_projects_degrees_to_cartesian_points():
 
 
 def test_radial_area_generator_projects_inner_and_outer_radii():
-    generator = RadialAreaGenerator(
+    generator = RadialAreaGenerator[tuple[int, int]](
         angle=lambda item, _index: item[0],
         inner_radius=lambda _item, _index: 5,
         outer_radius=lambda item, _index: item[1],
@@ -90,7 +108,7 @@ def test_pie_generator_returns_slice_metadata():
 
 def test_arc_generator_turns_pie_slices_into_ring_paths():
     slices = PieGenerator(start_angle=0, end_angle=90)([1])
-    generator = ArcGenerator(
+    generator = ArcGenerator[PieSlice](
         inner_radius=lambda _item, _index: 5,
         outer_radius=lambda _item, _index: 10,
         start_angle=lambda item, _index: item.start_angle,
@@ -109,27 +127,28 @@ def test_symbol_generator_returns_centered_symbol_paths():
     assert SymbolGenerator(symbol="square", size=100)() == (
         "M -5.00,-5.00 L 5.00,-5.00 L 5.00,5.00 L -5.00,5.00 Z"
     )
-    assert SymbolGenerator(
+    item: SymbolDatum = {"symbol": "triangle", "size": 100}
+    assert SymbolGenerator[SymbolDatum](
         symbol=lambda item, _index: item["symbol"],
         size=lambda item, _index: item["size"],
-    )({"symbol": "triangle", "size": 100}).startswith("M 0.00,-8.77")
+    )(item).startswith("M 0.00,-8.77")
 
 
 def test_link_generator_supports_linear_and_orthogonal_cubic_links():
-    item = {"source": (0, 10), "target": (100, 50)}
+    item: LinkDatum = {"source": (0, 10), "target": (100, 50)}
 
-    assert LinkGenerator(
+    assert LinkGenerator[LinkDatum](
         source=lambda item, _index: item["source"],
         target=lambda item, _index: item["target"],
         curve="linear",
     )(item) == "M 0.00,10.00 L 100.00,50.00"
 
-    assert LinkGenerator(
+    assert LinkGenerator[LinkDatum](
         source=lambda item, _index: item["source"],
         target=lambda item, _index: item["target"],
     )(item) == "M 0.00,10.00 C 50.00,10.00 50.00,50.00 100.00,50.00"
 
-    assert LinkGenerator(
+    assert LinkGenerator[LinkDatum](
         source=lambda item, _index: item["source"],
         target=lambda item, _index: item["target"],
         curve="vertical",

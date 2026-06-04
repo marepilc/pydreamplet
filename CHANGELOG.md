@@ -3,7 +3,7 @@
 All notable changes for pyDreamplet 2.0 are tracked here while the `version-2`
 branch is in progress.
 
-## Unreleased
+## 2.0.0
 
 ### Fixed
 
@@ -57,6 +57,7 @@ branch is in progress.
 - Added Ruff configuration and expanded CI to run pytest, basedpyright, mypy,
   Ruff, documentation build, package build, and wheel install smoke checks on
   pinned Python versions.
+- Added Python 3.14 to the CI test matrix for the v2.0 release line.
 - Reduced default GitHub Actions permissions and limited `contents: write` to
   the documentation deploy job.
 - Added an API design document defining the public/private boundary,
@@ -97,3 +98,7 @@ branch is in progress.
 - Added public API import tests for the expanded top-level import surface.
 - Added noise regression tests for `noise_range`, invalid bounds, seeded
   permutation generation, and simplex output behavior.
+- Added current documentation code-block tests that parse Nuxt Content examples
+  and execute portable guide/tutorial snippets against the public API.
+- Cleaned up test typing so basedpyright can validate both `pydreamplet` and the
+  test suite as part of the release checks.

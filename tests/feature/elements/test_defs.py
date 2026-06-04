@@ -49,7 +49,9 @@ def test_radial_gradient_add_stop():
     gradient = dp.RadialGradient("glow", cx="50%", cy="50%", r="40%")
 
     assert gradient.add_stop("0%", "#fff") is gradient
-    assert gradient.find("stop").stop_color == "#fff"
+    stop = gradient.find("stop")
+    assert isinstance(stop, dp.Stop)
+    assert stop.stop_color == "#fff"
     assert gradient.id_ref == "url(#glow)"
 
 
@@ -66,7 +68,9 @@ def test_definition_elements_are_registered_and_live():
     assert found_gradient.element is gradient.element
 
     found_stop.stop_color = "#333"
-    assert gradient.find("stop").stop_color == "#333"
+    stop = gradient.find("stop")
+    assert isinstance(stop, dp.Stop)
+    assert stop.stop_color == "#333"
 
 
 def test_resource_definition_wrappers_create_expected_tags():

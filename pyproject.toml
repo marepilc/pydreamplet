@@ -1,6 +1,6 @@
 [project]
 name = "pydreamplet"
-version = "1.1.11"
+version = "2.0.0"
 description = "A versatile Python toolkit for programmatically generating, manipulating, and assembling scalable vector graphics (SVG) images."
 authors = [{ name = "Marek Pilczuk", email = "user@mp76.pl" }]
 license = "MIT"
@@ -25,6 +25,16 @@ build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
 packages = ["pydreamplet"]
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "/docs/.data/**",
+    "/docs/.nuxt/**",
+    "/docs/.output/**",
+    "/docs/dist/**",
+    "/docs/node_modules/**",
+    "/docs/*.log",
+]
 
 [tool.hatch.build.targets.wheel.force-include]
 "pydreamplet/py.typed" = "pydreamplet/py.typed"
@@ -51,6 +61,13 @@ notebook = [
 
 [tool.basedpyright]
 typeCheckingMode = "standard"
+include = [
+    "pydreamplet",
+    "tests",
+]
+exclude = [
+    "**/*.ipynb",
+]
 reportMissingTypeStubs = false
 reportAny = false
 reportExplicitAny = false

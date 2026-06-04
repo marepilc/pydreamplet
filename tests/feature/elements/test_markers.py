@@ -33,6 +33,7 @@ def test_marker_d_property():
     assert marker.d == ARROW_CONVEX
     # Verify that the underlying path's d attribute is updated
     path = marker.find("path")
+    assert isinstance(path, Path)
     assert path.d == ARROW_CONVEX
 
 
@@ -45,6 +46,7 @@ def test_marker_fill_property():
     assert marker.fill == "#ff0000"
     # Verify the underlying path's fill attribute is updated
     path = marker.find("path")
+    assert isinstance(path, Path)
     assert path.fill == "#ff0000"
 
 
@@ -57,6 +59,7 @@ def test_marker_stroke_property():
     assert marker.stroke == "#00ff00"
     # Verify the underlying path's stroke attribute is updated
     path = marker.find("path")
+    assert isinstance(path, Path)
     assert path.stroke == "#00ff00"
 
 
@@ -69,6 +72,7 @@ def test_marker_stroke_width_property():
     assert marker.stroke_width == 2
     # Verify the underlying path's stroke-width attribute is updated
     path = marker.find("path")
+    assert isinstance(path, Path)
     assert path.stroke_width == 2
 
 
