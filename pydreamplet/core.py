@@ -1494,23 +1494,47 @@ class Circle(SvgElement):
         self.element.set("cy", str(point.y))
 
     @property
-    def radius(self):
-        return float(self.element.get("r", 0))
+    def cx(self) -> float:
+        return float(self.element.get("cx", 0))
 
-    @radius.setter
-    def radius(self, r: float) -> None:
-        self.element.set("r", str(r))
+    @cx.setter
+    def cx(self, value: Real) -> None:
+        self.element.set("cx", str(value))
 
     @property
-    def center(self):
+    def cy(self) -> float:
+        return float(self.element.get("cy", 0))
+
+    @cy.setter
+    def cy(self, value: Real) -> None:
+        self.element.set("cy", str(value))
+
+    @property
+    def r(self) -> float:
+        return float(self.element.get("r", 0))
+
+    @r.setter
+    def r(self, value: Real) -> None:
+        self.element.set("r", str(value))
+
+    @property
+    def radius(self) -> float:
+        return self.r
+
+    @radius.setter
+    def radius(self, value: Real) -> None:
+        self.r = value
+
+    @property
+    def center(self) -> Vector:
         return self.pos
 
     @property
-    def diameter(self):
+    def diameter(self) -> float:
         return self.radius * 2
 
     @property
-    def area(self):
+    def area(self) -> float:
         return math.pi * self.radius**2
 
     @property
@@ -1556,11 +1580,46 @@ class Ellipse(SvgElement):
         self.element.set("cy", str(point.y))
 
     @property
+    def cx(self) -> float:
+        return float(self.element.get("cx", 0))
+
+    @cx.setter
+    def cx(self, value: Real) -> None:
+        self.element.set("cx", str(value))
+
+    @property
+    def cy(self) -> float:
+        return float(self.element.get("cy", 0))
+
+    @cy.setter
+    def cy(self, value: Real) -> None:
+        self.element.set("cy", str(value))
+
+    @property
+    def rx(self) -> float:
+        return float(self.element.get("rx", 0))
+
+    @rx.setter
+    def rx(self, value: Real) -> None:
+        self.element.set("rx", str(value))
+
+    @property
+    def ry(self) -> float:
+        return float(self.element.get("ry", 0))
+
+    @ry.setter
+    def ry(self, value: Real) -> None:
+        self.element.set("ry", str(value))
+
+    @property
     def bbox(self) -> BoundingBox:
-        rx = float(self.element.get("rx", 0))
-        ry = float(self.element.get("ry", 0))
         center = self.pos
-        return BoundingBox(center.x - rx, center.y - ry, rx * 2, ry * 2)
+        return BoundingBox(
+            center.x - self.rx,
+            center.y - self.ry,
+            self.rx * 2,
+            self.ry * 2,
+        )
 
 
 class Rect(SvgElement):
@@ -1599,12 +1658,36 @@ class Rect(SvgElement):
         self.element.set("y", str(point.y))
 
     @property
-    def width(self):
-        return float(self.element.get("width", 0))
+    def x(self) -> float:
+        return float(self.element.get("x", 0))
+
+    @x.setter
+    def x(self, value: Real) -> None:
+        self.element.set("x", str(value))
 
     @property
-    def height(self):
+    def y(self) -> float:
+        return float(self.element.get("y", 0))
+
+    @y.setter
+    def y(self, value: Real) -> None:
+        self.element.set("y", str(value))
+
+    @property
+    def width(self) -> float:
+        return float(self.element.get("width", 0))
+
+    @width.setter
+    def width(self, value: Real) -> None:
+        self.element.set("width", str(value))
+
+    @property
+    def height(self) -> float:
         return float(self.element.get("height", 0))
+
+    @height.setter
+    def height(self, value: Real) -> None:
+        self.element.set("height", str(value))
 
     @property
     def bbox(self) -> BoundingBox:

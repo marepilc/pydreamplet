@@ -5,6 +5,24 @@ branch is in progress.
 
 ## 2.0.0
 
+### Breaking Changes
+
+- `TypographyMeasurer.measure_text()` now requires `font_family`, `weight`, and
+  `font_size` to be passed as keyword arguments after `text`.
+- Notebook display dependencies are no longer installed by default. Install the
+  `notebook` extra to use `SVG.display()` in environments that do not already
+  provide IPython.
+- `arc()` now treats `start_angle == end_angle` as a zero-length arc instead of
+  a full circle.
+- `ring()` now treats `start_angle == end_angle` as an empty path instead of a
+  full ring.
+- `arc()` and `ring()` now preserve clockwise/counter-clockwise direction based
+  on the sign of `end_angle - start_angle`.
+- Shape helpers now validate degenerate inputs and may raise `ValueError` where
+  previous versions emitted invalid or surprising path data.
+- Text measurement now uses HarfBuzz/fontTools instead of Pillow, so measured
+  dimensions may differ.
+
 ### Fixed
 
 - Fixed `pos` handling in `Circle`, `Ellipse`, and `Rect` constructors.
