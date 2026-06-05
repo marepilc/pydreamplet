@@ -1,0 +1,172 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1024" width="1024px" height="1024px">
+  <defs>
+    <clipPath id="bubble">
+      <circle r="500" cx="0.0" cy="0.0" />
+    </clipPath>
+    <radialGradient id="bubble-base" cx="34%" cy="28%" r="72%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.28" />
+      <stop offset="42%" stop-color="#f4f6f7" stop-opacity="0.03" />
+      <stop offset="76%" stop-color="#1186b4" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="#555f66" stop-opacity="0.09" />
+    </radialGradient>
+    <filter id="blur">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="10" />
+    </filter>
+    <filter id="blur-2">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="20" />
+    </filter>
+    <filter id="rim-blur">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="5" />
+    </filter>
+    <filter id="silk-blur">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="12" />
+    </filter>
+    <filter id="fine-blur">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="2.5" />
+    </filter>
+    <filter id="film-distort" x="-18%" y="-18%" width="136%" height="136%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.012 0.028" numOctaves="3" seed="8" result="film-noise">
+        <animate attributeName="baseFrequency" values="0.012 0.028;0.018 0.018;0.010 0.034;0.012 0.028" dur="18s" repeatCount="indefinite" />
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="film-noise" scale="28" xChannelSelector="R" yChannelSelector="G" result="warped-film">
+        <animate attributeName="scale" values="22;34;26;30;22" dur="14s" repeatCount="indefinite" />
+      </feDisplacementMap>
+      <feGaussianBlur in="warped-film" stdDeviation="11" />
+    </filter>
+    <filter id="fine-distort" x="-12%" y="-12%" width="124%" height="124%" color-interpolation-filters="sRGB">
+      <feTurbulence type="turbulence" baseFrequency="0.02 0.045" numOctaves="2" seed="13" result="fine-noise">
+        <animate attributeName="baseFrequency" values="0.020 0.045;0.030 0.034;0.018 0.052;0.020 0.045" dur="11s" repeatCount="indefinite" />
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="fine-noise" scale="12" xChannelSelector="R" yChannelSelector="B" result="warped-line">
+        <animate attributeName="scale" values="8;15;10;13;8" dur="9s" repeatCount="indefinite" />
+      </feDisplacementMap>
+      <feGaussianBlur in="warped-line" stdDeviation="3.2" />
+    </filter>
+    <filter id="edge-distort" x="-15%" y="-15%" width="130%" height="130%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.008 0.02" numOctaves="2" seed="21" result="edge-noise">
+        <animate attributeName="baseFrequency" values="0.008 0.020;0.012 0.016;0.006 0.024;0.008 0.020" dur="22s" repeatCount="indefinite" />
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="edge-noise" scale="16" xChannelSelector="R" yChannelSelector="G" result="warped-edge">
+        <animate attributeName="scale" values="12;20;15;18;12" dur="16s" repeatCount="indefinite" />
+      </feDisplacementMap>
+      <feGaussianBlur in="warped-edge" stdDeviation="8" />
+    </filter>
+    <filter id="blob-distort" x="-22%" y="-22%" width="144%" height="144%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.009 0.022" numOctaves="4" seed="34" result="blob-noise">
+        <animate attributeName="baseFrequency" values="0.009 0.022;0.014 0.018;0.007 0.028;0.011 0.020;0.009 0.022" dur="26s" repeatCount="indefinite" />
+      </feTurbulence>
+      <feDisplacementMap in="SourceGraphic" in2="blob-noise" scale="38" xChannelSelector="R" yChannelSelector="B" result="warped-blob">
+        <animate attributeName="scale" values="28;46;34;40;28" dur="19s" repeatCount="indefinite" />
+      </feDisplacementMap>
+      <feGaussianBlur in="warped-blob" stdDeviation="18" result="soft-blob" />
+      <feComponentTransfer>
+        <feFuncA type="gamma" amplitude="1.0" exponent="1.35" offset="0" />
+      </feComponentTransfer>
+    </filter>
+    <filter id="light-spot-blur" x="-160%" y="-160%" width="420%" height="420%">
+      <feGaussianBlur in="SourceGraphic" stdDeviation="14" />
+    </filter>
+    <filter id="reflection-blur" x="-35%" y="-35%" width="170%" height="170%" color-interpolation-filters="sRGB">
+      <feTurbulence type="fractalNoise" baseFrequency="0.018 0.032" numOctaves="2" seed="55" result="reflection-noise" />
+      <feDisplacementMap in="SourceGraphic" in2="reflection-noise" scale="10" xChannelSelector="R" yChannelSelector="G" result="warped-reflection" />
+      <feGaussianBlur in="warped-reflection" stdDeviation="17" />
+    </filter>
+    <filter id="bubble-lighting" x="-20%" y="-20%" width="140%" height="140%" color-interpolation-filters="sRGB">
+      <feGaussianBlur in="SourceAlpha" stdDeviation="42" result="soft-alpha" />
+      <feDiffuseLighting in="soft-alpha" surfaceScale="26" diffuseConstant="0.55" lighting-color="#ffffff" result="diffuse-light">
+        <fePointLight x="-190" y="-245" z="320">
+          <animate attributeName="x" values="-205;-170;-188;-220;-205" dur="12s" repeatCount="indefinite" />
+          <animate attributeName="y" values="-260;-228;-238;-276;-260" dur="15s" repeatCount="indefinite" />
+          <animate attributeName="z" values="300;380;330;360;300" dur="18s" repeatCount="indefinite" />
+        </fePointLight>
+      </feDiffuseLighting>
+      <feComposite in="diffuse-light" in2="SourceGraphic" operator="arithmetic" k1="0" k2="1" k3="0.16" k4="0" result="lit-bubble" />
+      <feComposite in="lit-bubble" in2="SourceAlpha" operator="in" />
+    </filter>
+    <circle fill="url(#bubble-base)" id="bubble-bg" r="500" cx="0.0" cy="0.0" />
+    <circle fill="#ffffff" id="bubble-light-spot" filter="url(#light-spot-blur)" r="34" cx="-190.0" cy="-245.0" opacity="0.24">
+      <animate attributeName="cx" values="-190;-174;-202;-212;-190" dur="12s" repeatCount="indefinite" />
+      <animate attributeName="cy" values="-245;-224;-236;-268;-245" dur="15s" repeatCount="indefinite" />
+      <animate attributeName="opacity" values="0.16;0.32;0.22;0.28;0.16" dur="9s" repeatCount="indefinite" />
+    </circle>
+    <circle fill="#ffffff" id="small-light-spot" filter="url(#fine-blur)" r="12" cx="-148.0" cy="-292.0" opacity="0.34">
+      <animate attributeName="cx" values="-148;-134;-152;-164;-148" dur="10s" repeatCount="indefinite" />
+      <animate attributeName="cy" values="-292;-278;-300;-306;-292" dur="13s" repeatCount="indefinite" />
+      <animate attributeName="opacity" values="0.18;0.44;0.26;0.36;0.18" dur="7s" repeatCount="indefinite" />
+    </circle>
+    <circle fill="none" id="inner-cyan-rim" stroke="#1186b4" stroke-width="8" filter="url(#rim-blur)" r="482" cx="0.0" cy="0.0" opacity="0.34" />
+    <circle fill="none" id="inner-magenta-rim" stroke="#d96cff" stroke-width="5" filter="url(#silk-blur)" r="454" cx="0.0" cy="0.0" opacity="0.24" />
+    <circle fill="none" id="okrag" stroke="#eef7f8" stroke-width="30" filter="url(#blur)" r="500" cx="0.0" cy="0.0" />
+    <path fill="#8befff" id="cyan-film-arc" filter="url(#blob-distort)" d="M -420 -250 C -340 -365, -180 -428, -20 -416 C 88 -408, 184 -382, 292 -352 C 236 -318, 118 -308, 8 -320 C -152 -338, -286 -294, -382 -184 Z" opacity="0.2">
+      <animate attributeName="opacity" values="0.16;0.23;0.18;0.21;0.16" dur="20s" repeatCount="indefinite" />
+      <animateTransform attributeName="transform" type="translate" values="0 0;18 -6;-10 12;0 0" dur="24s" repeatCount="indefinite" additive="sum" />
+    </path>
+    <path fill="#b848ff" id="violet-film-arc" filter="url(#blob-distort)" d="M -424 -206 C -476 -68, -468 94, -418 226 C -382 322, -324 394, -252 438 C -288 344, -330 258, -348 158 C -370 34, -356 -88, -300 -180 C -344 -184, -388 -194, -424 -206 Z" opacity="0.18">
+      <animate attributeName="opacity" values="0.13;0.22;0.16;0.20;0.13" dur="24s" repeatCount="indefinite" />
+      <animateTransform attributeName="transform" type="rotate" values="0 0 0;2.5 0 0;-1.5 0 0;0 0 0" dur="30s" repeatCount="indefinite" additive="sum" />
+    </path>
+    <path fill="#dacb64" id="gold-film-arc" filter="url(#blob-distort)" d="M -270 -20 C -196 -126, -72 -188, 76 -188 C 188 -188, 292 -158, 344 -104 C 244 -116, 154 -106, 52 -72 C -64 -34, -154 -12, -232 34 Z" opacity="0.16">
+      <animate attributeName="opacity" values="0.11;0.19;0.14;0.17;0.11" dur="17s" repeatCount="indefinite" />
+      <animateTransform attributeName="transform" type="translate" values="0 0;-12 10;16 -4;0 0" dur="21s" repeatCount="indefinite" additive="sum" />
+    </path>
+    <path fill="#5fd49a" id="green-film-arc" filter="url(#blob-distort)" d="M 116 -154 C 214 -118, 284 -30, 306 82 C 326 184, 288 284, 214 346 C 230 250, 222 166, 184 76 C 154 6, 112 -56, 70 -118 Z" opacity="0.13">
+      <animate attributeName="opacity" values="0.09;0.16;0.11;0.14;0.09" dur="22s" repeatCount="indefinite" />
+      <animateTransform attributeName="transform" type="rotate" values="0 0 0;-2 0 0;1.2 0 0;0 0 0" dur="27s" repeatCount="indefinite" additive="sum" />
+    </path>
+    <path fill="#35cdec" id="fine-cyan-arc" filter="url(#blob-distort)" d="M 424 142 C 382 278, 284 388, 136 444 C 18 488, -102 486, -210 438 C -112 412, -4 394, 104 348 C 222 298, 320 222, 386 116 Z" opacity="0.2">
+      <animate attributeName="opacity" values="0.15;0.24;0.18;0.21;0.15" dur="19s" repeatCount="indefinite" />
+      <animateTransform attributeName="transform" type="translate" values="0 0;-20 -8;10 14;0 0" dur="25s" repeatCount="indefinite" additive="sum" />
+    </path>
+    <path fill="#c5f2ef" id="fine-blue-edge" filter="url(#edge-distort)" d="M -470 -320 C -366 -456, -188 -520, 18 -514 C 206 -508, 362 -448, 458 -342 C 326 -398, 176 -416, 18 -404 C -178 -390, -330 -334, -438 -230 Z" opacity="0.16" />
+    <path fill="#ff8ed6" id="fine-pink-arc" filter="url(#blob-distort)" d="M -190 178 C -92 280, 72 304, 204 244 C 266 216, 304 188, 346 152 C 270 268, 154 328, 10 318 C -86 312, -164 274, -222 212 Z" opacity="0.19">
+      <animate attributeName="opacity" values="0.13;0.23;0.16;0.20;0.13" dur="15s" repeatCount="indefinite" />
+      <animateTransform attributeName="transform" type="translate" values="0 0;12 10;-14 -6;0 0" dur="18s" repeatCount="indefinite" additive="sum" />
+    </path>
+    <path fill="#2df2e3" id="blue-core-blob" filter="url(#blob-distort)" d="M -110 -210 C -18 -250, 116 -250, 194 -194 C 118 -178, 42 -144, -12 -92 C -62 -44, -126 -30, -186 -54 C -170 -122, -150 -174, -110 -210 Z" opacity="0.11">
+      <animate attributeName="opacity" values="0.07;0.16;0.10;0.13;0.07" dur="16s" repeatCount="indefinite" />
+    </path>
+    <path fill="#7e3cff" id="purple-shadow-blob" filter="url(#blob-distort)" d="M -440 46 C -386 -34, -310 -70, -230 -52 C -270 34, -278 136, -238 244 C -314 226, -388 166, -430 86 Z" opacity="0.11">
+      <animate attributeName="opacity" values="0.08;0.14;0.10;0.16;0.08" dur="19s" repeatCount="indefinite" />
+    </path>
+    <path fill="#ff7fbf" id="rose-lower-blob" filter="url(#film-distort)" d="M -92 280 C 8 328, 156 324, 250 258 C 202 354, 84 412, -42 396 C -120 386, -186 348, -230 292 Z" opacity="0.13">
+      <animateTransform attributeName="transform" type="translate" values="0 0;8 -14;-18 8;0 0" dur="23s" repeatCount="indefinite" additive="sum" />
+    </path>
+    <path fill="none" id="red-top-glow" stroke="#d97984" stroke-width="44" filter="url(#edge-distort)" d="M -78 -506 C 88 -532, 252 -510, 374 -438 C 442 -398, 484 -344, 510 -274" opacity="0.11" stroke-linecap="round" />
+    <path fill="#f8ffff" id="soft-reflection-smear" filter="url(#reflection-blur)" d="M -266 -232 C -238 -268, -184 -284, -130 -258 C -172 -250, -214 -228, -250 -194 C -276 -170, -294 -194, -266 -232 Z" opacity="0.12">
+      <animate attributeName="opacity" values="0.06;0.18;0.10;0.14;0.06" dur="8s" repeatCount="indefinite" />
+      <animateTransform attributeName="transform" type="translate" values="0 0;7 -5;-6 4;0 0" dur="17s" repeatCount="indefinite" additive="sum" />
+      <animateTransform attributeName="transform" type="scale" values="1;1.04;0.98;1" dur="13s" repeatCount="indefinite" additive="sum" />
+    </path>
+    <path fill="#f8ffff" id="soft-reflection-wisp" filter="url(#reflection-blur)" d="M -226 -258 C -190 -286, -142 -278, -118 -246 C -158 -252, -190 -236, -218 -208 C -238 -226, -246 -244, -226 -258 Z" opacity="0.13">
+      <animate attributeName="opacity" values="0.07;0.18;0.10;0.15;0.07" dur="11s" repeatCount="indefinite" />
+      <animateTransform attributeName="transform" type="translate" values="0 0;6 -4;-4 5;0 0" dur="14s" repeatCount="indefinite" additive="sum" />
+    </path>
+    <ellipse id="soft-reflection-dot" cx="-190" cy="-226" rx="24" ry="15" fill="#f8ffff" opacity="0.1" filter="url(#reflection-blur)" transform="rotate(-24 -190 -226)">
+      <animate attributeName="opacity" values="0.05;0.14;0.08;0.11;0.05" dur="10s" repeatCount="indefinite" />
+    </ellipse>
+    <path fill="none" id="red-ring-1" stroke="#d97984" stroke-width="16" filter="url(#blur-2)" d="M -92 -474 C 90 -516, 290 -454, 404 -294" opacity="0.16" stroke-linecap="round" />
+  </defs>
+  <g transform="translate(512 512)">
+    <use clip-path="url(#bubble)" href="#bubble-bg" />
+    <use clip-path="url(#bubble)" href="#cyan-film-arc" />
+    <use clip-path="url(#bubble)" href="#violet-film-arc" />
+    <use clip-path="url(#bubble)" href="#gold-film-arc" />
+    <use clip-path="url(#bubble)" href="#green-film-arc" />
+    <use clip-path="url(#bubble)" href="#fine-cyan-arc" />
+    <use clip-path="url(#bubble)" href="#fine-blue-edge" />
+    <use clip-path="url(#bubble)" href="#fine-pink-arc" />
+    <use clip-path="url(#bubble)" href="#blue-core-blob" />
+    <use clip-path="url(#bubble)" href="#purple-shadow-blob" />
+    <use clip-path="url(#bubble)" href="#rose-lower-blob" />
+    <use clip-path="url(#bubble)" href="#red-top-glow" />
+    <use clip-path="url(#bubble)" href="#soft-reflection-smear" />
+    <use clip-path="url(#bubble)" href="#soft-reflection-wisp" />
+    <use clip-path="url(#bubble)" href="#soft-reflection-dot" />
+    <use clip-path="url(#bubble)" href="#bubble-light-spot" />
+    <use clip-path="url(#bubble)" href="#small-light-spot" />
+    <use clip-path="url(#bubble)" href="#inner-cyan-rim" />
+    <use clip-path="url(#bubble)" href="#inner-magenta-rim" />
+    <use clip-path="url(#bubble)" href="#okrag" />
+    <use clip-path="url(#bubble)" href="#red-ring-1" />
+  </g>
+</svg>

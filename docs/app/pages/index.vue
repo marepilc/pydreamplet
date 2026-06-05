@@ -101,6 +101,49 @@ const faqs = [
     answer: 'Yes. pyDreamplet writes standard SVG markup, so generated graphics can be edited, embedded, versioned, or used in documentation and publishing workflows.'
   }
 ]
+
+const showcaseSlides = [
+  {
+    title: 'Supplier performance chart',
+    description: 'A dense SVG dashboard-style chart generated from Python.',
+    light: '/showcase/supplier_performance_chart_light.svg',
+    dark: '/showcase/supplier_performance_chart_dark.svg',
+    alt: 'Supplier performance chart generated with pyDreamplet'
+  },
+  {
+    title: 'Soap bubble illustration',
+    description: 'A subtly animated soap bubble built with SVG filters and clipping.',
+    light: '/showcase/soap_bubble_light.svg',
+    dark: '/showcase/soap_bubble_dark.svg',
+    alt: 'Soap bubble illustration generated with pyDreamplet'
+  }
+]
+
+const activeSlide = ref(0)
+const currentSlide = computed(() => showcaseSlides[activeSlide.value])
+let carouselTimer: ReturnType<typeof setInterval> | undefined
+
+const goToSlide = (index: number) => {
+  activeSlide.value = index
+}
+
+const nextSlide = () => {
+  activeSlide.value = (activeSlide.value + 1) % showcaseSlides.length
+}
+
+const previousSlide = () => {
+  activeSlide.value = (activeSlide.value + showcaseSlides.length - 1) % showcaseSlides.length
+}
+
+onMounted(() => {
+  carouselTimer = setInterval(nextSlide, 7000)
+})
+
+onBeforeUnmount(() => {
+  if (carouselTimer) {
+    clearInterval(carouselTimer)
+  }
+})
 </script>
 
 <template>
@@ -204,24 +247,75 @@ const faqs = [
         </div>
 
         <div class="relative">
-          <div class="aspect-[1.18] overflow-hidden">
-            <img
-              src="/showcase/supplier_performance_chart_light.svg"
-              alt="Supplier performance chart generated with pyDreamplet"
-              width="1500"
-              height="1500"
-              decoding="async"
-              fetchpriority="high"
-              class="h-full w-full object-contain dark:hidden"
+          <div class="relative aspect-[1.18] overflow-hidden">
+            <div
+              v-for="(slide, index) in showcaseSlides"
+              :key="slide.title"
+              class="absolute inset-0 transition-opacity duration-500"
+              :class="index === activeSlide ? 'opacity-100' : 'pointer-events-none opacity-0'"
+              :aria-hidden="index !== activeSlide"
             >
-            <img
-              src="/showcase/supplier_performance_chart_dark.svg"
-              alt="Supplier performance chart generated with pyDreamplet"
-              width="1500"
-              height="1500"
-              decoding="async"
-              class="hidden h-full w-full object-contain dark:block"
-            >
+              <img
+                :src="slide.light"
+                :alt="slide.alt"
+                width="1500"
+                height="1500"
+                decoding="async"
+                :fetchpriority="index === 0 ? 'high' : 'auto'"
+                class="h-full w-full object-contain dark:hidden"
+              >
+              <img
+                :src="slide.dark"
+                :alt="slide.alt"
+                width="1500"
+                height="1500"
+                decoding="async"
+                class="hidden h-full w-full object-contain dark:block"
+              >
+            </div>
+          </div>
+
+          <div class="mt-4 flex items-center justify-between gap-4">
+            <div class="min-w-0">
+              <p class="truncate text-sm font-semibold text-neutral-950 dark:text-white">
+                {{ currentSlide.title }}
+              </p>
+              <p class="mt-1 min-h-12 line-clamp-2 text-sm leading-6 text-neutral-600 dark:text-neutral-300">
+                {{ currentSlide.description }}
+              </p>
+            </div>
+
+            <div class="flex shrink-0 items-center gap-2">
+              <UButton
+                icon="i-lucide-chevron-left"
+                color="neutral"
+                variant="outline"
+                size="sm"
+                aria-label="Previous showcase image"
+                @click="previousSlide"
+              />
+              <UButton
+                icon="i-lucide-chevron-right"
+                color="neutral"
+                variant="outline"
+                size="sm"
+                aria-label="Next showcase image"
+                @click="nextSlide"
+              />
+            </div>
+          </div>
+
+          <div class="mt-4 flex gap-2" aria-label="Showcase slides">
+            <button
+              v-for="(slide, index) in showcaseSlides"
+              :key="slide.title"
+              type="button"
+              class="h-2.5 rounded-full transition-all focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-teal-700 dark:focus-visible:outline-teal-300"
+              :class="index === activeSlide ? 'w-8 bg-teal-700 dark:bg-teal-300' : 'w-2.5 bg-neutral-300 hover:bg-neutral-400 dark:bg-neutral-700 dark:hover:bg-neutral-600'"
+              :aria-label="`Show ${slide.title}`"
+              :aria-current="index === activeSlide ? 'true' : undefined"
+              @click="goToSlide(index)"
+            />
           </div>
         </div>
       </div>
