@@ -14,7 +14,7 @@ const open = defineModel<boolean>('open', { default: false })
 const query = ref('')
 const results = ref<DocSearchResult[]>([])
 const pending = ref(false)
-const input = ref<{ inputRef?: HTMLInputElement | null } | null>(null)
+const inputRoot = ref<HTMLElement | null>(null)
 let searchRun = 0
 
 const { search, status } = useSearchCollection('docs', {
@@ -64,7 +64,9 @@ const runSearch = async () => {
 
 const focusInput = async () => {
   await nextTick()
-  input.value?.inputRef?.focus()
+  requestAnimationFrame(() => {
+    inputRoot.value?.querySelector('input')?.focus()
+  })
 }
 
 const closeSearch = () => {
@@ -83,6 +85,12 @@ watch(open, (value) => {
   if (value) {
     focusInput()
   }
+}, { flush: 'post' })
+
+onMounted(() => {
+  if (open.value) {
+    focusInput()
+  }
 })
 </script>
 
@@ -94,17 +102,22 @@ watch(open, (value) => {
   >
     <template #body>
       <div class="space-y-4">
-        <UInput
-          ref="input"
-          v-model="query"
-          icon="i-lucide-search"
-          placeholder="Search documentation"
-          size="lg"
-          autocomplete="off"
-          enterkeyhint="search"
-          :loading="pending || status === 'loading'"
-          class="w-full"
-        />
+        <div ref="inputRoot">
+          <UInput
+            v-model="query"
+            icon="i-lucide-search"
+            placeholder="Search documentation"
+            size="lg"
+            color="primary"
+            autocomplete="off"
+            enterkeyhint="search"
+            :loading="pending || status === 'loading'"
+            class="w-full"
+            :ui="{
+              base: 'focus-visible:!ring-teal-500 dark:focus-visible:!ring-teal-400'
+            }"
+          />
+        </div>
 
         <div
           v-if="trimmedQuery.length < 2"
