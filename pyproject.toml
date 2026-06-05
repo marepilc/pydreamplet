@@ -49,9 +49,6 @@ dev = [
     "pytest>=8.4.1",
     "ruff>=0.9.5",
 ]
-docs = [
-    "mkdocs-material>=9.6.4",
-]
 
 [project.optional-dependencies]
 notebook = [

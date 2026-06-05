@@ -29,8 +29,15 @@ jobs:
         with:
           enable-cache: true
 
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: docs/package-lock.json
+
       - name: Install project dependencies
-        run: uv sync --group dev --group docs
+        run: uv sync --group dev
 
       - name: Run tests
         run: uv run pytest
@@ -44,8 +51,13 @@ jobs:
       - name: Run Ruff
         run: uv run ruff check pydreamplet tests
 
+      - name: Install documentation dependencies
+        working-directory: docs
+        run: npm ci
+
       - name: Build documentation
-        run: uv run mkdocs build
+        working-directory: docs
+        run: npm run build
 
       - name: Build package
         run: uv build
@@ -56,42 +68,3 @@ jobs:
           /tmp/pydreamplet-wheel/bin/python -m pip install --upgrade pip
           /tmp/pydreamplet-wheel/bin/python -m pip install dist/*.whl
           /tmp/pydreamplet-wheel/bin/python -c "import pydreamplet as dp; assert dp.SVG(10, 10).w == 10"
-
-  deploy:
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-    needs: test
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Configure Git Credentials
-        run: |
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: "3.12"
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v4
-        with:
-          enable-cache: true
-
-      - name: Cache MkDocs Material dependencies
-        run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
-
-      - uses: actions/cache@v4
-        with:
-          key: mkdocs-material-${{ env.cache_id }}
-          path: .cache
-          restore-keys: |
-            mkdocs-material-
-
-      - name: Install documentation dependencies
-        run: uv sync --group docs
-
-      - name: Deploy MkDocs site
-        run: uv run mkdocs gh-deploy --force
