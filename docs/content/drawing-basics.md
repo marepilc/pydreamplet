@@ -130,8 +130,9 @@ svg.append(dots)
 
 ## Generic Elements
 
-Use a dedicated wrapper such as `Circle`, `Rect`, `Path`, or `Text` when one
-exists. Use `SvgElement` for SVG tags that pyDreamplet does not wrap directly.
+Use a dedicated wrapper such as `Circle`, `Rect`, `Path`, `Use`, or `Text` when
+one exists. Use `SvgElement` for SVG tags that pyDreamplet does not wrap
+directly.
 
 ```python
 shadow = dp.SvgElement(

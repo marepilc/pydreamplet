@@ -43,20 +43,20 @@ not, it inserts a new one as the first child.
 
 Gradient, pattern, mask, clip path, and filter wrappers inherit from
 `SvgDefinition`, the shared base class for reusable SVG resources. Its public
-surface is intentionally small: it adds the `id_ref` property used when another
+surface is intentionally small: it adds the `url` property used when another
 element references the resource.
 
 ```python
 gradient = dp.LinearGradient(id="accent")
 
-print(gradient.id_ref)  # url(#accent)
+print(gradient.url)  # url(#accent)
 ```
 
-Use `id_ref` when assigning a resource to `fill`, `stroke`, `mask`,
-`clip_path`, or `filter`.
+Use `url` when assigning a resource to `fill`, `stroke`, `mask`, `clip_path`,
+or `filter`. The older `id_ref` property remains available as an alias.
 
 ```python
-rect.fill = gradient.id_ref
+rect.fill = gradient.url
 ```
 
 ## Stop
@@ -177,7 +177,7 @@ mask.append(
 Assign a mask with the `mask` attribute.
 
 ```python
-shape.mask = mask.id_ref
+shape.mask = mask.url
 ```
 
 ## ClipPath
@@ -196,7 +196,39 @@ clip.append(dp.Circle(cx=130, cy=80, r=60))
 Assign a clip path with `clip_path`, which serializes to `clip-path`.
 
 ```python
-image_group.clip_path = clip.id_ref
+image_group.clip_path = clip.url
+```
+
+## Use
+
+```python
+dp.Use(href: str | dp.SvgElement | None = None, **kwargs)
+```
+
+`Use` represents `<use>` and creates an instance of another SVG element. Pass a
+referenced element, an ID, or a `#id` reference.
+
+```python
+heart = dp.Path(
+    id="heart",
+    d="M10,30 A20,20,0,0,1,50,30 A20,20,0,0,1,90,30 Q90,60,50,90 Q10,60,10,30 Z",
+)
+
+copy = dp.Use(heart, fill="red")
+assert copy.href == "#heart"
+```
+
+Use `clip_path`, `mask`, `filter`, and paint attributes with normal pyDreamplet
+attribute names.
+
+```python
+clip = dp.ClipPath(id="myClip").append(dp.Circle(cx=40, cy=35, r=35))
+
+svg.ensure_defs().append(clip)
+svg.append(
+    heart,
+    dp.Use(heart, clip_path=clip.url, fill="red"),
+)
 ```
 
 ## Filter
@@ -225,7 +257,7 @@ shadow.append(
 Assign a filter with the `filter` attribute.
 
 ```python
-card.filter = shadow.id_ref
+card.filter = shadow.url
 ```
 
 ## Complete Example
@@ -259,8 +291,8 @@ svg.append(
         width=188,
         height=88,
         rx=14,
-        fill=gradient.id_ref,
-        filter=shadow.id_ref,
+        fill=gradient.url,
+        filter=shadow.url,
     )
 )
 ```

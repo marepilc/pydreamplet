@@ -132,7 +132,7 @@ circle_layer.append(circle)
 ## Gradient Fill
 
 Use `ensure_defs()` and `LinearGradient` for reusable SVG definitions. The
-gradient's `id_ref` property returns the `url(#...)` reference used by `fill`.
+gradient's `url` property returns the `url(#...)` reference used by `fill`.
 
 ```python
 defs = svg.ensure_defs()
@@ -142,7 +142,7 @@ gradient.add_stop("0%", color3)
 gradient.add_stop("100%", color1)
 defs.append(gradient)
 
-circle.fill = gradient.id_ref
+circle.fill = gradient.url
 circle.stroke = "#6b7280"
 
 svg.save("layered-art.svg")

@@ -37,6 +37,10 @@ branch is in progress.
 
 ### Changed
 
+- Added `url` properties to reusable SVG definitions and markers for clearer
+  `url(#id)` references. The older `id_ref` properties remain as aliases.
+- Added `Use` for SVG `<use>` elements, including `SvgElement` references and
+  automatic `#id` normalization.
 - Added a first-pass `pydreamplet.generators` module for D3-like data-to-path
   generation, including line, area, radial line, radial area, arc, pie, symbol,
   and link generators.

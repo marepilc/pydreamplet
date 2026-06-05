@@ -21,7 +21,7 @@ Start here when you already know the basic drawing flow and need exact construct
 - [Transforms](/reference/transforms) - `G`, `Transform`, `TransformList`, and `Matrix2D`.
 - [Text](/reference/text) - `Text`, multiline `tspan` output, `TextOnPath`, and font-size behavior.
 - [Animation](/reference/animation) - `Animate`, keyframe values, duration, and repeat count.
-- [Definitions](/reference/definitions) - `Defs`, gradients, stops, patterns, masks, clip paths, and filters.
+- [Definitions](/reference/definitions) - `Defs`, gradients, stops, patterns, masks, clip paths, filters, and `Use`.
 - [Scales](/reference/scales) - numeric, categorical, color, square-root, and circle-area scales.
 - [Creative helpers](/reference/creative) - top-level point and tile layout helpers.
 - [Path generators](/reference/generators) - data-driven line, area, radial, pie, arc, symbol, and link path generators.

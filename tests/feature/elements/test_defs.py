@@ -26,7 +26,7 @@ def test_ensure_defs_reuses_existing_defs():
     assert len(svg.find_all("defs")) == 1
 
 
-def test_linear_gradient_add_stop_and_id_ref():
+def test_linear_gradient_add_stop_and_url_ref():
     gradient = (
         dp.LinearGradient("fade", x1="0%", y1="0%", x2="100%", y2="0%")
         .add_stop("0%", "#000", opacity=0.25)
@@ -35,6 +35,7 @@ def test_linear_gradient_add_stop_and_id_ref():
 
     stops = gradient.find_all("stop")
 
+    assert gradient.url == "url(#fade)"
     assert gradient.id_ref == "url(#fade)"
     assert gradient.element.attrib["x1"] == "0%"
     assert gradient.element.attrib["x2"] == "100%"
@@ -52,6 +53,7 @@ def test_radial_gradient_add_stop():
     stop = gradient.find("stop")
     assert isinstance(stop, dp.Stop)
     assert stop.stop_color == "#fff"
+    assert gradient.url == "url(#glow)"
     assert gradient.id_ref == "url(#glow)"
 
 
@@ -83,4 +85,5 @@ def test_resource_definition_wrappers_create_expected_tags():
 
     for resource, tag in resources:
         assert resource.element.tag.endswith(tag)
+        assert resource.url == f"url(#{resource.id})"
         assert resource.id_ref == f"url(#{resource.id})"

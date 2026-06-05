@@ -44,14 +44,14 @@ line = dp.Line(
     stroke_width=3,
     stroke_linecap="round",
 )
-line.marker_start = dot.id_ref
-line.marker_end = arrow.id_ref
+line.marker_start = dot.url
+line.marker_end = arrow.url
 
 svg.append(
     line,
     dp.Text("marker_start", x=38, y=48, font_size=12, text_anchor="middle", fill="currentColor"),
     dp.Text("marker_end", x=252, y=48, font_size=12, text_anchor="middle", fill="currentColor"),
-    dp.Text("Marker(...).id_ref", x=92, y=108, font_size=12, fill="currentColor"),
+    dp.Text("Marker(...).url", x=92, y=108, font_size=12, fill="currentColor"),
 )
 ```
 
@@ -130,16 +130,16 @@ Gets or sets the nested path stroke width. The getter returns the parsed numeric
 value from the underlying `Path`.
 
 ```python
-marker.id_ref -> str
+marker.url -> str
 ```
 
 Returns `url(#<id>)`, suitable for assigning to `marker_start`, `marker_mid`, or
-`marker_end`.
+`marker_end`. The older `id_ref` property remains available as an alias.
 
 ```python
 marker = Marker("arrow", ARROW_BASIC, 10, 10)
 
-assert marker.id_ref == "url(#arrow)"
+assert marker.url == "url(#arrow)"
 ```
 
 ## Predefined Paths

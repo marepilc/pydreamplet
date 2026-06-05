@@ -565,8 +565,12 @@ class Defs(SvgElement):
 
 class SvgDefinition(SvgElement):
     @property
-    def id_ref(self) -> str:
+    def url(self) -> str:
         return f"url(#{self.id})"
+
+    @property
+    def id_ref(self) -> str:
+        return self.url
 
 
 class Stop(SvgElement):
@@ -1866,6 +1870,31 @@ class Path(SvgElement):
         return _bbox_from_points(points)
 
 
+class Use(SvgElement):
+    def __init__(
+        self,
+        href: str | SvgElement | None = None,
+        **kwargs: Any,
+    ):
+        if href is not None:
+            kwargs["href"] = self._normalize_href(href)
+        super().__init__("use", **kwargs)
+
+    @staticmethod
+    def _normalize_href(value: str | SvgElement) -> str:
+        if isinstance(value, SvgElement):
+            return f"#{value.id}"
+        return value if value.startswith("#") else f"#{value}"
+
+    @property
+    def href(self) -> str:
+        return self.element.get("href", "")
+
+    @href.setter
+    def href(self, value: str | SvgElement) -> None:
+        self.element.set("href", self._normalize_href(value))
+
+
 class Line(SvgElement):
     def __init__(
         self,
@@ -2164,6 +2193,7 @@ SvgElement.register("circle", Circle)
 SvgElement.register("ellipse", Ellipse)
 SvgElement.register("rect", Rect)
 SvgElement.register("path", Path)
+SvgElement.register("use", Use)
 SvgElement.register("polygon", Polygon)
 SvgElement.register("polyline", Polyline)
 SvgElement.register("line", Line)

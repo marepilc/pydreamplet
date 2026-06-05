@@ -76,7 +76,8 @@ def test_marker_stroke_width_property():
     assert path.stroke_width == 2
 
 
-def test_marker_id_ref():
+def test_marker_url_ref():
     marker = Marker("arrow", ARROW_BASIC, 10, 10)
-    # The id_ref property should return a URL reference for the marker id
+    # The url property should return a URL reference for the marker id.
+    assert marker.url == "url(#arrow)"
     assert marker.id_ref == "url(#arrow)"

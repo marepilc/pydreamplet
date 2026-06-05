@@ -144,9 +144,9 @@ axis_layer.append(tick_path)
 
 marker = Marker("bottom-tick", TICK_BOTTOM, 10, 10, fill="currentColor")
 defs.append(marker)
-tick_path.marker_start = marker.id_ref
-tick_path.marker_mid = marker.id_ref
-tick_path.marker_end = marker.id_ref
+tick_path.marker_start = marker.url
+tick_path.marker_mid = marker.url
+tick_path.marker_end = marker.url
 
 for index in tick_indices:
     tick_date = pendulum.instance(dates[index])
@@ -193,4 +193,3 @@ svg.save("line-chart.svg")
 
 ::svg-preview{src="/showcase/tutorial_line_chart_final.svg" alt="Final line chart with axes, labels, ticks, and grid lines."}
 ::
-

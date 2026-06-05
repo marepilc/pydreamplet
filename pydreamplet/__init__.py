@@ -24,6 +24,7 @@ from pydreamplet.core import (
     TextOnPath,
     Transform,
     TransformList,
+    Use,
 )
 from pydreamplet.creative import (
     Tile,
@@ -152,6 +153,7 @@ __all__ = [
     "Tile",
     "Transform",
     "TransformList",
+    "Use",
     "Vector",
     "arc_generator",
     "area_generator",

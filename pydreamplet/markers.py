@@ -108,8 +108,12 @@ class Marker(SvgElement):
             path_element.stroke_width = value
 
     @property
-    def id_ref(self):
+    def url(self):
         return f"url(#{self._id})"
+
+    @property
+    def id_ref(self):
+        return self.url
 
 
 SvgElement.register("marker", Marker)
