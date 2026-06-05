@@ -1,7 +1,43 @@
 <script setup lang="ts">
 useSeoMeta({
-  title: 'pyDreamplet',
-  description: 'A Python toolkit for precise SVG graphics, creative coding, and custom data visualization.'
+  title: 'pyDreamplet - Advanced Charts and Creative Coding with Python',
+  description: 'Build advanced charts, custom SVG visualizations, and creative coding graphics with Python. pyDreamplet gives you composable SVG elements, scales, generators, and precise export control.',
+  ogTitle: 'pyDreamplet - Advanced Charts and Creative Coding with Python',
+  ogDescription: 'A Python toolkit for advanced charts, custom SVG visualizations, generative graphics, and creative coding workflows.',
+  ogType: 'website',
+  ogImage: '/showcase/supplier_performance_chart_light.svg',
+  twitterCard: 'summary_large_image',
+  twitterTitle: 'pyDreamplet - Advanced Charts and Creative Coding with Python',
+  twitterDescription: 'Build advanced charts and creative coding graphics with Python and export clean SVG.'
+})
+
+useHead({
+  script: [
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'SoftwareApplication',
+        name: 'pyDreamplet',
+        applicationCategory: 'DeveloperApplication',
+        operatingSystem: 'Windows, macOS, Linux',
+        programmingLanguage: 'Python',
+        description: 'A Python toolkit for advanced charts, custom SVG visualization, and creative coding.',
+        keywords: [
+          'advanced charts with Python',
+          'creative coding with Python',
+          'Python SVG library',
+          'custom data visualization',
+          'generative graphics'
+        ],
+        offers: {
+          '@type': 'Offer',
+          price: '0',
+          priceCurrency: 'USD'
+        }
+      })
+    }
+  ]
 })
 
 const highlights = [
@@ -19,6 +55,50 @@ const highlights = [
     icon: 'i-lucide-notebook-tabs',
     title: 'Script or notebook',
     description: 'Save clean SVG files from scripts or display work inline while exploring ideas in notebooks.'
+  }
+]
+
+const useCases = [
+  {
+    title: 'Advanced charts with Python',
+    description: 'Create charts that need custom annotations, unusual geometry, precise labels, reusable markers, and SVG output that remains editable after export.',
+    link: '/tutorials/line-chart',
+    linkLabel: 'Build a line chart'
+  },
+  {
+    title: 'Creative coding with Python',
+    description: 'Generate procedural layouts, organic shapes, noise-driven points, radial compositions, and layered SVG artwork from repeatable Python scripts.',
+    link: '/tutorials/layered-svg-art',
+    linkLabel: 'Explore layered SVG art'
+  },
+  {
+    title: 'Scripted SVG production',
+    description: 'Use Python to produce consistent technical illustrations, diagrams, reports, notebook visuals, and publication-ready vector assets.',
+    link: '/reference',
+    linkLabel: 'Browse the API'
+  }
+]
+
+const capabilities = [
+  'SVG elements with dynamic attributes and typed geometry helpers',
+  'Scales, path generators, arcs, rings, splines, and symbols',
+  'Text measurement, markers, masks, clip paths, gradients, and filters',
+  'Collision helpers for labels and dense infographic layouts',
+  'Notebook display and clean SVG file export'
+]
+
+const faqs = [
+  {
+    question: 'Can pyDreamplet build advanced charts with Python?',
+    answer: 'Yes. pyDreamplet includes scales, path generators, shape helpers, markers, text tools, and low-level SVG access for charts that need more control than a preset charting library.'
+  },
+  {
+    question: 'Is pyDreamplet useful for creative coding with Python?',
+    answer: 'Yes. It includes point generators, noise helpers, organic shape helpers, SVG paths, gradients, masks, and animation primitives for procedural and generative graphics.'
+  },
+  {
+    question: 'Does pyDreamplet export real SVG?',
+    answer: 'Yes. pyDreamplet writes standard SVG markup, so generated graphics can be edited, embedded, versioned, or used in documentation and publishing workflows.'
   }
 ]
 </script>
@@ -72,7 +152,7 @@ const highlights = [
             Python to precise SVG
           </p>
           <h1 class="max-w-lg text-2xl font-semibold leading-9 tracking-normal text-neutral-950 dark:text-white md:text-3xl md:leading-10">
-            Build expressive vector graphics with code.
+            Advanced charts and creative coding with Python.
           </h1>
           <p class="mt-5 max-w-xl text-lg leading-8 text-neutral-600 dark:text-neutral-300">
             pyDreamplet gives you composable SVG elements, scales, generators, and creative helpers for custom visualizations that need more control than a charting preset.
@@ -113,11 +193,11 @@ const highlights = [
               </dd>
             </div>
             <div>
-              <dt class="text-neutral-500 dark:text-neutral-400">
+          <dt class="text-neutral-500 dark:text-neutral-400">
                 Workflow
               </dt>
               <dd class="mt-1 font-semibold">
-                Scripts + notebooks
+                Charts + art
               </dd>
             </div>
           </dl>
@@ -128,11 +208,18 @@ const highlights = [
             <img
               src="/showcase/supplier_performance_chart_light.svg"
               alt="Supplier performance chart generated with pyDreamplet"
+              width="1500"
+              height="1500"
+              decoding="async"
+              fetchpriority="high"
               class="h-full w-full object-contain dark:hidden"
             >
             <img
               src="/showcase/supplier_performance_chart_dark.svg"
               alt="Supplier performance chart generated with pyDreamplet"
+              width="1500"
+              height="1500"
+              decoding="async"
               class="hidden h-full w-full object-contain dark:block"
             >
           </div>
@@ -155,6 +242,89 @@ const highlights = [
             {{ item.description }}
           </p>
         </article>
+      </div>
+    </section>
+
+    <section class="border-y border-neutral-200 bg-white px-6 py-14 dark:border-neutral-800 dark:bg-neutral-950">
+      <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-[0.8fr_1.2fr]">
+        <div>
+          <p class="text-sm font-semibold uppercase tracking-[0.16em] text-teal-700 dark:text-teal-300">
+            Python visualization toolkit
+          </p>
+          <h2 class="mt-4 max-w-md text-2xl font-semibold leading-9 text-neutral-950 dark:text-white">
+            Build the chart or graphic your project actually needs.
+          </h2>
+          <p class="mt-5 max-w-lg text-base leading-7 text-neutral-600 dark:text-neutral-300">
+            pyDreamplet is designed for developers, analysts, designers, and creative coders who want direct control over SVG geometry while staying in Python.
+          </p>
+        </div>
+
+        <div class="grid gap-4 md:grid-cols-3">
+          <article
+            v-for="item in useCases"
+            :key="item.title"
+            class="rounded-lg border border-neutral-200 bg-neutral-50 p-5 dark:border-neutral-800 dark:bg-neutral-900"
+          >
+            <h3 class="text-base font-semibold text-neutral-950 dark:text-white">
+              {{ item.title }}
+            </h3>
+            <p class="mt-3 text-sm leading-6 text-neutral-600 dark:text-neutral-300">
+              {{ item.description }}
+            </p>
+            <NuxtLink
+              :to="item.link"
+              class="mt-4 inline-flex text-sm font-semibold text-teal-700 hover:text-teal-800 dark:text-teal-300 dark:hover:text-teal-200"
+            >
+              {{ item.linkLabel }}
+            </NuxtLink>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section class="bg-neutral-50 px-6 py-14 dark:bg-neutral-950">
+      <div class="mx-auto grid max-w-7xl gap-10 lg:grid-cols-2">
+        <div>
+          <h2 class="text-2xl font-semibold leading-9 text-neutral-950 dark:text-white">
+            What pyDreamplet gives you for custom Python graphics
+          </h2>
+          <p class="mt-5 max-w-xl text-base leading-7 text-neutral-600 dark:text-neutral-300">
+            Use high-level helpers when they fit, then drop down to SVG primitives whenever you need exact geometry, styling, or export behavior.
+          </p>
+        </div>
+
+        <ul class="grid gap-3 text-sm leading-6 text-neutral-700 dark:text-neutral-300">
+          <li
+            v-for="capability in capabilities"
+            :key="capability"
+            class="flex gap-3"
+          >
+            <UIcon name="i-lucide-check" class="mt-1 size-4 shrink-0 text-teal-700 dark:text-teal-300" />
+            <span>{{ capability }}</span>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="bg-white px-6 py-14 dark:bg-neutral-950">
+      <div class="mx-auto max-w-4xl">
+        <h2 class="text-2xl font-semibold leading-9 text-neutral-950 dark:text-white">
+          pyDreamplet questions
+        </h2>
+        <div class="mt-7 divide-y divide-neutral-200 border-y border-neutral-200 dark:divide-neutral-800 dark:border-neutral-800">
+          <article
+            v-for="item in faqs"
+            :key="item.question"
+            class="py-5"
+          >
+            <h3 class="text-base font-semibold text-neutral-950 dark:text-white">
+              {{ item.question }}
+            </h3>
+            <p class="mt-2 text-sm leading-6 text-neutral-600 dark:text-neutral-300">
+              {{ item.answer }}
+            </p>
+          </article>
+        </div>
       </div>
     </section>
   </main>
