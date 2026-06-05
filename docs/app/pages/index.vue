@@ -61,12 +61,12 @@ const highlights = [
     </header>
 
     <section class="border-b border-neutral-200 bg-white dark:border-neutral-800 dark:bg-neutral-950">
-      <div class="mx-auto grid min-h-[calc(100vh-4rem)] max-w-7xl items-center gap-10 px-6 py-12 lg:grid-cols-[0.92fr_1.08fr]">
+      <div class="mx-auto grid max-w-7xl items-center gap-8 px-6 py-8 md:py-10 lg:grid-cols-[0.92fr_1.08fr]">
         <div class="max-w-2xl">
           <img
             src="/brand/pyDreamplet_logo.png"
             alt="pyDreamplet"
-            class="mb-8 h-auto w-full max-w-md"
+            class="mb-6 h-auto w-full max-w-md"
           >
           <p class="mb-4 text-sm font-semibold uppercase tracking-[0.16em] text-teal-700 dark:text-teal-300">
             Python to precise SVG
@@ -74,12 +74,17 @@ const highlights = [
           <h1 class="max-w-lg text-2xl font-semibold leading-9 tracking-normal text-neutral-950 dark:text-white md:text-3xl md:leading-10">
             Build expressive vector graphics with code.
           </h1>
-          <p class="mt-6 max-w-xl text-lg leading-8 text-neutral-600 dark:text-neutral-300">
+          <p class="mt-5 max-w-xl text-lg leading-8 text-neutral-600 dark:text-neutral-300">
             pyDreamplet gives you composable SVG elements, scales, generators, and creative helpers for custom visualizations that need more control than a charting preset.
           </p>
 
-          <div class="mt-8 flex flex-wrap gap-3">
-            <UButton to="/getting-started" icon="i-lucide-play" size="lg">
+          <div class="mt-7 flex flex-wrap gap-3">
+            <UButton
+              to="/getting-started"
+              icon="i-lucide-play"
+              size="lg"
+              class="bg-teal-700 text-white hover:bg-teal-800 active:bg-teal-900 focus-visible:ring-teal-700 dark:bg-teal-300 dark:text-neutral-950 dark:hover:bg-teal-200 dark:active:bg-teal-100 dark:focus-visible:ring-teal-300"
+            >
               Getting started
             </UButton>
             <UButton to="/tutorials" icon="i-lucide-graduation-cap" color="neutral" variant="outline" size="lg">
@@ -90,7 +95,7 @@ const highlights = [
             </UButton>
           </div>
 
-          <dl class="mt-10 grid max-w-lg grid-cols-3 gap-5 border-t border-neutral-200 pt-6 text-sm dark:border-neutral-800">
+          <dl class="mt-8 grid max-w-lg grid-cols-3 gap-5 border-t border-neutral-200 pt-5 text-sm dark:border-neutral-800">
             <div>
               <dt class="text-neutral-500 dark:text-neutral-400">
                 Output
@@ -119,18 +124,17 @@ const highlights = [
         </div>
 
         <div class="relative">
-          <div class="overflow-hidden rounded-lg border border-neutral-200 bg-neutral-100 shadow-sm dark:border-neutral-800 dark:bg-neutral-900">
-            <div class="flex items-center justify-between border-b border-neutral-200 px-4 py-3 text-xs text-neutral-500 dark:border-neutral-800 dark:text-neutral-400">
-              <span>supplier-quality.svg</span>
-              <span>generated with pyDreamplet</span>
-            </div>
-            <div class="aspect-[1.18] bg-white p-4">
-              <img
-                :src="'/showcase/supplier-quality.svg'"
-                alt="Supplier quality performance SVG visualization generated with pyDreamplet"
-                class="h-full w-full object-contain"
-              >
-            </div>
+          <div class="aspect-[1.18] overflow-hidden">
+            <img
+              src="/showcase/supplier_performance_chart_light.svg"
+              alt="Supplier performance chart generated with pyDreamplet"
+              class="h-full w-full object-contain dark:hidden"
+            >
+            <img
+              src="/showcase/supplier_performance_chart_dark.svg"
+              alt="Supplier performance chart generated with pyDreamplet"
+              class="hidden h-full w-full object-contain dark:block"
+            >
           </div>
         </div>
       </div>
