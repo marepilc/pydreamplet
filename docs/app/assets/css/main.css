@@ -1,0 +1,110 @@
+@import "tailwindcss";
+@import "@nuxt/ui";
+
+@theme {
+  --font-sans: "Proza Libre", ui-sans-serif, system-ui, sans-serif;
+}
+
+.docs-content h1 {
+  margin-bottom: 1rem;
+  font-size: 2.25rem;
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 1.15;
+}
+
+.docs-content h2 {
+  margin-top: 2.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 1.5rem;
+  font-weight: 650;
+  letter-spacing: 0;
+  line-height: 1.25;
+}
+
+.docs-content p {
+  margin-top: 1rem;
+  color: var(--ui-text-muted);
+  font-size: 1rem;
+  line-height: 1.75;
+}
+
+.docs-content ul {
+  margin-top: 1rem;
+  padding-left: 1.25rem;
+  color: var(--ui-text-muted);
+  line-height: 1.75;
+  list-style: disc;
+}
+
+.docs-content li + li {
+  margin-top: 0.25rem;
+}
+
+.docs-content :not(pre) > code {
+  border-radius: 0.25rem;
+  background: var(--ui-bg-elevated);
+  padding: 0.125rem 0.25rem;
+  color: var(--ui-text-highlighted);
+  font-size: 0.925em;
+}
+
+.docs-content pre {
+  margin-top: 1rem;
+  overflow-x: auto;
+  border: 1px solid var(--ui-border);
+  border-radius: 0.5rem;
+  background: #f8fafc;
+  padding: 1rem;
+  color: #111827;
+}
+
+.docs-content pre code {
+  display: block;
+  background: transparent;
+  padding: 0;
+  color: #1f2937 !important;
+  font-size: 0.875rem;
+  line-height: 1.7;
+}
+
+.docs-content pre span {
+  color: #334155 !important;
+  filter: saturate(1.45) contrast(1.35) brightness(0.62);
+}
+
+.docs-content pre.shiki .line {
+  min-height: 1.7em;
+}
+
+.docs-content pre.shiki,
+.docs-content pre.shiki span {
+  color: var(--shiki-light, #111827) !important;
+}
+
+.docs-content pre.shiki span[style] {
+  filter: saturate(1.35) contrast(1.2) brightness(0.72);
+}
+
+.dark .docs-content pre {
+  background: var(--ui-bg-elevated);
+  color: var(--ui-text-highlighted);
+}
+
+.dark .docs-content pre code {
+  color: inherit !important;
+}
+
+.dark .docs-content pre span {
+  color: var(--shiki-dark, var(--ui-text-highlighted)) !important;
+  filter: none;
+}
+
+.dark .docs-content pre.shiki,
+.dark .docs-content pre.shiki span {
+  color: var(--shiki-dark, var(--ui-text-highlighted)) !important;
+}
+
+.dark .docs-content pre.shiki span[style] {
+  filter: none;
+}

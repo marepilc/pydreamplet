@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="800px" height="400px">
+  <g color="currentColor">
+    <line x1="50" y1="350" x2="695" y2="350" stroke="currentColor"/>
+    <line x1="50" y1="285" x2="695" y2="285" stroke="currentColor" opacity=".18"/>
+    <line x1="50" y1="220" x2="695" y2="220" stroke="currentColor" opacity=".18"/>
+    <line x1="50" y1="155" x2="695" y2="155" stroke="currentColor" opacity=".18"/>
+    <line x1="50" y1="90" x2="695" y2="90" stroke="currentColor" opacity=".18"/>
+    <text x="40" y="289" font-size="13" text-anchor="end" fill="currentColor">50</text>
+    <text x="40" y="224" font-size="13" text-anchor="end" fill="currentColor">100</text>
+    <text x="40" y="159" font-size="13" text-anchor="end" fill="currentColor">150</text>
+    <text x="40" y="94" font-size="13" text-anchor="end" fill="currentColor">200</text>
+    <text x="50" y="380" font-size="13" text-anchor="middle" fill="currentColor">1 Jul</text>
+    <text x="210" y="380" font-size="13" text-anchor="middle" fill="currentColor">25 Jul</text>
+    <text x="370" y="380" font-size="13" text-anchor="middle" fill="currentColor">18 Aug</text>
+    <text x="530" y="380" font-size="13" text-anchor="middle" fill="currentColor">11 Sep</text>
+    <text x="690" y="380" font-size="13" text-anchor="middle" fill="currentColor">8 Oct</text>
+  </g>
+  <polyline points="50,270 120,250 190,230 260,210 330,225 400,190 470,170 540,155 610,140 680,130" fill="none" stroke="#cc340c" stroke-width="3"/>
+  <polyline points="50,210 120,205 190,218 260,190 330,180 400,175 470,150 540,160 610,145 680,118" fill="none" stroke="#14b8a6" stroke-width="3"/>
+  <polyline points="50,300 120,285 190,265 260,250 330,232 400,225 470,215 540,205 610,180 680,170" fill="none" stroke="#6366f1" stroke-width="3"/>
+  <polyline points="50,160 120,175 190,165 260,150 330,130 400,138 470,126 540,112 610,105 680,95" fill="none" stroke="#f59e0b" stroke-width="3"/>
+  <polyline points="50,115 120,125 190,135 260,120 330,112 400,100 470,92 540,88 610,82 680,75" fill="none" stroke="#ec4899" stroke-width="3"/>
+  <polyline points="50,245 120,235 190,220 260,230 330,210 400,198 470,188 540,176 610,166 680,150" fill="none" stroke="#0ea5e9" stroke-width="3"/>
+  <text x="690" y="134" font-size="14" fill="#cc340c">bicycle</text>
+  <text x="690" y="118" font-size="14" fill="#14b8a6">apple</text>
+  <text x="690" y="174" font-size="14" fill="#6366f1">ham</text>
+  <text x="690" y="99" font-size="14" fill="#f59e0b">spoon</text>
+  <text x="690" y="78" font-size="14" fill="#ec4899">boat</text>
+  <text x="690" y="154" font-size="14" fill="#0ea5e9">starship</text>
+</svg>

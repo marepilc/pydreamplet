@@ -1,11 +1,8 @@
 import math
 from typing import Any, Iterable, Sequence
 
-from pydreamplet.core import Real
-
 from pydreamplet.colors import hex_to_rgb, rgb_to_hex
-
-type NumericPair = tuple[Real, Real] | list[Real]
+from pydreamplet.types import NumericPair
 
 
 class LinearScale:

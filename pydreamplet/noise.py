@@ -7,11 +7,23 @@ from typing import Callable
 # Noise Value Generator (Random Walk)
 # ────────────────────────────────────────────────────────────
 class Noise:
-    def __init__(self, min_val: float, max_val: float, noise_range: float):
+    def __init__(
+        self,
+        min_val: float,
+        max_val: float,
+        noise_range: float,
+        *,
+        seed: int | None = None,
+    ):
+        if min_val > max_val:
+            raise ValueError("min_val must be less than or equal to max_val")
+
         self._min = min_val
         self._max = max_val
+        self._random = random.Random(seed) if seed is not None else random
+        self._range = 0.0
         self.noise_range = noise_range
-        self._value = random.uniform(min_val, max_val)
+        self._value = self._random.uniform(min_val, max_val)
 
     @property
     def min(self) -> float:
@@ -19,6 +31,9 @@ class Noise:
 
     @min.setter
     def min(self, value: float) -> None:
+        if value > self._max:
+            raise ValueError("min cannot be greater than max")
+
         old_relative = self.noise_range
         if self._value < value:
             self._value = value
@@ -31,6 +46,9 @@ class Noise:
 
     @max.setter
     def max(self, value: float) -> None:
+        if value < self._min:
+            raise ValueError("max cannot be less than min")
+
         old_relative = self.noise_range
         if self._value > value:
             self._value = value
@@ -45,8 +63,10 @@ class Noise:
 
     @noise_range.setter
     def noise_range(self, value: float) -> None:
-        if 0 < value < 1:
-            self._range = value * (self._max - self._min)
+        if not 0 <= value <= 1:
+            raise ValueError("noise_range must be between 0 and 1")
+
+        self._range = value * (self._max - self._min)
 
     @property
     def value(self) -> float:
@@ -72,7 +92,7 @@ class Noise:
         elif max0 > self._max:
             max0 = self._max
             min0 = max0 - self._range
-        self._value = random.uniform(min0, max0)
+        self._value = self._random.uniform(min0, max0)
 
 
 # ────────────────────────────────────────────────────────────
@@ -95,6 +115,10 @@ class NoiseBase:
         return p + p
 
     def _seeded_random(self, seed: int) -> Callable[[], float]:
+        seed %= 2147483647
+        if seed <= 0:
+            seed += 2147483646
+
         def random_func() -> float:
             nonlocal seed
             seed = (seed * 16807) % 2147483647
@@ -117,8 +141,6 @@ class NoiseBase:
 class SimplexNoise(NoiseBase):
     def __init__(self, seed: int | None = None):
         super().__init__(seed)
-        # For 1D, the gradient can be either 1 or -1.
-        self.grad3 = [1, -1]
 
     def noise(self, x: float, frequency: float = 1, amplitude: float = 1) -> float:
         x *= frequency
@@ -140,13 +162,17 @@ class SimplexNoise(NoiseBase):
             t1 *= t1
             n1 = t1 * t1 * self._grad(self.permutation[i1 & 255], x1)
 
-        # rawNoise is roughly in [-1, 1]
-        raw_noise = 0.5 * (n0 + n1)
+        # Scale to roughly [-1, 1], then map to [0, amplitude].
+        raw_noise = 0.395 * (n0 + n1)
         # Map [-1, 1] -> [0, 1] then scale by amplitude
         return amplitude * ((raw_noise + 1) / 2)
 
     def _grad(self, hash_val: int, x: float) -> float:
-        return self.grad3[hash_val & 1] * x
+        h = hash_val & 15
+        grad = 1.0 + (h & 7)
+        if h & 8:
+            grad = -grad
+        return grad * x
 
 
 # ────────────────────────────────────────────────────────────

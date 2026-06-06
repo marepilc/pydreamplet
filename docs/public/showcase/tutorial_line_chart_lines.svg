@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 400" width="800px" height="400px">
+  <polyline points="50,270 120,250 190,230 260,210 330,225 400,190 470,170 540,155 610,140 680,130" fill="none" stroke="#cc340c" stroke-width="3"/>
+  <polyline points="50,210 120,205 190,218 260,190 330,180 400,175 470,150 540,160 610,145 680,118" fill="none" stroke="#14b8a6" stroke-width="3"/>
+  <polyline points="50,300 120,285 190,265 260,250 330,232 400,225 470,215 540,205 610,180 680,170" fill="none" stroke="#6366f1" stroke-width="3"/>
+  <polyline points="50,160 120,175 190,165 260,150 330,130 400,138 470,126 540,112 610,105 680,95" fill="none" stroke="#f59e0b" stroke-width="3"/>
+  <polyline points="50,115 120,125 190,135 260,120 330,112 400,100 470,92 540,88 610,82 680,75" fill="none" stroke="#ec4899" stroke-width="3"/>
+  <polyline points="50,245 120,235 190,220 260,230 330,210 400,198 470,188 540,176 610,166 680,150" fill="none" stroke="#0ea5e9" stroke-width="3"/>
+</svg>

@@ -3,13 +3,18 @@ on:
   push:
     branches:
       - "**" # Trigger on pushes to all branches
+  pull_request:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   test:
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python-version: ["3.12", "3.13", "3.14"]
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -17,45 +22,49 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: 3.x
+          python-version: ${{ matrix.python-version }}
 
       - name: Install uv
         uses: astral-sh/setup-uv@v4
+        with:
+          enable-cache: true
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+          cache: npm
+          cache-dependency-path: docs/package-lock.json
 
       - name: Install project dependencies
-        run: uv sync --extra dev
+        run: uv sync --group dev
 
       - name: Run tests
         run: uv run pytest
 
-  deploy:
-    if: github.ref == 'refs/heads/main' || github.ref == 'refs/heads/master'
-    needs: test
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
+      - name: Run basedpyright
+        run: uv run basedpyright
 
-      - name: Configure Git Credentials
+      - name: Run mypy
+        run: uv run mypy pydreamplet tests
+
+      - name: Run Ruff
+        run: uv run ruff check pydreamplet tests
+
+      - name: Install documentation dependencies
+        working-directory: docs
+        run: npm ci
+
+      - name: Build documentation
+        working-directory: docs
+        run: npm run build
+
+      - name: Build package
+        run: uv build
+
+      - name: Smoke test wheel install
         run: |
-          git config user.name github-actions[bot]
-          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
-
-      - uses: actions/setup-python@v5
-        with:
-          python-version: 3.x
-
-      - name: Cache MkDocs Material dependencies
-        run: echo "cache_id=$(date --utc '+%V')" >> $GITHUB_ENV
-
-      - uses: actions/cache@v4
-        with:
-          key: mkdocs-material-${{ env.cache_id }}
-          path: .cache
-          restore-keys: |
-            mkdocs-material-
-
-      - name: Install MkDocs Material
-        run: pip install mkdocs-material
-
-      - name: Deploy MkDocs site
-        run: mkdocs gh-deploy --force
+          python -m venv /tmp/pydreamplet-wheel
+          /tmp/pydreamplet-wheel/bin/python -m pip install --upgrade pip
+          /tmp/pydreamplet-wheel/bin/python -m pip install dist/*.whl
+          /tmp/pydreamplet-wheel/bin/python -c "import pydreamplet as dp; assert dp.SVG(10, 10).w == 10"

@@ -1,0 +1,1 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 180" width="360px" height="180px"><path id="curve" fill="none" stroke="currentColor" stroke-width="3" opacity="0.45" d="M40 120 C95 30 265 30 320 120" /><text fill="currentColor" font-size="24" font-weight="700"><textPath startOffset="50%" text-anchor="middle" href="#curve">Text follows the curve</textPath></text></svg>

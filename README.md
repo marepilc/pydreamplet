@@ -7,7 +7,7 @@
 - **Lightweight & Flexible:** Generate SVG images with minimal overhead.
 - **Easy Integration:** Works seamlessly in Jupyter notebooks, scripts, or web applications.
 - **Customizable:** Set any attribute on your SVG elements using simple keyword arguments.
-- **No Heavy Dependencies:** Designed to work with just Python’s standard library (plus Pillow and IPython for additional features).
+- **No Heavy Dependencies:** Designed to work with a small core dependency set. Notebook display support is optional.
 
 ## Installation
 
@@ -19,15 +19,27 @@ With uv:
 uv add pydreamplet
 ```
 
+For notebook display support with `svg.display()`:
+
+```shell
+uv add pydreamplet --extra notebook
+```
+
 With pip:
 
-```schell
+```shell
 pip install pydreamplet
+```
+
+For notebook display support with `svg.display()`:
+
+```shell
+pip install "pydreamplet[notebook]"
 ```
 
 ## Documentation
 
-For complete documentation, tutorials, and API references, please visit [pyDreampled documentation](https://marepilc.github.io/pydreamplet/)
+For complete documentation, tutorials, and API references, please visit [pyDreamplet documentation](https://py.dreamplet.com/)
 
 ## Examples
 

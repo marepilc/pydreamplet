@@ -81,9 +81,15 @@ def test_point_scale_map_and_unknown():
     # "b": 0 + step*(1 + 0.5) ≈ 50.0
     # "c": 0 + step*(2 + 0.5) ≈ 83.33
     step = (100) / (2 + 1)  # 100/3
-    assert math.isclose(scale.map("a"), step * 0.5, rel_tol=1e-4)
-    assert math.isclose(scale.map("b"), step * 1.5, rel_tol=1e-4)
-    assert math.isclose(scale.map("c"), step * 2.5, rel_tol=1e-4)
+    pos_a = scale.map("a")
+    pos_b = scale.map("b")
+    pos_c = scale.map("c")
+    assert pos_a is not None
+    assert pos_b is not None
+    assert pos_c is not None
+    assert math.isclose(pos_a, step * 0.5, rel_tol=1e-4)
+    assert math.isclose(pos_b, step * 1.5, rel_tol=1e-4)
+    assert math.isclose(pos_c, step * 2.5, rel_tol=1e-4)
     # Test unknown value returns None
     assert scale.map("d") is None
 
@@ -141,7 +147,7 @@ def test_color_scale_invalid_domain():
 def test_color_scale_invalid_output_range():
     # Output range must have exactly two colors.
     with pytest.raises(ValueError):
-        ColorScale((0, 100), ("#000000",))
+        ColorScale((0, 100), ("#000000",))  # type: ignore[arg-type]
 
 
 # ----- SquareScale Tests -----

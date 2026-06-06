@@ -1,5 +1,70 @@
 import math
-from typing import Sequence, cast
+from typing import Literal, Sequence, cast
+
+
+_ANGLE_TOLERANCE = 1e-9
+type PointInput = Sequence[float] | Sequence[Sequence[float]]
+type StepMode = Literal["before", "after", "mid"]
+
+
+def _format_point(x: float, y: float) -> str:
+    if math.isclose(x, 0, abs_tol=_ANGLE_TOLERANCE):
+        x = 0
+    if math.isclose(y, 0, abs_tol=_ANGLE_TOLERANCE):
+        y = 0
+    return f"{x:.2f},{y:.2f}"
+
+
+def _validate_non_negative(value: float, name: str) -> None:
+    if value < 0:
+        raise ValueError(f"{name} must be non-negative")
+
+
+def _validate_positive(value: float, name: str) -> None:
+    if value <= 0:
+        raise ValueError(f"{name} must be positive")
+
+
+def _coerce_points(points: PointInput) -> list[tuple[float, float]]:
+    if not points:
+        return []
+
+    first = points[0]
+    if isinstance(first, (int, float)):
+        if len(points) % 2 != 0:
+            raise ValueError("flat points must contain an even number of values")
+        flat_points = cast(Sequence[float], points)
+        return [
+            (float(flat_points[i]), float(flat_points[i + 1]))
+            for i in range(0, len(flat_points), 2)
+        ]
+
+    point_pairs = cast(Sequence[Sequence[float]], points)
+    normalized: list[tuple[float, float]] = []
+    for point in point_pairs:
+        if len(point) != 2:
+            raise ValueError("points must contain exactly 2 coordinates each")
+        x, y = point
+        normalized.append((float(x), float(y)))
+    return normalized
+
+
+def _arc_span(start_angle: float, end_angle: float) -> tuple[float, bool, int]:
+    raw_delta = end_angle - start_angle
+    sweep_flag = 1 if raw_delta >= 0 else 0
+    if math.isclose(raw_delta, 0, abs_tol=_ANGLE_TOLERANCE):
+        return 0, False, sweep_flag
+
+    abs_delta = abs(raw_delta)
+    normalized = abs_delta % 360
+    if math.isclose(normalized, 360, abs_tol=_ANGLE_TOLERANCE):
+        normalized = 0
+
+    if math.isclose(normalized, 0, abs_tol=_ANGLE_TOLERANCE) and abs_delta >= 360:
+        return 360 if raw_delta > 0 else -360, True, sweep_flag
+
+    signed_delta = normalized if raw_delta > 0 else -normalized
+    return signed_delta, False, sweep_flag
 
 
 def star(
@@ -27,6 +92,11 @@ def star(
     Returns:
       str: A string suitable for the "d" attribute in an SVG path element.
     """
+    if n < 2:
+        raise ValueError("n must be at least 2")
+    _validate_non_negative(inner_radius, "inner_radius")
+    _validate_positive(outer_radius, "outer_radius")
+
     # Convert the angle offset from degrees to radians.
     angle_offset = math.radians(angle)
 
@@ -42,7 +112,7 @@ def star(
         px = x + r * math.cos(a)
         py = y + r * math.sin(a)
         # Format the coordinate to two decimal places.
-        points.append(f"{px:.2f},{py:.2f}")
+        points.append(_format_point(px, py))
 
     # Build the SVG path string: move to the first point, draw lines to the rest, then close the path.
     d_string = "M " + " L ".join(points) + " Z"
@@ -67,17 +137,283 @@ def polyline(x_coords: Sequence[float], y_coords: Sequence[float]) -> str:
     """
     if len(x_coords) != len(y_coords):
         raise ValueError("x_coords and y_coords must have the same length")
+    if not x_coords:
+        raise ValueError("x_coords and y_coords must contain at least one point")
 
     # Create a list of formatted point strings (with two decimal places).
-    points = [f"{x:.2f},{y:.2f}" for x, y in zip(x_coords, y_coords)]
+    points = [_format_point(x, y) for x, y in zip(x_coords, y_coords)]
 
     # Build the SVG path string: move to the first point, then draw lines to the rest.
     d_string = "M " + " L ".join(points)
     return d_string
 
 
+def linear_path(points: PointInput, closed: bool = False) -> str:
+    """
+    Generate an SVG path through points using straight line segments.
+    """
+    xy = _coerce_points(points)
+    if not xy:
+        return ""
+    d = "M " + " L ".join(_format_point(x, y) for x, y in xy)
+    if closed:
+        d += " Z"
+    return d
+
+
+def step_path(
+    points: PointInput,
+    closed: bool = False,
+    mode: StepMode = "mid",
+) -> str:
+    """
+    Generate an SVG stepped path through points.
+
+    `mode="before"` changes y before x, `mode="after"` changes x before y,
+    and `mode="mid"` changes y at the midpoint between adjacent x values.
+    """
+    if mode not in {"before", "after", "mid"}:
+        raise ValueError("mode must be 'before', 'after', or 'mid'")
+
+    xy = _coerce_points(points)
+    if not xy:
+        return ""
+
+    parts = [f"M {_format_point(xy[0][0], xy[0][1])}"]
+    for previous, current in zip(xy, xy[1:]):
+        x0, y0 = previous
+        x1, y1 = current
+        if mode == "before":
+            parts.append(f"L {_format_point(x0, y1)}")
+            parts.append(f"L {_format_point(x1, y1)}")
+        elif mode == "after":
+            parts.append(f"L {_format_point(x1, y0)}")
+            parts.append(f"L {_format_point(x1, y1)}")
+        else:
+            mid_x = (x0 + x1) / 2
+            parts.append(f"L {_format_point(mid_x, y0)}")
+            parts.append(f"L {_format_point(mid_x, y1)}")
+            parts.append(f"L {_format_point(x1, y1)}")
+
+    if closed:
+        parts.append("Z")
+    return " ".join(parts)
+
+
+def catmull_rom_path(points: PointInput, closed: bool = False) -> str:
+    """
+    Generate an SVG Catmull-Rom spline through points.
+
+    This uses the common uniform Catmull-Rom to cubic Bezier conversion.
+    """
+    xy = _coerce_points(points)
+    n = len(xy)
+    if n == 0:
+        return ""
+    if n == 1:
+        return f"M {_format_point(xy[0][0], xy[0][1])}"
+    if n == 2 and not closed:
+        return linear_path(xy)
+    if closed and n < 3:
+        raise ValueError("closed Catmull-Rom paths require at least 3 points")
+
+    parts = [f"M {_format_point(xy[0][0], xy[0][1])}"]
+    segment_count = n if closed else n - 1
+    for i in range(segment_count):
+        p0 = xy[(i - 1) % n] if closed or i > 0 else xy[0]
+        p1 = xy[i % n]
+        p2 = xy[(i + 1) % n]
+        p3 = xy[(i + 2) % n] if closed or i + 2 < n else xy[-1]
+
+        c1 = (p1[0] + (p2[0] - p0[0]) / 6, p1[1] + (p2[1] - p0[1]) / 6)
+        c2 = (p2[0] - (p3[0] - p1[0]) / 6, p2[1] - (p3[1] - p1[1]) / 6)
+        parts.append(
+            "C "
+            f"{_format_point(c1[0], c1[1])} "
+            f"{_format_point(c2[0], c2[1])} "
+            f"{_format_point(p2[0], p2[1])}"
+        )
+
+    if closed:
+        parts.append("Z")
+    return " ".join(parts)
+
+
+def basis_spline(points: PointInput, closed: bool = False) -> str:
+    """
+    Generate a cubic basis spline path from control points.
+
+    Basis splines are smooth but do not generally pass through every control point.
+    The open variant starts at the first point and ends at the last point.
+    """
+    xy = _coerce_points(points)
+    n = len(xy)
+    if n == 0:
+        return ""
+    if n == 1:
+        return f"M {_format_point(xy[0][0], xy[0][1])}"
+    if n == 2 and not closed:
+        return linear_path(xy)
+    if closed and n < 3:
+        raise ValueError("closed basis splines require at least 3 points")
+
+    def blend(
+        p0: tuple[float, float],
+        p1: tuple[float, float],
+        p2: tuple[float, float],
+        p3: tuple[float, float],
+    ) -> tuple[tuple[float, float], tuple[float, float], tuple[float, float]]:
+        c1 = ((2 * p1[0] + p2[0]) / 3, (2 * p1[1] + p2[1]) / 3)
+        c2 = ((p1[0] + 2 * p2[0]) / 3, (p1[1] + 2 * p2[1]) / 3)
+        end = (
+            (p1[0] + 4 * p2[0] + p3[0]) / 6,
+            (p1[1] + 4 * p2[1] + p3[1]) / 6,
+        )
+        return c1, c2, end
+
+    if closed:
+        start = (
+            (xy[-1][0] + 4 * xy[0][0] + xy[1][0]) / 6,
+            (xy[-1][1] + 4 * xy[0][1] + xy[1][1]) / 6,
+        )
+        parts = [f"M {_format_point(start[0], start[1])}"]
+        for i in range(n):
+            c1, c2, end = blend(
+                xy[(i - 1) % n],
+                xy[i % n],
+                xy[(i + 1) % n],
+                xy[(i + 2) % n],
+            )
+            parts.append(
+                "C "
+                f"{_format_point(c1[0], c1[1])} "
+                f"{_format_point(c2[0], c2[1])} "
+                f"{_format_point(end[0], end[1])}"
+            )
+        parts.append("Z")
+        return " ".join(parts)
+
+    extended = [xy[0], *xy, xy[-1]]
+    parts = [f"M {_format_point(xy[0][0], xy[0][1])}"]
+    for i in range(n - 1):
+        c1, c2, end = blend(
+            extended[i],
+            extended[i + 1],
+            extended[i + 2],
+            extended[i + 3],
+        )
+        if i == n - 2:
+            end = xy[-1]
+        parts.append(
+            "C "
+            f"{_format_point(c1[0], c1[1])} "
+            f"{_format_point(c2[0], c2[1])} "
+            f"{_format_point(end[0], end[1])}"
+        )
+    return " ".join(parts)
+
+
+def _monotone_tangents(values: Sequence[float], coordinates: Sequence[float]) -> list[float]:
+    n = len(values)
+    slopes: list[float] = []
+    for i in range(n - 1):
+        delta_coordinate = coordinates[i + 1] - coordinates[i]
+        if delta_coordinate == 0:
+            raise ValueError("monotone coordinates must be strictly monotonic")
+        slopes.append((values[i + 1] - values[i]) / delta_coordinate)
+
+    tangents = [0.0] * n
+    tangents[0] = slopes[0]
+    tangents[-1] = slopes[-1]
+    for i in range(1, n - 1):
+        if slopes[i - 1] * slopes[i] <= 0:
+            tangents[i] = 0
+        else:
+            tangents[i] = (slopes[i - 1] + slopes[i]) / 2
+
+    for i, slope in enumerate(slopes):
+        if slope == 0:
+            tangents[i] = 0
+            tangents[i + 1] = 0
+            continue
+        alpha = tangents[i] / slope
+        beta = tangents[i + 1] / slope
+        length = math.hypot(alpha, beta)
+        if length > 3:
+            scale = 3 / length
+            tangents[i] = scale * alpha * slope
+            tangents[i + 1] = scale * beta * slope
+    return tangents
+
+
+def monotone_x_path(points: PointInput) -> str:
+    """
+    Generate an SVG path with monotone cubic interpolation in x.
+    """
+    xy = _coerce_points(points)
+    n = len(xy)
+    if n == 0:
+        return ""
+    if n == 1:
+        return f"M {_format_point(xy[0][0], xy[0][1])}"
+    if n == 2:
+        return linear_path(xy)
+
+    x_values = [point[0] for point in xy]
+    y_values = [point[1] for point in xy]
+    tangents = _monotone_tangents(y_values, x_values)
+
+    parts = [f"M {_format_point(xy[0][0], xy[0][1])}"]
+    for i in range(n - 1):
+        x0, y0 = xy[i]
+        x1, y1 = xy[i + 1]
+        dx = x1 - x0
+        c1 = (x0 + dx / 3, y0 + tangents[i] * dx / 3)
+        c2 = (x1 - dx / 3, y1 - tangents[i + 1] * dx / 3)
+        parts.append(
+            "C "
+            f"{_format_point(c1[0], c1[1])} "
+            f"{_format_point(c2[0], c2[1])} "
+            f"{_format_point(x1, y1)}"
+        )
+    return " ".join(parts)
+
+
+def monotone_y_path(points: PointInput) -> str:
+    """
+    Generate an SVG path with monotone cubic interpolation in y.
+    """
+    xy = _coerce_points(points)
+    n = len(xy)
+    if n == 0:
+        return ""
+    if n == 1:
+        return f"M {_format_point(xy[0][0], xy[0][1])}"
+    if n == 2:
+        return linear_path(xy)
+
+    x_values = [point[0] for point in xy]
+    y_values = [point[1] for point in xy]
+    tangents = _monotone_tangents(x_values, y_values)
+
+    parts = [f"M {_format_point(xy[0][0], xy[0][1])}"]
+    for i in range(n - 1):
+        x0, y0 = xy[i]
+        x1, y1 = xy[i + 1]
+        dy = y1 - y0
+        c1 = (x0 + tangents[i] * dy / 3, y0 + dy / 3)
+        c2 = (x1 - tangents[i + 1] * dy / 3, y1 - dy / 3)
+        parts.append(
+            "C "
+            f"{_format_point(c1[0], c1[1])} "
+            f"{_format_point(c2[0], c2[1])} "
+            f"{_format_point(x1, y1)}"
+        )
+    return " ".join(parts)
+
+
 def cardinal_spline(
-    points: list[float] | list[tuple[float, float]],
+    points: PointInput,
     tension: float = 0.0,
     closed: bool = False,
 ) -> str:
@@ -104,24 +440,11 @@ def cardinal_spline(
     str
         An SVG path 'd' string, e.g. "M x0,y0 C c1x,c1y c2x,c2y x1,y1 ..."
     """
-    # Normalize the input to a list of (float, float) pairs.
-    xy: list[tuple[float, float]] = []
+    xy = _coerce_points(points)
     if not points:
         return ""  # nothing to draw
-
-    first = points[0]
-    if isinstance(first, (int, float)) and len(points) % 2 == 0:
-        # We're in the flat-list branch.
-        flat_points = cast(list[float], points)
-        for i in range(0, len(flat_points), 2):
-            xy.append((float(flat_points[i]), float(flat_points[i + 1])))
-    elif isinstance(first, (tuple, list)) and len(first) == 2:
-        # Input is already a list of (x, y) pairs.
-        xy = [(float(x), float(y)) for x, y in cast(list[tuple[float, float]], points)]
-    else:
-        raise ValueError(
-            "points must be either flat [x0, y0, ...] or a list of (x, y) pairs"
-        )
+    if not 0 <= tension <= 1:
+        raise ValueError("tension must be between 0 and 1")
 
     n = len(xy)
     if n == 0:
@@ -132,6 +455,8 @@ def cardinal_spline(
     if n == 2 and not closed:
         # Two points: draw a straight line.
         return f"M {xy[0][0]},{xy[0][1]} L {xy[1][0]},{xy[1][1]}"
+    if closed and n < 3:
+        raise ValueError("closed cardinal splines require at least 3 points")
 
     # k is the factor controlling the tangent lengths.
     # D3 uses k = (1 - tension) / 6 for its cardinal spline.
@@ -195,6 +520,10 @@ def polygon(x: float, y: float, radius: float, n: int, angle: float = 0) -> str:
     Returns:
       str: A string suitable for the "d" attribute in an SVG <path> element.
     """
+    if n < 3:
+        raise ValueError("n must be at least 3")
+    _validate_non_negative(radius, "radius")
+
     angle_offset = math.radians(angle)
     angle_step = 2 * math.pi / n
     points: list[str] = []
@@ -202,8 +531,141 @@ def polygon(x: float, y: float, radius: float, n: int, angle: float = 0) -> str:
         a = i * angle_step - math.pi / 2 + angle_offset
         sx = x + math.cos(a) * radius
         sy = y + math.sin(a) * radius
-        points.append(f"{sx:.2f},{sy:.2f}")
+        points.append(_format_point(sx, sy))
     return "M " + " L ".join(points) + " Z"
+
+
+def superellipse(
+    x: float = 0,
+    y: float = 0,
+    *,
+    rx: float,
+    ry: float,
+    exponent: float = 4,
+    n: int = 64,
+    angle: float = 0,
+) -> str:
+    """
+    Returns a closed superellipse path centered at (x, y).
+
+    `exponent=2` produces an ellipse-like shape. Larger values produce squarer
+    sides, while values between 0 and 2 produce pinched diamond-like shapes.
+    """
+    _validate_positive(rx, "rx")
+    _validate_positive(ry, "ry")
+    _validate_positive(exponent, "exponent")
+    if n < 4:
+        raise ValueError("n must be at least 4")
+
+    rotation = math.radians(angle)
+    cos_rotation = math.cos(rotation)
+    sin_rotation = math.sin(rotation)
+    power = 2 / exponent
+    points: list[tuple[float, float]] = []
+
+    for i in range(n):
+        theta = 2 * math.pi * i / n
+        cos_theta = math.cos(theta)
+        sin_theta = math.sin(theta)
+        px = rx * math.copysign(abs(cos_theta) ** power, cos_theta)
+        py = ry * math.copysign(abs(sin_theta) ** power, sin_theta)
+        rotated_x = px * cos_rotation - py * sin_rotation
+        rotated_y = px * sin_rotation + py * cos_rotation
+        points.append((x + rotated_x, y + rotated_y))
+
+    return linear_path(points, closed=True)
+
+
+def rounded_polygon(
+    points: PointInput,
+    *,
+    radius: float,
+) -> str:
+    """
+    Generate a closed polygon path with quadratic rounded corners.
+    """
+    _validate_non_negative(radius, "radius")
+    xy = _coerce_points(points)
+    if len(xy) < 3:
+        raise ValueError("rounded polygons require at least 3 points")
+
+    if radius == 0:
+        return linear_path(xy, closed=True)
+
+    corner_points: list[tuple[tuple[float, float], tuple[float, float], tuple[float, float]]] = []
+    n = len(xy)
+    for i, current in enumerate(xy):
+        previous = xy[(i - 1) % n]
+        following = xy[(i + 1) % n]
+        in_length = math.dist(previous, current)
+        out_length = math.dist(current, following)
+        offset = min(radius, in_length / 2, out_length / 2)
+        if math.isclose(offset, 0, abs_tol=_ANGLE_TOLERANCE):
+            corner_points.append((current, current, current))
+            continue
+
+        start = (
+            current[0] + (previous[0] - current[0]) * offset / in_length,
+            current[1] + (previous[1] - current[1]) * offset / in_length,
+        )
+        end = (
+            current[0] + (following[0] - current[0]) * offset / out_length,
+            current[1] + (following[1] - current[1]) * offset / out_length,
+        )
+        corner_points.append((start, current, end))
+
+    first_start, first_corner, first_end = corner_points[0]
+    parts = [f"M {_format_point(first_start[0], first_start[1])}"]
+    parts.append(
+        f"Q {_format_point(first_corner[0], first_corner[1])} "
+        f"{_format_point(first_end[0], first_end[1])}"
+    )
+    for start, corner, end in corner_points[1:]:
+        parts.append(f"L {_format_point(start[0], start[1])}")
+        parts.append(
+            f"Q {_format_point(corner[0], corner[1])} {_format_point(end[0], end[1])}"
+        )
+    parts.append("Z")
+    return " ".join(parts)
+
+
+def blob(
+    x: float = 0,
+    y: float = 0,
+    *,
+    radius: float,
+    variance: float = 0.25,
+    n: int = 12,
+    seed: int = 0,
+    smooth: bool = True,
+) -> str:
+    """
+    Generate a deterministic organic closed shape.
+
+    The shape is produced from sinusoidal radius variation rather than random
+    state, so the same parameters always generate the same path.
+    """
+    _validate_positive(radius, "radius")
+    _validate_non_negative(variance, "variance")
+    if n < 3:
+        raise ValueError("n must be at least 3")
+
+    amplitude = min(variance, 1.0)
+    points: list[tuple[float, float]] = []
+    for i in range(n):
+        theta = 2 * math.pi * i / n
+        wave = (
+            math.sin(theta * 2 + seed * 1.713)
+            + 0.5 * math.sin(theta * 3 - seed * 0.927)
+            + 0.25 * math.cos(theta * 5 + seed * 0.313)
+        )
+        normalized = wave / 1.75
+        r = radius * (1 + amplitude * normalized)
+        points.append((x + r * math.cos(theta), y + r * math.sin(theta)))
+
+    if smooth:
+        return catmull_rom_path(points, closed=True)
+    return linear_path(points, closed=True)
 
 
 def cross(
@@ -225,6 +687,11 @@ def cross(
     Returns:
       str: A string suitable for the "d" attribute in an SVG path element.
     """
+    _validate_positive(size, "size")
+    _validate_positive(thickness, "thickness")
+    if thickness > size:
+        raise ValueError("thickness must be less than or equal to size")
+
     # Calculate half dimensions
     h = size / 2  # half-size: distance from center to tip
     t = thickness / 2  # half-thickness
@@ -262,7 +729,7 @@ def cross(
 
     # Construct the SVG path d-string: move to the first point, then draw lines to each subsequent point, and close the path.
     d_string = (
-        "M " + " L ".join(f"{rx:.2f},{ry:.2f}" for rx, ry in rotated_points) + " Z"
+        "M " + " L ".join(_format_point(rx, ry) for rx, ry in rotated_points) + " Z"
     )
     return d_string
 
@@ -290,15 +757,11 @@ def arc(
     Returns:
       str: A string suitable for the "d" attribute in an SVG path element.
     """
-    # Convert angles from degrees to radians.
+    _validate_positive(radius, "radius")
+
     start_rad = math.radians(start_angle)
     end_rad = math.radians(end_angle)
-
-    # Compute the angular span (in degrees) and check if it represents a full circle.
-    delta_deg = (end_angle - start_angle) % 360
-    is_full_circle = math.isclose(delta_deg, 0, abs_tol=1e-9) or math.isclose(
-        delta_deg, 360, abs_tol=1e-9
-    )
+    delta_deg, is_full_circle, sweep_flag = _arc_span(start_angle, end_angle)
 
     # Helper function to compute a point on the circle.
     def point(angle_rad: float) -> tuple[float, float]:
@@ -307,22 +770,25 @@ def arc(
     start_point = point(start_rad)
     end_point = point(end_rad)
 
+    if math.isclose(delta_deg, 0, abs_tol=_ANGLE_TOLERANCE):
+        return f"M {_format_point(start_point[0], start_point[1])}"
+
     if is_full_circle:
         # For a full circle, we need to split the arc into two 180° segments.
-        mid_point = point(start_rad + math.pi)
+        direction = 1 if sweep_flag == 1 else -1
+        mid_point = point(start_rad + direction * math.pi)
         # Each arc segment is exactly 180° so the large_arc_flag is 0.
         d = (
-            f"M {start_point[0]:.2f},{start_point[1]:.2f} "
-            f"A {radius:.2f} {radius:.2f} 0 0 1 {mid_point[0]:.2f},{mid_point[1]:.2f} "
-            f"A {radius:.2f} {radius:.2f} 0 0 1 {start_point[0]:.2f},{start_point[1]:.2f}"
+            f"M {_format_point(start_point[0], start_point[1])} "
+            f"A {radius:.2f} {radius:.2f} 0 0 {sweep_flag} {_format_point(mid_point[0], mid_point[1])} "
+            f"A {radius:.2f} {radius:.2f} 0 0 {sweep_flag} {_format_point(start_point[0], start_point[1])}"
         )
     else:
         # For a partial arc, set the large_arc_flag based on the angular span.
-        large_arc_flag = 1 if delta_deg > 180 else 0
-        # Use a sweep flag of 1 to draw the arc in the positive angle direction.
+        large_arc_flag = 1 if abs(delta_deg) > 180 else 0
         d = (
-            f"M {start_point[0]:.2f},{start_point[1]:.2f} "
-            f"A {radius:.2f} {radius:.2f} 0 {large_arc_flag} 1 {end_point[0]:.2f},{end_point[1]:.2f}"
+            f"M {_format_point(start_point[0], start_point[1])} "
+            f"A {radius:.2f} {radius:.2f} 0 {large_arc_flag} {sweep_flag} {_format_point(end_point[0], end_point[1])}"
         )
 
     return d
@@ -347,19 +813,21 @@ def ring(
     For a partial ring (angle != 360°):
       - If without_inner is False, a full ring segment is drawn (outer arc,
         radial line from outer_end to inner_end, inner arc, and radial line back).
-      - If without_inner is True, the inner arc is omitted. Instead a single closed path is drawn:
+      - If without_inner is True, the inner arc is omitted. Instead an open path is drawn:
           1. Move to inner_start.
           2. Draw a radial line from inner_start to outer_start.
           3. Draw the outer arc from outer_start to outer_end.
           4. Draw a radial line from outer_end to inner_end.
-          5. Close the path (which draws a chord from inner_end back to inner_start).
     """
+    _validate_non_negative(inner_radius, "inner_radius")
+    _validate_positive(outer_radius, "outer_radius")
+    if inner_radius > outer_radius:
+        raise ValueError("inner_radius must be less than or equal to outer_radius")
+
     start_rad = math.radians(start_angle)
     end_rad = math.radians(end_angle)
-    delta_deg = (end_angle - start_angle) % 360
-    is_full_circle = math.isclose(delta_deg, 0, abs_tol=1e-9) or math.isclose(
-        delta_deg, 360, abs_tol=1e-9
-    )
+    delta_deg, is_full_circle, sweep_flag = _arc_span(start_angle, end_angle)
+    inner_sweep_flag = 0 if sweep_flag == 1 else 1
 
     def point(r: float, angle: float) -> tuple[float, float]:
         return (x + r * math.cos(angle), y + r * math.sin(angle))
@@ -369,33 +837,37 @@ def ring(
     inner_start = point(inner_radius, start_rad)
     inner_end = point(inner_radius, end_rad)
 
+    if math.isclose(delta_deg, 0, abs_tol=_ANGLE_TOLERANCE):
+        return ""
+
     if is_full_circle:
-        mid_outer = point(outer_radius, start_rad + math.pi)
-        mid_inner = point(inner_radius, start_rad + math.pi)
+        direction = 1 if sweep_flag == 1 else -1
+        mid_outer = point(outer_radius, start_rad + direction * math.pi)
+        mid_inner = point(inner_radius, start_rad + direction * math.pi)
         d = (
-            f"M {outer_start[0]:.2f},{outer_start[1]:.2f} "
-            f"A {outer_radius:.2f} {outer_radius:.2f} 0 0 1 {mid_outer[0]:.2f},{mid_outer[1]:.2f} "
-            f"A {outer_radius:.2f} {outer_radius:.2f} 0 0 1 {outer_start[0]:.2f},{outer_start[1]:.2f} "
-            f"M {inner_end[0]:.2f},{inner_end[1]:.2f} "
-            f"A {inner_radius:.2f} {inner_radius:.2f} 0 0 0 {mid_inner[0]:.2f},{mid_inner[1]:.2f} "
-            f"A {inner_radius:.2f} {inner_radius:.2f} 0 0 0 {inner_start[0]:.2f},{inner_start[1]:.2f} Z"
+            f"M {_format_point(outer_start[0], outer_start[1])} "
+            f"A {outer_radius:.2f} {outer_radius:.2f} 0 0 {sweep_flag} {_format_point(mid_outer[0], mid_outer[1])} "
+            f"A {outer_radius:.2f} {outer_radius:.2f} 0 0 {sweep_flag} {_format_point(outer_start[0], outer_start[1])} "
+            f"M {_format_point(inner_end[0], inner_end[1])} "
+            f"A {inner_radius:.2f} {inner_radius:.2f} 0 0 {inner_sweep_flag} {_format_point(mid_inner[0], mid_inner[1])} "
+            f"A {inner_radius:.2f} {inner_radius:.2f} 0 0 {inner_sweep_flag} {_format_point(inner_start[0], inner_start[1])} Z"
         )
         return d
 
-    large_arc_flag = 1 if delta_deg > 180 else 0
+    large_arc_flag = 1 if abs(delta_deg) > 180 else 0
 
     if without_inner:
         d = (
-            f"M {inner_start[0]:.2f},{inner_start[1]:.2f} "
-            f"L {outer_start[0]:.2f},{outer_start[1]:.2f} "
-            f"A {outer_radius:.2f} {outer_radius:.2f} 0 {large_arc_flag} 1 {outer_end[0]:.2f},{outer_end[1]:.2f} "
-            f"L {inner_end[0]:.2f},{inner_end[1]:.2f} "
+            f"M {_format_point(inner_start[0], inner_start[1])} "
+            f"L {_format_point(outer_start[0], outer_start[1])} "
+            f"A {outer_radius:.2f} {outer_radius:.2f} 0 {large_arc_flag} {sweep_flag} {_format_point(outer_end[0], outer_end[1])} "
+            f"L {_format_point(inner_end[0], inner_end[1])} "
         )
     else:
         d = (
-            f"M {outer_start[0]:.2f},{outer_start[1]:.2f} "
-            f"A {outer_radius:.2f} {outer_radius:.2f} 0 {large_arc_flag} 1 {outer_end[0]:.2f},{outer_end[1]:.2f} "
-            f"L {inner_end[0]:.2f},{inner_end[1]:.2f} "
-            f"A {inner_radius:.2f} {inner_radius:.2f} 0 {large_arc_flag} 0 {inner_start[0]:.2f},{inner_start[1]:.2f} Z"
+            f"M {_format_point(outer_start[0], outer_start[1])} "
+            f"A {outer_radius:.2f} {outer_radius:.2f} 0 {large_arc_flag} {sweep_flag} {_format_point(outer_end[0], outer_end[1])} "
+            f"L {_format_point(inner_end[0], inner_end[1])} "
+            f"A {inner_radius:.2f} {inner_radius:.2f} 0 {large_arc_flag} {inner_sweep_flag} {_format_point(inner_start[0], inner_start[1])} Z"
         )
     return d

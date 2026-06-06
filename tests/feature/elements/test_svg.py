@@ -4,7 +4,7 @@ from pathlib import Path
 import pytest
 
 import pydreamplet as dp
-from pydreamplet.core import qname
+from pydreamplet.core import XLINK_NS, ns_attr, qname
 
 
 def test_svg_dimensions(svg_300, two_rectangles):
@@ -23,6 +23,159 @@ def test_svg_viewbox(args, expected_viewbox):
     svg = dp.SVG(*args)
     root = ET.fromstring(str(svg))
     assert root.attrib.get("viewBox") == expected_viewbox
+
+
+def test_svg_from_file_supports_decimal_viewbox(tmp_path: Path):
+    svg_file = tmp_path / "decimal.svg"
+    svg_file.write_text(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0.5 1.5 200.25 100.75" />',
+        encoding="utf-8",
+    )
+
+    svg = dp.SVG.from_file(str(svg_file))
+
+    assert svg.w == 200.25
+    assert svg.h == 100.75
+    assert svg.element.attrib["viewBox"] == "0.5 1.5 200.25 100.75"
+
+
+def test_svg_from_file_supports_comma_separated_viewbox(tmp_path: Path):
+    svg_file = tmp_path / "comma-viewbox.svg"
+    svg_file.write_text(
+        '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0.5,1.5,200.25,100.75" />',
+        encoding="utf-8",
+    )
+
+    svg = dp.SVG.from_file(str(svg_file))
+
+    assert svg.w == 200.25
+    assert svg.h == 100.75
+
+
+def test_svg_from_file_derives_viewbox_from_dimensions(tmp_path: Path):
+    svg_file = tmp_path / "dimensions.svg"
+    svg_file.write_text(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="320px" height="240px" />',
+        encoding="utf-8",
+    )
+
+    svg = dp.SVG.from_file(str(svg_file))
+
+    assert svg.w == 320
+    assert svg.h == 240
+    assert svg.element.attrib["viewBox"] == "0 0 320 240"
+
+
+def test_svg_from_file_derives_decimal_viewbox_from_dimensions(tmp_path: Path):
+    svg_file = tmp_path / "decimal-dimensions.svg"
+    svg_file.write_text(
+        '<svg xmlns="http://www.w3.org/2000/svg" width="320.5px" height="240.25px" />',
+        encoding="utf-8",
+    )
+
+    svg = dp.SVG.from_file(str(svg_file))
+
+    assert svg.w == 320.5
+    assert svg.h == 240.25
+    assert svg.element.attrib["viewBox"] == "0 0 320.5 240.25"
+
+
+def test_svg_from_file_preserves_existing_root_attributes(tmp_path: Path):
+    svg_file = tmp_path / "attrs.svg"
+    svg_file.write_text(
+        (
+            '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" '
+            'id="logo" data-name="Example" role="img" />'
+        ),
+        encoding="utf-8",
+    )
+
+    svg = dp.SVG.from_file(str(svg_file))
+
+    assert svg.element.attrib["id"] == "logo"
+    assert svg.element.attrib["data-name"] == "Example"
+    assert svg.element.attrib["role"] == "img"
+    assert svg.element.attrib["width"] == "320"
+    assert svg.element.attrib["height"] == "240"
+
+
+def test_svg_from_file_preserves_loaded_namespace_prefixes(tmp_path: Path):
+    svg_file = tmp_path / "namespaced.svg"
+    svg_file.write_text(
+        (
+            '<svg xmlns="http://www.w3.org/2000/svg" '
+            'xmlns:xlink="http://www.w3.org/1999/xlink" '
+            'xmlns:serif="http://www.serif.com/" '
+            'viewBox="0 0 10 10">'
+            '<use xlink:href="#shape" serif:id="copy" />'
+            "</svg>"
+        ),
+        encoding="utf-8",
+    )
+
+    svg = dp.SVG.from_file(str(svg_file))
+    use = svg.find("use")
+    output = svg.to_string(pretty_print=False)
+
+    assert use is not None
+    assert use.element.attrib[ns_attr("xlink", "href")] == "#shape"
+    assert use.element.attrib[ns_attr("serif", "id")] == "copy"
+    assert "xlink:href" in output
+    assert "serif:id" in output
+    assert "ns0:" not in output
+
+
+def test_namespaced_attribute_helpers_use_known_prefixes():
+    use = dp.SvgElement("use", xlink_href="#shape")
+
+    assert use.element.attrib[f"{{{XLINK_NS}}}href"] == "#shape"
+    assert use.xlink_href == "#shape"
+    assert use.has_attr("xlink_href") is True
+
+    use.xlink_href = "#other"
+    assert use.element.attrib[f"{{{XLINK_NS}}}href"] == "#other"
+
+    use.attrs({"xlink_href": None})
+    assert f"{{{XLINK_NS}}}href" not in use.element.attrib
+
+
+def test_svg_from_file_without_viewbox_or_dimensions_uses_zero_size(tmp_path: Path):
+    svg_file = tmp_path / "empty.svg"
+    svg_file.write_text('<svg xmlns="http://www.w3.org/2000/svg" />', encoding="utf-8")
+
+    svg = dp.SVG.from_file(str(svg_file))
+
+    assert svg.w == 0
+    assert svg.h == 0
+    assert "viewBox" not in svg.element.attrib
+
+
+def test_svg_from_file_raises_for_malformed_xml(tmp_path: Path):
+    svg_file = tmp_path / "malformed.svg"
+    svg_file.write_text("<svg><rect></svg>", encoding="utf-8")
+
+    with pytest.raises(ET.ParseError):
+        dp.SVG.from_file(str(svg_file))
+
+
+@pytest.mark.parametrize(
+    "viewbox, message",
+    [
+        ("0 0 100", "viewBox must contain 4 numbers"),
+        ("0 0 nope 100", "Invalid viewBox values"),
+    ],
+)
+def test_svg_from_file_raises_for_invalid_viewbox(
+    tmp_path: Path, viewbox: str, message: str
+):
+    svg_file = tmp_path / "invalid-viewbox.svg"
+    svg_file.write_text(
+        f'<svg xmlns="http://www.w3.org/2000/svg" viewBox="{viewbox}" />',
+        encoding="utf-8",
+    )
+
+    with pytest.raises(ValueError, match=message):
+        dp.SVG.from_file(str(svg_file))
 
 
 def test_style_overwrite(tmp_path: Path):
@@ -150,7 +303,7 @@ def test_to_string_with_pretty_print():
     formatted = svg.to_string(pretty_print=True)
     # Check that pretty printed output contains newlines (or more whitespace).
     assert "\n" in formatted, "Pretty printed SVG should contain newline characters."
-    # Additionally, compare lengths: pretty printed output should be longer due to added whitespace.
+    # Pretty printed output should be longer due to added whitespace.
     svg_unformatted = create_sample_svg().to_string(pretty_print=False)
     assert len(formatted) > len(svg_unformatted), (
         "Pretty printed SVG should be longer than unformatted SVG."

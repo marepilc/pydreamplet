@@ -1,7 +1,9 @@
 """Test documentation code blocks in markdown files."""
 
 import ast
+import contextlib
 import io
+import os
 import re
 import sys
 import tempfile
@@ -222,6 +224,16 @@ class DocTestExtractor:
 
 class TestDocumentation:
     """Test suite for documentation code blocks."""
+
+    CURRENT_DOC_EXAMPLE_FILES = {
+        Path("docs/content/getting-started/index.md"),
+        Path("docs/content/drawing-basics.md"),
+        Path("docs/content/path-basics.md"),
+        Path("docs/content/text-basics.md"),
+        Path("docs/content/transform-basics.md"),
+        Path("docs/content/tutorials/layered-svg-art.md"),
+        Path("docs/content/tutorials/waffle-chart.md"),
+    }
 
     def setup_method(self):
         """Set up test environment."""
@@ -557,16 +569,16 @@ x = 1  # Only this should be extracted
     def test_documentation_code_blocks(self):
         """Test actual documentation files for code block execution."""
         project_root = Path(__file__).parent.parent
-        docs_dir = project_root / "docs"
-        
+        docs_dir = project_root / "legacy_docs"
+
         if not docs_dir.exists():
-            pytest.skip("docs directory not found")
+            pytest.skip("legacy_docs directory not found")
 
         extractor = DocTestExtractor(verbose=False)
         markdown_files = extractor.find_markdown_files([docs_dir])
-        
+
         if not markdown_files:
-            pytest.skip("No markdown files found in docs")
+            pytest.skip("No markdown files found in legacy_docs")
 
         failed_blocks = []
         total_blocks = 0
@@ -605,3 +617,132 @@ x = 1  # Only this should be extracted
 
         # Ensure we found some code blocks to test
         assert total_blocks > 0, "Should find at least some code blocks in documentation"
+
+    def test_current_documentation_python_blocks_parse_or_are_api_signatures(self):
+        """Ensure current Nuxt Content Python fences are valid code or signatures."""
+        project_root = Path(__file__).parent.parent
+        docs_dir = project_root / "docs" / "content"
+
+        extractor = DocTestExtractor(verbose=False)
+        markdown_files = extractor.find_markdown_files([docs_dir])
+
+        failed_blocks = []
+        total_blocks = 0
+        signature_blocks = 0
+
+        for md_file in markdown_files:
+            for code_block in extractor.extract_code_blocks(md_file):
+                total_blocks += 1
+
+                if code_block.should_skip:
+                    continue
+
+                syntax_error = extractor.validate_syntax(code_block)
+                if syntax_error is None:
+                    continue
+
+                if self._looks_like_api_signature(code_block.content):
+                    signature_blocks += 1
+                    continue
+
+                failed_blocks.append((code_block, syntax_error))
+
+        if failed_blocks:
+            error_msg = (
+                f"\nFound {len(failed_blocks)} invalid Python code blocks "
+                f"out of {total_blocks} current docs blocks:\n"
+            )
+            for code_block, error in failed_blocks[:20]:
+                error_msg += f"  {code_block}: {error}\n"
+            if len(failed_blocks) > 20:
+                error_msg += f"  ... and {len(failed_blocks) - 20} more errors\n"
+            pytest.fail(error_msg)
+
+        assert total_blocks > 0
+        assert signature_blocks > 0
+
+    def test_current_documentation_examples_execute(self):
+        """Execute full current documentation examples that should behave as scripts."""
+        project_root = Path(__file__).parent.parent
+
+        failed_blocks = []
+        total_blocks = 0
+        skipped_blocks = 0
+
+        with tempfile.TemporaryDirectory() as tmp_dir:
+            with self._working_directory(Path(tmp_dir)):
+                for relative_path in sorted(self.CURRENT_DOC_EXAMPLE_FILES):
+                    md_file = project_root / relative_path
+                    extractor = DocTestExtractor(verbose=False)
+
+                    for code_block in extractor.extract_code_blocks(md_file):
+                        total_blocks += 1
+
+                        if self._should_skip_current_example_block(code_block):
+                            skipped_blocks += 1
+                            continue
+
+                        result = extractor.execute_code_block(code_block)
+                        if not result.success:
+                            failed_blocks.append((code_block, result.error))
+
+        if failed_blocks:
+            error_msg = (
+                f"\nFound {len(failed_blocks)} failing current docs examples "
+                f"out of {total_blocks} blocks ({skipped_blocks} skipped):\n"
+            )
+            for code_block, error in failed_blocks[:20]:
+                error_msg += f"  {code_block}: {error}\n"
+            if len(failed_blocks) > 20:
+                error_msg += f"  ... and {len(failed_blocks) - 20} more errors\n"
+            pytest.fail(error_msg)
+
+        assert total_blocks > 0
+        assert skipped_blocks > 0
+
+    @staticmethod
+    def _looks_like_api_signature(content: str) -> bool:
+        """Return True for reference blocks that document call/property signatures."""
+        lines = [
+            line.strip()
+            for line in content.splitlines()
+            if line.strip() and not line.strip().startswith("#")
+        ]
+        if not lines:
+            return False
+
+        joined = "\n".join(lines)
+
+        has_typed_call = bool(re.search(r"\w[\w.]*\([^)]*:\s*[^)]*\)", joined))
+        has_return_arrow = "->" in joined
+        has_typed_property = bool(re.fullmatch(r"[\w.]+\s*->\s*.+", joined))
+        has_star_signature = bool(re.search(r"\(\s*\*\s*,", joined))
+
+        return has_typed_call or has_return_arrow or has_typed_property or has_star_signature
+
+    def _should_skip_current_example_block(self, code_block: CodeBlock) -> bool:
+        """Skip doc blocks that are illustrative but not portable executable examples."""
+        if code_block.should_skip:
+            return True
+        if self._looks_like_api_signature(code_block.content):
+            return True
+
+        content = code_block.content
+        if ".display(" in content:
+            return True
+        if re.search(r"\.from_file\([\"'][^\"']+[\"']\)", content):
+            return True
+        if "get_system_font_path(" in content:
+            return True
+
+        return False
+
+    @staticmethod
+    @contextlib.contextmanager
+    def _working_directory(path: Path):
+        previous = Path.cwd()
+        os.chdir(path)
+        try:
+            yield
+        finally:
+            os.chdir(previous)

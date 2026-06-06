@@ -1,5 +1,7 @@
 import math
 
+import pytest
+
 from pydreamplet.noise import Noise, SimplexNoise, SimplexNoise2D, SimplexNoise3D
 
 # ────────────────────────────────────────────────────────────
@@ -34,6 +36,40 @@ def test_setter_adjustments():
     assert n.value <= 8, "Noise value did not adjust to the new maximum."
 
 
+def test_random_walk_noise_is_deterministic_with_seed():
+    n1 = Noise(0, 10, 0.5, seed=123)
+    n2 = Noise(0, 10, 0.5, seed=123)
+
+    assert [n1.value for _ in range(5)] == [n2.value for _ in range(5)]
+
+
+def test_random_walk_noise_accepts_zero_and_full_noise_range():
+    fixed = Noise(0, 10, 0, seed=123)
+    first = fixed.value
+
+    assert [fixed.value for _ in range(5)] == [first] * 5
+
+    full = Noise(0, 10, 1, seed=123)
+    assert all(0 <= full.value <= 10 for _ in range(10))
+
+
+@pytest.mark.parametrize("noise_range", [-0.1, 1.1])
+def test_random_walk_noise_rejects_invalid_noise_range(noise_range):
+    with pytest.raises(ValueError, match="noise_range"):
+        Noise(0, 10, noise_range)
+
+
+def test_random_walk_noise_rejects_invalid_bounds():
+    with pytest.raises(ValueError, match="min_val"):
+        Noise(10, 0, 0.5)
+
+    noise = Noise(0, 10, 0.5)
+    with pytest.raises(ValueError, match="min"):
+        noise.min = 11
+    with pytest.raises(ValueError, match="max"):
+        noise.max = -1
+
+
 # ────────────────────────────────────────────────────────────
 # Tests for Simplex Noise 1D
 # ────────────────────────────────────────────────────────────
@@ -66,6 +102,14 @@ def test_deterministic_noise_1d():
     assert math.isclose(
         val1, val2, rel_tol=1e-9
     ), "Deterministic 1D noise values do not match"
+
+
+def test_seed_zero_generates_valid_permutation():
+    sn = SimplexNoise(seed=0)
+
+    assert len(sn.permutation) == 512
+    assert sorted(sn.permutation[:256]) == list(range(256))
+    assert sn.permutation[:256] == sn.permutation[256:]
 
 
 # ────────────────────────────────────────────────────────────

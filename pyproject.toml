@@ -1,6 +1,6 @@
 [project]
 name = "pydreamplet"
-version = "1.1.11"
+version = "2.0.0"
 description = "A versatile Python toolkit for programmatically generating, manipulating, and assembling scalable vector graphics (SVG) images."
 authors = [{ name = "Marek Pilczuk", email = "user@mp76.pl" }]
 license = "MIT"
@@ -8,15 +8,13 @@ readme = "README.md"
 keywords = ["svg", "graphics", "design"]
 requires-python = ">=3.12"
 dependencies = [
-    "pillow (>=11.1.0,<12.0.0)",
     "fonttools (>=4.56.0,<5.0.0)",
-    "ipython (>=8.32.0,<9.0.0)",
-    "ipykernel>=6.30.1",
+    "uharfbuzz>=0.52.0",
 ]
 
 [project.urls]
-Documentation = "https://marepilc.github.io/pydreamplet/"
-Homepage = "https://marepilc.github.io/pydreamplet/"
+Documentation = "https://py.dreamplet.com/"
+Homepage = "https://py.dreamplet.com/"
 Repository = "https://github.com/marepilc/pydreamplet"
 "Source Code" = "https://github.com/marepilc/pydreamplet"
 
@@ -28,6 +26,16 @@ build-backend = "hatchling.build"
 [tool.hatch.build.targets.wheel]
 packages = ["pydreamplet"]
 
+[tool.hatch.build.targets.sdist]
+exclude = [
+    "/docs/.data/**",
+    "/docs/.nuxt/**",
+    "/docs/.output/**",
+    "/docs/dist/**",
+    "/docs/node_modules/**",
+    "/docs/*.log",
+]
+
 [tool.hatch.build.targets.wheel.force-include]
 "pydreamplet/py.typed" = "pydreamplet/py.typed"
 "pydreamplet/resources/hummingbird.svg" = "pydreamplet/resources/hummingbird.svg"
@@ -35,15 +43,40 @@ packages = ["pydreamplet"]
 "pydreamplet/resources/world_map_iso3.svg" = "pydreamplet/resources/world_map_iso3.svg"
 
 [dependency-groups]
-dev = ["mypy>=1.18.2", "pytest>=8.4.1"]
-
-[project.optional-dependencies]
 dev = [
-    "jupyter>=1.1.1",
-    "ruff>=0.9.5",
+    "basedpyright>=1.39.5",
+    "mypy>=1.18.2",
     "pytest>=8.4.1",
-    "mkdocs-material>=9.6.4",
+    "ruff>=0.9.5",
 ]
 
-[tool.pyright]
+[project.optional-dependencies]
+notebook = [
+    "ipython (>=8.32.0,<9.0.0)",
+    "ipykernel>=6.30.1",
+]
+
+[tool.basedpyright]
+typeCheckingMode = "standard"
+include = [
+    "pydreamplet",
+    "tests",
+]
+exclude = [
+    "**/*.ipynb",
+]
 reportMissingTypeStubs = false
+reportAny = false
+reportExplicitAny = false
+reportImplicitOverride = false
+reportUnannotatedClassAttribute = false
+reportUnknownVariableType = false
+reportUnusedCallResult = false
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+extend-exclude = ["site"]
+
+[tool.ruff.lint]
+select = ["E4", "E7", "E9", "F", "ISC"]

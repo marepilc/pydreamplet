@@ -24,7 +24,8 @@ def test_svg_find(svg_300, two_rectangles):
 def test_svg_find_all(svg_300, two_rectangles):
     rect1, rect2 = two_rectangles
     svg_300.append(rect1).append(rect2)
-    rectangles = list(svg_300.find_all("rect"))
+    rectangles = svg_300.find_all("rect")
+    assert isinstance(rectangles, list)
     assert len(rectangles) == 2
     assert rectangles[1].pos.x == 50
 
@@ -58,9 +59,11 @@ def test_find_and_find_all():
 def test_svg_append_remove(svg_300, two_rectangles):
     rect1, rect2 = two_rectangles
 
-    svg_300.append(rect1)
+    assert svg_300.append(rect1) is svg_300
+    assert getattr(rect1, "_parent") is svg_300
     assert len(list(svg_300.element)) == 1
-    svg_300.remove(rect1)
+    assert svg_300.remove(rect1) is svg_300
+    assert not hasattr(rect1, "_parent")
     assert len(list(svg_300.element)) == 0
 
     svg_300.append(rect1).append(rect2)
@@ -109,6 +112,97 @@ def test_svg_element_copy():
     assert original.element.attrib is not duplicate.element.attrib
 
 
+def test_copy_preserves_element_class_and_deep_copies_children():
+    group = dp.G(id="layer")
+    rect = dp.Rect(x=10, y=20, width=30, height=40)
+    group.append(rect)
+
+    duplicate = group.copy()
+    duplicate_rect = duplicate.find("rect")
+    assert isinstance(duplicate, dp.G)
+    assert isinstance(duplicate_rect, dp.Rect)
+    assert duplicate is not group
+    assert duplicate.element is not group.element
+    assert duplicate_rect is not None
+    assert duplicate_rect.element is not rect.element
+
+    duplicate_rect.x = 99
+    assert rect.x == 10
+    assert duplicate_rect.x == 99
+
+
+def test_append_remove_parent_contract_for_multiple_children():
+    group = dp.G()
+    rect = dp.Rect()
+    circle = dp.Circle()
+
+    result = group.append(rect, circle)
+
+    assert result is group
+    assert getattr(rect, "_parent") is group
+    assert getattr(circle, "_parent") is group
+    assert group.remove(rect, circle) is group
+    assert not hasattr(rect, "_parent")
+    assert not hasattr(circle, "_parent")
+
+
+def test_find_returns_registered_types_and_none_for_missing_elements():
+    svg = dp.SVG(100, 100)
+    group = dp.G(id="layer")
+    rect = dp.Rect(id="box")
+    circle = dp.Circle(id="dot")
+    group.append(rect, circle)
+    svg.append(group)
+
+    assert isinstance(svg.find("g"), dp.G)
+    assert isinstance(svg.find("rect", nested=True, id="box"), dp.Rect)
+    assert isinstance(svg.find("circle", nested=True, id="dot"), dp.Circle)
+    assert svg.find("ellipse", nested=True) is None
+
+
+def test_find_returns_live_wrapper_for_existing_element():
+    svg = dp.SVG(100, 100)
+    rect = dp.Rect(id="box", fill="red")
+    svg.append(rect)
+
+    found = svg.find("rect", id="box")
+    assert isinstance(found, dp.Rect)
+    assert found is not rect
+    assert found.element is rect.element
+
+    found.fill = "blue"
+    assert rect.fill == "blue"
+    assert 'fill="blue"' in svg.to_string(pretty_print=False)
+
+
+def test_find_all_returns_registered_types_with_filters():
+    svg = dp.SVG(100, 100)
+    svg.append(
+        dp.Rect(class_name="item"),
+        dp.Circle(class_name="item"),
+        dp.Rect(class_name="other"),
+    )
+
+    items = svg.find_all("rect", class_name="item")
+
+    assert isinstance(items, list)
+    assert len(items) == 1
+    assert isinstance(items[0], dp.Rect)
+
+
+def test_find_all_returns_live_wrappers_for_existing_elements():
+    svg = dp.SVG(100, 100)
+    rect = dp.Rect(class_name="item", fill="red")
+    svg.append(rect)
+
+    found = svg.find_all("rect", class_name="item")
+    found[0].fill = "blue"
+
+    assert found[0].element is rect.element
+    assert rect.fill == "blue"
+    assert 'fill="blue"' in svg.to_string(pretty_print=False)
+
+
 def test_has_attr():
     # Test with regular attributes
     rect = dp.Rect(x=10, y=20, width=100, height=50, fill="blue")
@@ -137,3 +231,47 @@ def test_has_attr():
     circle_no_class = dp.Circle(r=5)
     assert circle_no_class.has_attr("class_name") is False
     assert circle_no_class.has_attr("r") is True
+
+
+def test_common_attribute_helpers_are_chainable():
+    rect = (
+        dp.Rect(width=10, height=20)
+        .set_id("main")
+        .set_class("highlight")
+        .set_fill("red")
+        .set_stroke("black", width=2, linecap="round", linejoin="bevel")
+        .set_style({"opacity": 0.5, "stroke_width": 3, "display": None})
+    )
+
+    assert rect.element.attrib["id"] == "main"
+    assert rect.element.attrib["class"] == "highlight"
+    assert rect.element.attrib["fill"] == "red"
+    assert rect.element.attrib["stroke"] == "black"
+    assert rect.element.attrib["stroke-width"] == "2"
+    assert rect.element.attrib["stroke-linecap"] == "round"
+    assert rect.element.attrib["stroke-linejoin"] == "bevel"
+    assert rect.element.attrib["style"] == "opacity: 0.5; stroke-width: 3"
+
+
+def test_common_attribute_helpers_remove_values_with_none():
+    circle = dp.Circle(r=5).set_id("dot").set_class("marker").set_fill("blue")
+
+    circle.set_id(None).set_class(None).set_fill(None).set_style(None)
+
+    assert "id" not in circle.element.attrib
+    assert "class" not in circle.element.attrib
+    assert "fill" not in circle.element.attrib
+    assert "style" not in circle.element.attrib
+
+
+def test_common_position_and_size_helpers():
+    rect = dp.Rect().set_position((10, 20)).set_size(30, 40)
+    circle = dp.Circle(r=5).set_position([50, 60])
+
+    assert rect.pos == dp.Vector(10, 20)
+    assert rect.width == 30
+    assert rect.height == 40
+    assert circle.pos == dp.Vector(50, 60)
+    assert "x" not in circle.element.attrib
+    assert circle.element.attrib["cx"] == "50.0"
+    assert circle.element.attrib["cy"] == "60.0"
