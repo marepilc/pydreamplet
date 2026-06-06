@@ -13,8 +13,8 @@ dependencies = [
 ]
 
 [project.urls]
-Documentation = "https://marepilc.github.io/pydreamplet/"
-Homepage = "https://marepilc.github.io/pydreamplet/"
+Documentation = "https://py.dreamplet.com/"
+Homepage = "https://py.dreamplet.com/"
 Repository = "https://github.com/marepilc/pydreamplet"
 "Source Code" = "https://github.com/marepilc/pydreamplet"
 

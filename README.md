@@ -39,7 +39,7 @@ pip install "pydreamplet[notebook]"
 
 ## Documentation
 
-For complete documentation, tutorials, and API references, please visit [pyDreampled documentation](https://marepilc.github.io/pydreamplet/)
+For complete documentation, tutorials, and API references, please visit [pyDreamplet documentation](https://py.dreamplet.com/)
 
 ## Examples
 
