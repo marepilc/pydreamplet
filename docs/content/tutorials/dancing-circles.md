@@ -47,16 +47,15 @@ easier to read.
 ## Blended Stroke Colors
 
 Create one color for each circle by blending between the theme's pink and sky
-tokens. `blend_colors()` accepts theme colors directly, including OKLCH values.
+tokens. `blend()` accepts theme colors directly, including OKLCH values.
 
 ```python
 colors = [
-    dp.blend_colors(theme.pink, theme.sky, i / circle_count)
-    for i in range(circle_count)
+    dp.blend(theme.pink, theme.sky, i / circle_count) for i in range(circle_count)
 ]
 ```
 
-`dp.blend()` remains available as a shorter compatibility alias.
+`dp.blend_colors()` is also available when you prefer the more explicit name.
 
 ## Centered Group
 
@@ -66,14 +65,11 @@ to that center.
 
 ```python
 g = dp.G(pos=(svg.w / 2, svg.h / 2))
-g.append(dp.AnimateTransform("rotate", from_=0, to=360, dur="16s"))
 svg.append(g)
 ```
 
-`AnimateTransform` creates SVG `<animateTransform>`, which is the correct SVG
-element for animating `transform`. Here it rotates the whole group around its
-local origin. Because the group is positioned at the canvas center, the circle
-ring rotates around the middle of the SVG.
+The group will receive its rotation animation after the circles are appended,
+so the whole composition rotates as one element.
 
 ## Circle Positions
 
@@ -130,6 +126,29 @@ for i in range(circle_count):
     g.append(circle)
 ```
 
+## Rotating the Group
+
+`AnimateTransform` creates SVG `<animateTransform>`, which is the correct SVG
+element for animating `transform`. Appending it to the group rotates every
+circle around the group's local origin. Because the group is positioned at the
+canvas center, the whole ring rotates around the middle of the SVG.
+
+```python
+g.append(
+    dp.AnimateTransform(
+        "rotate",
+        values=[0, 120, 240, 360],
+        dur="10s",
+        calcMode="linear",
+        additive="sum",
+    )
+)
+```
+
+`values` defines the rotation keyframes. `calcMode="linear"` keeps the angular
+speed even, and `additive="sum"` lets the animation add to the group's existing
+`transform` instead of replacing it.
+
 ## Complete Script
 
 ```python
@@ -146,11 +165,9 @@ circle_count = 32
 max_radius = svg.w / 2 - margin
 radius_step = (max_radius - min_radius) / (circle_count - 1)
 colors = [
-    dp.blend_colors(theme.pink, theme.sky, i / circle_count)
-    for i in range(circle_count)
+    dp.blend(theme.pink, theme.sky, i / circle_count) for i in range(circle_count)
 ]
 g = dp.G(pos=(svg.w / 2, svg.h / 2))
-g.append(dp.AnimateTransform("rotate", from_=0, to=360, dur="16s"))
 svg.append(g)
 
 angle_step = 360 / circle_count
@@ -171,6 +188,16 @@ for i in range(circle_count):
     circle.append(dp.Animate("cx", values=[final_cx, 0, final_cx], dur="5s"))
     circle.append(dp.Animate("cy", values=[final_cy, 0, final_cy], dur="5s"))
     g.append(circle)
+
+g.append(
+    dp.AnimateTransform(
+        "rotate",
+        values=[0, 120, 240, 360],
+        dur="10s",
+        calcMode="linear",
+        additive="sum",
+    )
+)
 
 svg.save("output/dancing_circles.svg")
 ```
