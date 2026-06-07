@@ -25,8 +25,18 @@ from pydreamplet.colors import (
 def test_color_defaults_support_attribute_and_mapping_access():
     colors = Color()
 
-    assert colors.blue == "#1447e6"
-    assert colors["blue"] == "#1447e6"
+    assert colors.blue == "oklch(62.3% 0.214 259.815)"
+    assert colors["blue"] == "oklch(62.3% 0.214 259.815)"
+
+
+def test_color_defaults_use_tailwind_500_with_zinc_surface_and_ink():
+    colors = Color()
+
+    assert colors.amber == "oklch(76.9% 0.188 70.08)"
+    assert colors.red == "oklch(63.7% 0.237 25.331)"
+    assert colors.slate == "oklch(55.4% 0.046 257.417)"
+    assert colors.surface == "oklch(96.7% 0.001 286.375)"
+    assert colors.ink == "oklch(27.4% 0.006 286.033)"
 
 
 def test_color_allows_custom_tokens():
@@ -64,14 +74,14 @@ def test_theme_uses_default_font_and_colors():
     assert theme.font_size == 14
     assert theme.font_weight == 400
     assert theme.line_height == 1.5
-    assert theme.colors.ink == "#18181b"
+    assert theme.colors.ink == "oklch(27.4% 0.006 286.033)"
     assert theme.color is theme.colors
 
 
 def test_theme_exposes_colors_as_direct_attributes():
     theme = Theme()
 
-    assert theme.amber == "#bb4d00"
+    assert theme.amber == "oklch(76.9% 0.188 70.08)"
 
     theme.brand = (212, 136, 113)
     theme.gray = 128
@@ -81,6 +91,17 @@ def test_theme_exposes_colors_as_direct_attributes():
     assert theme.colors.brand == "#d48871"
     assert theme.gray == "#808080"
     assert theme.font_weight == 600
+
+
+def test_theme_dir_includes_current_color_tokens():
+    theme = Theme()
+    theme.brand = "#123456"
+
+    names = dir(theme)
+
+    assert "amber" in names
+    assert "brand" in names
+    assert "font_weight" in names
 
 
 def test_theme_loads_json_and_merges_with_defaults(tmp_path):

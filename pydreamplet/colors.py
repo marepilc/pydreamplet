@@ -5,7 +5,7 @@ import random
 import re
 from collections.abc import Iterator, MutableMapping
 from pathlib import Path
-from typing import Any
+from typing import Any, overload
 
 from pydreamplet.utils import constrain, math_round
 
@@ -16,30 +16,30 @@ DEFAULT_COLORS: dict[str, str] = {
     "transparent": "transparent",
     "black": "#000000",
     "white": "#ffffff",
-    "slate": "#314158",
-    "gray": "#364153",
-    "zinc": "#3f3f46",
-    "neutral": "#404040",
-    "stone": "#44403b",
-    "red": "#c10007",
-    "orange": "#ca3500",
-    "amber": "#bb4d00",
-    "yellow": "#a65f00",
-    "lime": "#497d00",
-    "green": "#008236",
-    "emerald": "#007a55",
-    "teal": "#00786f",
-    "cyan": "#007595",
-    "sky": "#0069a8",
-    "blue": "#1447e6",
-    "indigo": "#432dd7",
-    "violet": "#6e11b0",
-    "purple": "#8200db",
-    "fuchsia": "#c800de",
-    "pink": "#c6005c",
-    "rose": "#c70036",
-    "ink": "#18181b",
-    "surface": "#e4e4e7",
+    "slate": "oklch(55.4% 0.046 257.417)",
+    "gray": "oklch(55.1% 0.027 264.364)",
+    "zinc": "oklch(55.2% 0.016 285.938)",
+    "neutral": "oklch(55.6% 0 0)",
+    "stone": "oklch(55.3% 0.013 58.071)",
+    "red": "oklch(63.7% 0.237 25.331)",
+    "orange": "oklch(70.5% 0.213 47.604)",
+    "amber": "oklch(76.9% 0.188 70.08)",
+    "yellow": "oklch(79.5% 0.184 86.047)",
+    "lime": "oklch(76.8% 0.233 130.85)",
+    "green": "oklch(72.3% 0.219 149.579)",
+    "emerald": "oklch(69.6% 0.17 162.48)",
+    "teal": "oklch(70.4% 0.14 182.503)",
+    "cyan": "oklch(71.5% 0.143 215.221)",
+    "sky": "oklch(68.5% 0.169 237.323)",
+    "blue": "oklch(62.3% 0.214 259.815)",
+    "indigo": "oklch(58.5% 0.233 277.117)",
+    "violet": "oklch(60.6% 0.25 292.717)",
+    "purple": "oklch(62.7% 0.265 303.9)",
+    "fuchsia": "oklch(66.7% 0.295 322.15)",
+    "pink": "oklch(65.6% 0.241 354.308)",
+    "rose": "oklch(64.5% 0.246 16.439)",
+    "ink": "oklch(27.4% 0.006 286.033)",
+    "surface": "oklch(96.7% 0.001 286.375)",
 }
 
 DEFAULT_FONT: dict[str, str | int | float] = {
@@ -276,10 +276,61 @@ class Color(MutableMapping[str, str]):
         return dict(self._values)
 
 
+class ColorToken:
+    def __init__(self, name: str):
+        self.name = name
+
+    @overload
+    def __get__(self, instance: None, owner: type["Theme"]) -> "ColorToken": ...
+
+    @overload
+    def __get__(self, instance: "Theme", owner: type["Theme"]) -> str: ...
+
+    def __get__(
+        self, instance: "Theme | None", owner: type["Theme"]
+    ) -> "ColorToken | str":
+        if instance is None:
+            return self
+        return instance.colors[self.name]
+
+    def __set__(self, instance: "Theme", value: ColorInput) -> None:
+        instance.colors[self.name] = value
+
+
 class Theme:
     """
     Font settings and color tokens loaded from defaults or a theme JSON file.
     """
+
+    inherit = ColorToken("inherit")
+    current = ColorToken("current")
+    transparent = ColorToken("transparent")
+    black = ColorToken("black")
+    white = ColorToken("white")
+    slate = ColorToken("slate")
+    gray = ColorToken("gray")
+    zinc = ColorToken("zinc")
+    neutral = ColorToken("neutral")
+    stone = ColorToken("stone")
+    red = ColorToken("red")
+    orange = ColorToken("orange")
+    amber = ColorToken("amber")
+    yellow = ColorToken("yellow")
+    lime = ColorToken("lime")
+    green = ColorToken("green")
+    emerald = ColorToken("emerald")
+    teal = ColorToken("teal")
+    cyan = ColorToken("cyan")
+    sky = ColorToken("sky")
+    blue = ColorToken("blue")
+    indigo = ColorToken("indigo")
+    violet = ColorToken("violet")
+    purple = ColorToken("purple")
+    fuchsia = ColorToken("fuchsia")
+    pink = ColorToken("pink")
+    rose = ColorToken("rose")
+    ink = ColorToken("ink")
+    surface = ColorToken("surface")
 
     _INTERNAL_ATTRIBUTES = {"font", "colors"}
     _FONT_ATTRIBUTES = {"font_family", "font_size", "font_weight", "line_height"}
@@ -323,6 +374,9 @@ class Theme:
             return self.colors[name]
         except KeyError as exc:
             raise AttributeError(name) from exc
+
+    def __dir__(self) -> list[str]:
+        return sorted(set(super().__dir__()) | set(self.colors))
 
     def __setattr__(self, name: str, value: Any) -> None:
         if name in self._INTERNAL_ATTRIBUTES:

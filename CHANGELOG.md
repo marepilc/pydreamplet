@@ -17,6 +17,8 @@ branch is in progress.
   and RGBA tuples while normalizing Python color values to SVG/CSS strings.
 - `Theme` now exposes color tokens directly, so `theme.amber` and
   `theme.colors.amber` are equivalent.
+- Default named theme colors now use Tailwind CSS 4.3 shade `500`; `surface`
+  uses `zinc-100` and `ink` uses `zinc-800`.
 - Color blending now accepts hex, grayscale integers, RGB/RGBA tuples,
   `rgb(...)`, `rgba(...)`, and `oklch(...)` inputs.
 

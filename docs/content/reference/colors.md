@@ -28,7 +28,7 @@ theme = dp.Theme()
 
 assert theme.font_family == "sans-serif"
 assert theme.font_size == 14
-assert theme.blue == "#1447e6"
+assert theme.blue == "oklch(62.3% 0.214 259.815)"
 assert theme.color is theme.colors
 ```
 
@@ -43,9 +43,9 @@ Pass a JSON file path to override part or all of the default theme:
     "lineHeight": 1.5
   },
   "colors": {
-    "ink": "#18181b",
-    "surface": "#e4e4e7",
-    "brand": "#1447e6"
+    "ink": "oklch(27.4% 0.006 286.033)",
+    "surface": "oklch(96.7% 0.001 286.375)",
+    "brand": "oklch(62.3% 0.214 259.815)"
   }
 }
 ```
@@ -64,13 +64,21 @@ assert theme.brand == "#d48871"
 assert theme.muted == "rgba(212, 136, 113, 0.5)"
 assert theme.gray == "#808080"
 assert theme.colors.brand == "#d48871"
-assert theme.colors["surface"] == "#e4e4e7"
+assert theme.colors["surface"] == "oklch(96.7% 0.001 286.375)"
 ```
 
 `Color` is the token container used by `Theme.colors`. It supports attribute
 access, mapping access, custom tokens, hex strings, CSS color strings, grayscale
 integers, RGB tuples, and RGBA tuples. `Theme` also exposes color tokens
 directly, so `theme.amber` is equivalent to `theme.colors.amber`.
+
+Default theme colors are annotated on `Theme`, so IDEs can suggest names such as
+`theme.amber`, `theme.blue`, and `theme.surface`. Runtime color tokens loaded
+from JSON or assigned in Python are also exposed through `dir(theme)` for tools
+that use runtime introspection.
+
+Named default colors use Tailwind CSS 4.3 shade `500`. `theme.surface` uses
+Tailwind `zinc-100`, and `theme.ink` uses Tailwind `zinc-800`.
 
 ## Visual Example
 
