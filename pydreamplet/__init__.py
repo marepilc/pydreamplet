@@ -1,6 +1,7 @@
 from pydreamplet.core import (
     SVG,
     Animate,
+    AnimateTransform,
     BoundingBox,
     Circle,
     ClipPath,
@@ -113,6 +114,7 @@ from pydreamplet.shapes import (
 __all__ = [
     "SVG",
     "Animate",
+    "AnimateTransform",
     "ArcGenerator",
     "AreaGenerator",
     "BandScale",

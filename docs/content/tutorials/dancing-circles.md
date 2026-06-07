@@ -66,8 +66,14 @@ to that center.
 
 ```python
 g = dp.G(pos=(svg.w / 2, svg.h / 2))
+g.append(dp.AnimateTransform("rotate", from_=0, to=360, dur="16s"))
 svg.append(g)
 ```
+
+`AnimateTransform` creates SVG `<animateTransform>`, which is the correct SVG
+element for animating `transform`. Here it rotates the whole group around its
+local origin. Because the group is positioned at the canvas center, the circle
+ring rotates around the middle of the SVG.
 
 ## Circle Positions
 
@@ -131,6 +137,7 @@ colors = [
     for i in range(circle_count)
 ]
 g = dp.G(pos=(svg.w / 2, svg.h / 2))
+g.append(dp.AnimateTransform("rotate", from_=0, to=360, dur="16s"))
 svg.append(g)
 
 angle_step = 360 / circle_count
