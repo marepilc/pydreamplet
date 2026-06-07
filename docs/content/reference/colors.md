@@ -18,6 +18,49 @@ import pydreamplet as dp
 
 Lower-level legacy helpers are still available from `pydreamplet.colors`.
 
+## Theme
+
+`Theme` stores reusable font settings and color tokens. With no arguments it
+uses built-in defaults.
+
+```python
+theme = dp.Theme()
+
+assert theme.font_family == "sans-serif"
+assert theme.font_size == 14
+assert theme.colors.blue == "#1447e6"
+```
+
+Pass a JSON file path to override part or all of the default theme:
+
+```json
+{
+  "font": {
+    "fontFamily": "Roboto",
+    "fontSize": 12,
+    "fontWeight": 400,
+    "lineHeight": 1.5
+  },
+  "colors": {
+    "ink": "#18181b",
+    "surface": "#e4e4e7",
+    "brand": "#1447e6"
+  }
+}
+```
+
+```python
+theme = dp.Theme("themes/light.json")
+theme.font_family = "Roboto"
+theme.font_size = 12
+
+assert theme.colors.brand == "#1447e6"
+assert theme.colors["surface"] == "#e4e4e7"
+```
+
+`Color` is the token container used by `Theme.colors`. It supports attribute
+access, mapping access, and custom tokens.
+
 ## Visual Example
 
 ```python
@@ -40,6 +83,8 @@ for index, color in enumerate(palette):
 ## Top-Level Helpers
 
 ```python
+Theme(path: str | Path | None = None)
+Color(**values: str)
 hex_to_rgb(hex_color: str) -> tuple[int, int, int]
 rgb_to_hex(rgb: tuple[int, int, int]) -> str
 color2rgba(c: str | int | list[int] | tuple[int, int, int], alpha: float = 1) -> str

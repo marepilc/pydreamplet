@@ -72,6 +72,8 @@ from pydreamplet.path_data import (
     tangent_at_length,
 )
 from pydreamplet.colors import (
+    Color,
+    Theme,
     blend,
     color2rgba,
     generate_colors,
@@ -117,6 +119,7 @@ __all__ = [
     "Circle",
     "CircleScale",
     "ClipPath",
+    "Color",
     "ColorScale",
     "Defs",
     "Ellipse",
@@ -150,6 +153,7 @@ __all__ = [
     "SvgElement",
     "Text",
     "TextOnPath",
+    "Theme",
     "Tile",
     "Transform",
     "TransformList",

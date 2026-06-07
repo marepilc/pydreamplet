@@ -1,4 +1,5 @@
 import colorsys
+import json
 import re
 
 import pytest
@@ -6,6 +7,8 @@ import pytest
 # Import the functions from your module.
 # Adjust the import path as necessary.
 from pydreamplet.colors import (
+    Color,
+    Theme,
     blend,
     color2rgba,
     generate_colors,
@@ -16,6 +19,76 @@ from pydreamplet.colors import (
     rgb_to_hex,
     str2rgb,
 )
+
+
+def test_color_defaults_support_attribute_and_mapping_access():
+    colors = Color()
+
+    assert colors.blue == "#1447e6"
+    assert colors["blue"] == "#1447e6"
+
+
+def test_color_allows_custom_tokens():
+    colors = Color(brand="#123456")
+    colors.accent = "#abcdef"
+
+    assert colors.brand == "#123456"
+    assert colors["accent"] == "#abcdef"
+    assert colors.to_dict()["black"] == "#000000"
+
+
+def test_theme_uses_default_font_and_colors():
+    theme = Theme()
+
+    assert theme.font_family == "sans-serif"
+    assert theme.font_size == 14
+    assert theme.font_weight == 400
+    assert theme.line_height == 1.5
+    assert theme.colors.ink == "#18181b"
+
+
+def test_theme_loads_json_and_merges_with_defaults(tmp_path):
+    theme_path = tmp_path / "theme.json"
+    theme_path.write_text(
+        json.dumps(
+            {
+                "font": {
+                    "fontFamily": "Roboto",
+                    "fontSize": 12,
+                },
+                "colors": {
+                    "blue": "#0055ff",
+                    "brand": "#123456",
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    theme = Theme(theme_path)
+
+    assert theme.font_family == "Roboto"
+    assert theme.font_size == 12
+    assert theme.font_weight == 400
+    assert theme.colors.blue == "#0055ff"
+    assert theme.colors.brand == "#123456"
+    assert theme.colors.black == "#000000"
+
+
+def test_theme_font_properties_can_be_updated():
+    theme = Theme()
+
+    theme.font_family = "Roboto"
+    theme.font_size = 12
+    theme.font_weight = 500
+    theme.line_height = 1.4
+
+    assert theme.to_dict()["font"] == {
+        "fontFamily": "Roboto",
+        "fontSize": 12,
+        "fontWeight": 500,
+        "lineHeight": 1.4,
+    }
 
 
 # === Tests for hexStr ===

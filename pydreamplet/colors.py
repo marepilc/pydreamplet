@@ -1,8 +1,174 @@
 import colorsys
+import json
 import random
 import re
+from collections.abc import Iterator, MutableMapping
+from pathlib import Path
+from typing import Any
 
 from pydreamplet.utils import constrain, math_round
+
+
+DEFAULT_COLORS: dict[str, str] = {
+    "inherit": "inherit",
+    "current": "currentColor",
+    "transparent": "transparent",
+    "black": "#000000",
+    "white": "#ffffff",
+    "slate": "#314158",
+    "gray": "#364153",
+    "zinc": "#3f3f46",
+    "neutral": "#404040",
+    "stone": "#44403b",
+    "red": "#c10007",
+    "orange": "#ca3500",
+    "amber": "#bb4d00",
+    "yellow": "#a65f00",
+    "lime": "#497d00",
+    "green": "#008236",
+    "emerald": "#007a55",
+    "teal": "#00786f",
+    "cyan": "#007595",
+    "sky": "#0069a8",
+    "blue": "#1447e6",
+    "indigo": "#432dd7",
+    "violet": "#6e11b0",
+    "purple": "#8200db",
+    "fuchsia": "#c800de",
+    "pink": "#c6005c",
+    "rose": "#c70036",
+    "ink": "#18181b",
+    "surface": "#e4e4e7",
+}
+
+DEFAULT_FONT: dict[str, str | int | float] = {
+    "fontFamily": "sans-serif",
+    "fontSize": 14,
+    "fontWeight": 400,
+    "lineHeight": 1.5,
+}
+
+
+class Color(MutableMapping[str, str]):
+    """
+    Theme color tokens with attribute and mapping-style access.
+    """
+
+    def __init__(self, **values: str):
+        self._values = DEFAULT_COLORS | values
+
+    def __getitem__(self, key: str) -> str:
+        return self._values[key]
+
+    def __setitem__(self, key: str, value: str) -> None:
+        self._values[key] = value
+
+    def __delitem__(self, key: str) -> None:
+        del self._values[key]
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self._values)
+
+    def __len__(self) -> int:
+        return len(self._values)
+
+    def __getattr__(self, name: str) -> str:
+        try:
+            return self._values[name]
+        except KeyError as exc:
+            raise AttributeError(name) from exc
+
+    def __setattr__(self, name: str, value: str) -> None:
+        if name == "_values":
+            super().__setattr__(name, value)
+        else:
+            self._values[name] = value
+
+    def to_dict(self) -> dict[str, str]:
+        return dict(self._values)
+
+
+class Theme:
+    """
+    Font settings and color tokens loaded from defaults or a theme JSON file.
+    """
+
+    def __init__(self, path: str | Path | None = None):
+        theme_values = self._load_theme(path)
+        font_values = theme_values.get("font", {})
+        color_values = theme_values.get("colors", {})
+
+        self.font = DEFAULT_FONT | self._require_mapping(font_values, "font")
+        self.colors = Color(**self._require_str_mapping(color_values, "colors"))
+
+    @staticmethod
+    def _load_theme(path: str | Path | None) -> dict[str, Any]:
+        if path is None:
+            return {}
+
+        theme_path = Path(path)
+        theme_values = json.loads(theme_path.read_text(encoding="utf-8"))
+        if not isinstance(theme_values, dict):
+            raise ValueError("Theme JSON must contain an object.")
+        return theme_values
+
+    @staticmethod
+    def _require_mapping(value: Any, field: str) -> dict[str, Any]:
+        if not isinstance(value, dict):
+            raise ValueError(f"Theme field '{field}' must contain an object.")
+        return value
+
+    @staticmethod
+    def _require_str_mapping(value: Any, field: str) -> dict[str, str]:
+        mapping = Theme._require_mapping(value, field)
+        return {str(key): str(color) for key, color in mapping.items()}
+
+    @property
+    def font_family(self) -> str:
+        return str(self.font["fontFamily"])
+
+    @font_family.setter
+    def font_family(self, value: str) -> None:
+        self.font["fontFamily"] = value
+
+    @property
+    def font_size(self) -> int | float:
+        value = self.font["fontSize"]
+        if not isinstance(value, (int, float)):
+            raise TypeError("fontSize must be a number.")
+        return value
+
+    @font_size.setter
+    def font_size(self, value: int | float) -> None:
+        self.font["fontSize"] = value
+
+    @property
+    def font_weight(self) -> int:
+        value = self.font["fontWeight"]
+        if not isinstance(value, int):
+            raise TypeError("fontWeight must be an integer.")
+        return value
+
+    @font_weight.setter
+    def font_weight(self, value: int) -> None:
+        self.font["fontWeight"] = value
+
+    @property
+    def line_height(self) -> int | float:
+        value = self.font["lineHeight"]
+        if not isinstance(value, (int, float)):
+            raise TypeError("lineHeight must be a number.")
+        return value
+
+    @line_height.setter
+    def line_height(self, value: int | float) -> None:
+        self.font["lineHeight"] = value
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "font": dict(self.font),
+            "colors": self.colors.to_dict(),
+        }
 
 
 def hexStr(n: int) -> str:

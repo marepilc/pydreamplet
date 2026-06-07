@@ -36,6 +36,8 @@ def test_shape_helpers_are_exported_from_top_level():
 
 
 def test_color_helpers_are_exported_from_top_level():
+    assert dp.Color is colors.Color
+    assert dp.Theme is colors.Theme
     assert dp.hex_to_rgb is colors.hex_to_rgb
     assert dp.rgb_to_hex is colors.rgb_to_hex
     assert dp.color2rgba is colors.color2rgba
