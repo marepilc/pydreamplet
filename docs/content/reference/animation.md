@@ -9,7 +9,9 @@ category: reference
 # Animation
 
 `Animate` creates an SVG `<animate>` element. Append it to a shape, text, path,
-or group to animate one SVG attribute over time.
+or group to animate one SVG attribute over time. Use `AnimateTransform` when the
+target attribute is `transform`, because SVG uses a dedicated
+`<animateTransform>` element for transform animation.
 
 ## Import
 
@@ -21,6 +23,7 @@ import pydreamplet as dp
 
 ```python
 dp.Animate(attr: str, **kwargs)
+dp.AnimateTransform(transform_type: str, **kwargs)
 ```
 
 The first argument is the SVG attribute name to animate. The constructor writes
@@ -54,6 +57,8 @@ svg.append(circle)
 
 ## Constructor Parameters
 
+### `Animate`
+
 | Parameter | Type | Default | Description |
 | --- | --- | --- | --- |
 | `attr` | `str` | required | SVG attribute name written to `attributeName`. |
@@ -70,6 +75,34 @@ svg.append(circle)
 | `attributeName` | the `attr` argument |
 | `dur` | provided `dur`, or `"2s"` |
 | `repeatCount` | provided `repeatCount`, or `"indefinite"` |
+
+### `AnimateTransform`
+
+| Parameter | Type | Default | Description |
+| --- | --- | --- | --- |
+| `transform_type` | `str` | required | SVG transform type, such as `"rotate"`, `"scale"`, or `"translate"`. |
+| `repeatCount` | `int \| str` | `"indefinite"` | SVG repeat count. Use this exact camelCase keyword. |
+| `values` | `list[Any]` | `None` | Transform keyframe values joined with semicolons. |
+| `from_` | `Any` | `None` | Writes the SVG `from` attribute. The trailing underscore avoids Python's reserved `from` keyword. |
+| `dur` | `str` | `"2s"` | SVG duration. |
+| `**kwargs` | `Any` | none | Additional attributes for the `<animateTransform>` element, such as `to`, `by`, or `additive`. |
+
+`AnimateTransform` always sets:
+
+| Attribute | Value |
+| --- | --- |
+| `attributeName` | `"transform"` |
+| `type` | the `transform_type` argument |
+| `dur` | provided `dur`, or `"2s"` |
+| `repeatCount` | provided `repeatCount`, or `"indefinite"` |
+
+```python
+svg = dp.SVG(300, 300)
+g = dp.G(pos=(150, 150))
+g.append(dp.Circle(cx=72, cy=0, r=18, fill="currentColor"))
+g.append(dp.AnimateTransform("rotate", from_=0, to=360, dur="8s"))
+svg.append(g)
+```
 
 ```python
 anim = dp.Animate("opacity")

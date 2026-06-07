@@ -18,6 +18,68 @@ import pydreamplet as dp
 
 Lower-level legacy helpers are still available from `pydreamplet.colors`.
 
+## Theme
+
+`Theme` stores reusable font settings and color tokens. With no arguments it
+uses built-in defaults.
+
+```python
+theme = dp.Theme()
+
+assert theme.font_family == "sans-serif"
+assert theme.font_size == 14
+assert theme.blue == "oklch(62.3% 0.214 259.815)"
+assert theme.color is theme.colors
+```
+
+Pass a JSON file path to override part or all of the default theme:
+
+```json
+{
+  "font": {
+    "fontFamily": "Roboto",
+    "fontSize": 12,
+    "fontWeight": 400,
+    "lineHeight": 1.5
+  },
+  "colors": {
+    "ink": "oklch(27.4% 0.006 286.033)",
+    "surface": "oklch(96.7% 0.001 286.375)",
+    "brand": "oklch(62.3% 0.214 259.815)"
+  }
+}
+```
+
+```python
+theme = dp.Theme("themes/light.json")
+theme.font_family = "Roboto"
+theme.font_size = 12
+theme.font_weight = 600
+
+theme.brand = (212, 136, 113)
+theme.muted = (212, 136, 113, 0.5)
+theme.gray = 128
+
+assert theme.brand == "#d48871"
+assert theme.muted == "rgba(212, 136, 113, 0.5)"
+assert theme.gray == "#808080"
+assert theme.colors.brand == "#d48871"
+assert theme.colors["surface"] == "oklch(96.7% 0.001 286.375)"
+```
+
+`Color` is the token container used by `Theme.colors`. It supports attribute
+access, mapping access, custom tokens, hex strings, CSS color strings, grayscale
+integers, RGB tuples, and RGBA tuples. `Theme` also exposes color tokens
+directly, so `theme.amber` is equivalent to `theme.colors.amber`.
+
+Default theme colors are annotated on `Theme`, so IDEs can suggest names such as
+`theme.amber`, `theme.blue`, and `theme.surface`. Runtime color tokens loaded
+from JSON or assigned in Python are also exposed through `dir(theme)` for tools
+that use runtime introspection.
+
+Named default colors use Tailwind CSS 4.3 shade `500`. `theme.surface` uses
+Tailwind `zinc-100`, and `theme.ink` uses Tailwind `zinc-800`.
+
 ## Visual Example
 
 ```python
@@ -40,10 +102,13 @@ for index, color in enumerate(palette):
 ## Top-Level Helpers
 
 ```python
+Theme(path: str | Path | None = None)
+Color(**values: ColorInput)
 hex_to_rgb(hex_color: str) -> tuple[int, int, int]
 rgb_to_hex(rgb: tuple[int, int, int]) -> str
-color2rgba(c: str | int | list[int] | tuple[int, int, int], alpha: float = 1) -> str
-blend(color1: str, color2: str, proportion: float) -> str
+color2rgba(c: ColorInput, alpha: float = 1) -> str
+blend_colors(color1: ColorInput, color2: ColorInput, proportion: float) -> str
+blend(color1: ColorInput, color2: ColorInput, proportion: float) -> str
 random_color() -> str
 generate_colors(base_color: str, n: int = 10) -> list[str]
 ```
@@ -81,18 +146,20 @@ assert dp.color2rgba("#00ff00", alpha=0.3) == "rgba(0, 255, 0, 0.3)"
 
 RGB channels and alpha are constrained to their valid ranges.
 
-### `blend`
+### `blend_colors`
 
-Blends two hex colors. `proportion=0` returns the first color and
+Blends two supported color values. `proportion=0` returns the first color and
 `proportion=1` returns the second. Proportions outside `[0, 1]` are constrained.
+Opaque blends return hex. Blends involving alpha return `rgba(...)`.
 
 ```python
-assert dp.blend("#123456", "#abcdef", 0) == "#123456"
-assert dp.blend("#123456", "#abcdef", 1) == "#abcdef"
+assert dp.blend_colors("#123456", "#abcdef", 0) == "#123456"
+assert dp.blend_colors((0, 0, 0), 255, 0.5) in ("#7f7f7f", "#808080")
+assert dp.blend_colors((212, 136, 113, 0.5), "#000000", 0) == "rgba(212, 136, 113, 0.5)"
 assert dp.blend("invalid", "#abcdef", 0.5) == "#000000"
 ```
 
-Both three-digit and six-digit hex values are accepted.
+`blend` remains available as the shorter legacy name.
 
 ### `random_color`
 

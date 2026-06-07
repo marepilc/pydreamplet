@@ -1,7 +1,27 @@
 # Changelog
 
-All notable changes for pyDreamplet 2.0 are tracked here while the `version-2`
+All notable changes for pyDreamplet 2.x are tracked here while the `version-2`
 branch is in progress.
+
+## 2.1.0
+
+### Added
+
+- Added `Theme` and `Color` for reusable font settings and color tokens.
+- Added `blend_colors()` as the explicit two-color blending helper. The shorter
+  `blend()` name remains available for compatibility.
+- Added `AnimateTransform` for SVG `<animateTransform>` transform animations.
+
+### Changed
+
+- `Color` tokens now accept CSS color strings, grayscale integers, RGB tuples,
+  and RGBA tuples while normalizing Python color values to SVG/CSS strings.
+- `Theme` now exposes color tokens directly, so `theme.amber` and
+  `theme.colors.amber` are equivalent.
+- Default named theme colors now use Tailwind CSS 4.3 shade `500`; `surface`
+  uses `zinc-100` and `ink` uses `zinc-800`.
+- Color blending now accepts hex, grayscale integers, RGB/RGBA tuples,
+  `rgb(...)`, `rgba(...)`, and `oklch(...)` inputs.
 
 ## 2.0.0
 

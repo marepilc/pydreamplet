@@ -1,8 +1,437 @@
 import colorsys
+import json
+import math
 import random
 import re
+from collections.abc import Iterator, MutableMapping
+from pathlib import Path
+from typing import Any, overload
 
 from pydreamplet.utils import constrain, math_round
+
+
+DEFAULT_COLORS: dict[str, str] = {
+    "inherit": "inherit",
+    "current": "currentColor",
+    "transparent": "transparent",
+    "black": "#000000",
+    "white": "#ffffff",
+    "slate": "oklch(55.4% 0.046 257.417)",
+    "gray": "oklch(55.1% 0.027 264.364)",
+    "zinc": "oklch(55.2% 0.016 285.938)",
+    "neutral": "oklch(55.6% 0 0)",
+    "stone": "oklch(55.3% 0.013 58.071)",
+    "red": "oklch(63.7% 0.237 25.331)",
+    "orange": "oklch(70.5% 0.213 47.604)",
+    "amber": "oklch(76.9% 0.188 70.08)",
+    "yellow": "oklch(79.5% 0.184 86.047)",
+    "lime": "oklch(76.8% 0.233 130.85)",
+    "green": "oklch(72.3% 0.219 149.579)",
+    "emerald": "oklch(69.6% 0.17 162.48)",
+    "teal": "oklch(70.4% 0.14 182.503)",
+    "cyan": "oklch(71.5% 0.143 215.221)",
+    "sky": "oklch(68.5% 0.169 237.323)",
+    "blue": "oklch(62.3% 0.214 259.815)",
+    "indigo": "oklch(58.5% 0.233 277.117)",
+    "violet": "oklch(60.6% 0.25 292.717)",
+    "purple": "oklch(62.7% 0.265 303.9)",
+    "fuchsia": "oklch(66.7% 0.295 322.15)",
+    "pink": "oklch(65.6% 0.241 354.308)",
+    "rose": "oklch(64.5% 0.246 16.439)",
+    "ink": "oklch(27.4% 0.006 286.033)",
+    "surface": "oklch(96.7% 0.001 286.375)",
+}
+
+DEFAULT_FONT: dict[str, str | int | float] = {
+    "fontFamily": "sans-serif",
+    "fontSize": 14,
+    "fontWeight": 400,
+    "lineHeight": 1.5,
+}
+
+ColorInput = str | int | list[int | float] | tuple[int | float, ...]
+
+
+def _format_alpha(alpha: float) -> str:
+    alpha = constrain(alpha, 0, 1)
+    return f"{alpha:g}"
+
+
+def _rgb_channel(value: int | float) -> int:
+    return int(constrain(value, 0, 255))
+
+
+def _alpha_channel(value: int | float) -> float:
+    return constrain(float(value), 0, 1)
+
+
+def normalize_color(value: ColorInput) -> str:
+    """
+    Converts supported Python color values to SVG/CSS color strings.
+    """
+    if isinstance(value, int):
+        channel = _rgb_channel(value)
+        return rgb_to_hex((channel, channel, channel))
+
+    if isinstance(value, (list, tuple)):
+        if len(value) == 3:
+            return rgb_to_hex(
+                (
+                    _rgb_channel(value[0]),
+                    _rgb_channel(value[1]),
+                    _rgb_channel(value[2]),
+                )
+            )
+        if len(value) == 4:
+            r = _rgb_channel(value[0])
+            g = _rgb_channel(value[1])
+            b = _rgb_channel(value[2])
+            a = _alpha_channel(value[3])
+            return f"rgba({r}, {g}, {b}, {_format_alpha(a)})"
+        raise ValueError("Color sequences must contain 3 RGB or 4 RGBA values.")
+
+    if isinstance(value, str):
+        return value
+
+    raise TypeError("Color values must be strings, numbers, RGB tuples, or RGBA tuples.")
+
+
+def _parse_hex_color(value: str) -> tuple[int, int, int, float] | None:
+    color = value.strip()
+    rgx = re.compile(r"^#?([a-fA-F\d]{6}|[a-fA-F\d]{3})$")
+    match = rgx.match(color)
+    if match is None:
+        return None
+
+    hex_value = match.group(1)
+    if len(hex_value) == 3:
+        hex_value = "".join(ch * 2 for ch in hex_value)
+    r = int(hex_value[0:2], 16)
+    g = int(hex_value[2:4], 16)
+    b = int(hex_value[4:6], 16)
+    return r, g, b, 1
+
+
+def _parse_rgb_color(value: str) -> tuple[int, int, int, float] | None:
+    match = re.fullmatch(r"rgba?\((.+)\)", value.strip(), flags=re.IGNORECASE)
+    if match is None:
+        return None
+
+    parts = [
+        part.strip()
+        for part in re.split(r"[,/ ]+", match.group(1).strip())
+        if part.strip()
+    ]
+    if len(parts) not in (3, 4):
+        return None
+
+    try:
+        r = _rgb_channel(float(parts[0].rstrip("%")))
+        g = _rgb_channel(float(parts[1].rstrip("%")))
+        b = _rgb_channel(float(parts[2].rstrip("%")))
+        alpha = _alpha_channel(float(parts[3])) if len(parts) == 4 else 1
+    except ValueError:
+        return None
+    return r, g, b, alpha
+
+
+def _linear_to_srgb(channel: float) -> int:
+    if channel <= 0.0031308:
+        srgb = 12.92 * channel
+    else:
+        srgb = 1.055 * (channel ** (1 / 2.4)) - 0.055
+    return _rgb_channel(math_round(srgb * 255))
+
+
+def _parse_oklch_color(value: str) -> tuple[int, int, int, float] | None:
+    match = re.fullmatch(r"oklch\((.+)\)", value.strip(), flags=re.IGNORECASE)
+    if match is None:
+        return None
+
+    parts = [
+        part.strip()
+        for part in re.split(r"[,/ ]+", match.group(1).strip())
+        if part.strip()
+    ]
+    if len(parts) not in (3, 4):
+        return None
+
+    try:
+        lightness_text = parts[0]
+        lightness = float(lightness_text.rstrip("%"))
+        if lightness_text.endswith("%"):
+            lightness /= 100
+
+        chroma = float(parts[1])
+        hue = float(parts[2].removesuffix("deg"))
+        alpha = _alpha_channel(float(parts[3])) if len(parts) == 4 else 1
+    except ValueError:
+        return None
+
+    a = chroma * math.cos(math.radians(hue))
+    b = chroma * math.sin(math.radians(hue))
+    l_ = lightness + 0.3963377774 * a + 0.2158037573 * b
+    m_ = lightness - 0.1055613458 * a - 0.0638541728 * b
+    s_ = lightness - 0.0894841775 * a - 1.2914855480 * b
+
+    long_response = l_**3
+    medium_response = m_**3
+    short_response = s_**3
+
+    red = (
+        +4.0767416621 * long_response
+        - 3.3077115913 * medium_response
+        + 0.2309699292 * short_response
+    )
+    green = (
+        -1.2684380046 * long_response
+        + 2.6097574011 * medium_response
+        - 0.3413193965 * short_response
+    )
+    blue = (
+        -0.0041960863 * long_response
+        - 0.7034186147 * medium_response
+        + 1.7076147010 * short_response
+    )
+
+    return (
+        _linear_to_srgb(red),
+        _linear_to_srgb(green),
+        _linear_to_srgb(blue),
+        alpha,
+    )
+
+
+def color_to_rgba(value: ColorInput) -> tuple[int, int, int, float]:
+    """
+    Converts supported Python and CSS color values to RGBA channels.
+    """
+    if isinstance(value, int):
+        channel = _rgb_channel(value)
+        return channel, channel, channel, 1
+
+    if isinstance(value, (list, tuple)):
+        if len(value) == 3:
+            return (
+                _rgb_channel(value[0]),
+                _rgb_channel(value[1]),
+                _rgb_channel(value[2]),
+                1,
+            )
+        if len(value) == 4:
+            return (
+                _rgb_channel(value[0]),
+                _rgb_channel(value[1]),
+                _rgb_channel(value[2]),
+                _alpha_channel(value[3]),
+            )
+        raise ValueError("Color sequences must contain 3 RGB or 4 RGBA values.")
+
+    for parser in (_parse_hex_color, _parse_rgb_color, _parse_oklch_color):
+        parsed = parser(value)
+        if parsed is not None:
+            return parsed
+
+    raise ValueError(f"Unsupported color value: {value!r}")
+
+
+class Color(MutableMapping[str, str]):
+    """
+    Theme color tokens with attribute and mapping-style access.
+    """
+
+    def __init__(self, **values: ColorInput):
+        self._values = DEFAULT_COLORS | {
+            key: normalize_color(value) for key, value in values.items()
+        }
+
+    def __getitem__(self, key: str) -> str:
+        return self._values[key]
+
+    def __setitem__(self, key: str, value: ColorInput) -> None:
+        self._values[key] = normalize_color(value)
+
+    def __delitem__(self, key: str) -> None:
+        del self._values[key]
+
+    def __iter__(self) -> Iterator[str]:
+        return iter(self._values)
+
+    def __len__(self) -> int:
+        return len(self._values)
+
+    def __getattr__(self, name: str) -> str:
+        try:
+            return self._values[name]
+        except KeyError as exc:
+            raise AttributeError(name) from exc
+
+    def __setattr__(self, name: str, value: ColorInput) -> None:
+        if name == "_values":
+            super().__setattr__(name, value)
+        else:
+            self._values[name] = normalize_color(value)
+
+    def to_dict(self) -> dict[str, str]:
+        return dict(self._values)
+
+
+class ColorToken:
+    def __init__(self, name: str):
+        self.name = name
+
+    @overload
+    def __get__(self, instance: None, owner: type["Theme"]) -> "ColorToken": ...
+
+    @overload
+    def __get__(self, instance: "Theme", owner: type["Theme"]) -> str: ...
+
+    def __get__(
+        self, instance: "Theme | None", owner: type["Theme"]
+    ) -> "ColorToken | str":
+        if instance is None:
+            return self
+        return instance.colors[self.name]
+
+    def __set__(self, instance: "Theme", value: ColorInput) -> None:
+        instance.colors[self.name] = value
+
+
+class Theme:
+    """
+    Font settings and color tokens loaded from defaults or a theme JSON file.
+    """
+
+    inherit = ColorToken("inherit")
+    current = ColorToken("current")
+    transparent = ColorToken("transparent")
+    black = ColorToken("black")
+    white = ColorToken("white")
+    slate = ColorToken("slate")
+    gray = ColorToken("gray")
+    zinc = ColorToken("zinc")
+    neutral = ColorToken("neutral")
+    stone = ColorToken("stone")
+    red = ColorToken("red")
+    orange = ColorToken("orange")
+    amber = ColorToken("amber")
+    yellow = ColorToken("yellow")
+    lime = ColorToken("lime")
+    green = ColorToken("green")
+    emerald = ColorToken("emerald")
+    teal = ColorToken("teal")
+    cyan = ColorToken("cyan")
+    sky = ColorToken("sky")
+    blue = ColorToken("blue")
+    indigo = ColorToken("indigo")
+    violet = ColorToken("violet")
+    purple = ColorToken("purple")
+    fuchsia = ColorToken("fuchsia")
+    pink = ColorToken("pink")
+    rose = ColorToken("rose")
+    ink = ColorToken("ink")
+    surface = ColorToken("surface")
+
+    _INTERNAL_ATTRIBUTES = {"font", "colors"}
+    _FONT_ATTRIBUTES = {"font_family", "font_size", "font_weight", "line_height"}
+
+    def __init__(self, path: str | Path | None = None):
+        theme_values = self._load_theme(path)
+        font_values = theme_values.get("font", {})
+        color_values = theme_values.get("colors", {})
+
+        self.font = DEFAULT_FONT | self._require_mapping(font_values, "font")
+        self.colors = Color(**self._require_color_mapping(color_values, "colors"))
+
+    @staticmethod
+    def _load_theme(path: str | Path | None) -> dict[str, Any]:
+        if path is None:
+            return {}
+
+        theme_path = Path(path)
+        theme_values = json.loads(theme_path.read_text(encoding="utf-8"))
+        if not isinstance(theme_values, dict):
+            raise ValueError("Theme JSON must contain an object.")
+        return theme_values
+
+    @staticmethod
+    def _require_mapping(value: Any, field: str) -> dict[str, Any]:
+        if not isinstance(value, dict):
+            raise ValueError(f"Theme field '{field}' must contain an object.")
+        return value
+
+    @staticmethod
+    def _require_color_mapping(value: Any, field: str) -> dict[str, ColorInput]:
+        mapping = Theme._require_mapping(value, field)
+        return {str(key): color for key, color in mapping.items()}
+
+    @property
+    def color(self) -> Color:
+        return self.colors
+
+    def __getattr__(self, name: str) -> str:
+        try:
+            return self.colors[name]
+        except KeyError as exc:
+            raise AttributeError(name) from exc
+
+    def __dir__(self) -> list[str]:
+        return sorted(set(super().__dir__()) | set(self.colors))
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name in self._INTERNAL_ATTRIBUTES:
+            super().__setattr__(name, value)
+        elif name in self._FONT_ATTRIBUTES:
+            super().__setattr__(name, value)
+        else:
+            self.colors[name] = value
+
+    @property
+    def font_family(self) -> str:
+        return str(self.font["fontFamily"])
+
+    @font_family.setter
+    def font_family(self, value: str) -> None:
+        self.font["fontFamily"] = value
+
+    @property
+    def font_size(self) -> int | float:
+        value = self.font["fontSize"]
+        if not isinstance(value, (int, float)):
+            raise TypeError("fontSize must be a number.")
+        return value
+
+    @font_size.setter
+    def font_size(self, value: int | float) -> None:
+        self.font["fontSize"] = value
+
+    @property
+    def font_weight(self) -> int:
+        value = self.font["fontWeight"]
+        if not isinstance(value, int):
+            raise TypeError("fontWeight must be an integer.")
+        return value
+
+    @font_weight.setter
+    def font_weight(self, value: int) -> None:
+        self.font["fontWeight"] = value
+
+    @property
+    def line_height(self) -> int | float:
+        value = self.font["lineHeight"]
+        if not isinstance(value, (int, float)):
+            raise TypeError("lineHeight must be a number.")
+        return value
+
+    @line_height.setter
+    def line_height(self, value: int | float) -> None:
+        self.font["lineHeight"] = value
+
+    def to_dict(self) -> dict[str, object]:
+        return {
+            "font": dict(self.font),
+            "colors": self.colors.to_dict(),
+        }
 
 
 def hexStr(n: int) -> str:
@@ -61,72 +490,55 @@ def rgb_to_hex(rgb: tuple[int, int, int]) -> str:
     return f"#{r:02x}{g:02x}{b:02x}"
 
 
-def color2rgba(
-    c: str | int | list[int] | tuple[int, int, int], alpha: float = 1
-) -> str:
+def color2rgba(c: ColorInput, alpha: float = 1) -> str:
     """
     Converts an input color (which can be a list/tuple of three numbers,
     an integer, or a hex string) and an alpha value to an "rgba(r, g, b, a)" string.
     """
-    r = g = b = 0
-    a: float = 1
-    if isinstance(c, (list, tuple)):
-        if len(c) == 3:
-            r = int(constrain(c[0], 0, 255))
-            g = int(constrain(c[1], 0, 255))
-            b = int(constrain(c[2], 0, 255))
-            a = constrain(alpha, 0, 1)
-        else:
-            r = g = b = 0
-            a = 1
-    elif isinstance(c, int):
-        r = g = b = int(constrain(c, 0, 255))
-        a = constrain(alpha, 0, 1)
-    else:
-        rgb = str2rgb(c)
-        r = int(rgb.get("r", 0))
-        g = int(rgb.get("g", 0))
-        b = int(rgb.get("b", 0))
-        a = constrain(alpha, 0, 1)
-    return f"rgba({r}, {g}, {b}, {a})"
+    try:
+        r, g, b, parsed_alpha = color_to_rgba(c)
+    except ValueError:
+        r, g, b, parsed_alpha = 0, 0, 0, 1
+    a = parsed_alpha if parsed_alpha < 1 else constrain(alpha, 0, 1)
+    return f"rgba({r}, {g}, {b}, {_format_alpha(a)})"
 
 
-def blend(color1: str, color2: str, proportion: float) -> str:
+def blend(color1: ColorInput, color2: ColorInput, proportion: float) -> str:
     """
-    Blends two hex color strings by the given proportion.
+    Blends two supported color values by the given proportion.
     proportion: 0 returns color1, 1 returns color2.
-    Returns the blended color as a hex string.
+    Returns hex for opaque colors and rgba(...) when transparency is involved.
     """
     proportion = constrain(proportion, 0, 1)
-    # Ensure the colors start with '#'
-    c1 = color1 if color1.startswith("#") else "#" + color1
-    c2 = color2 if color2.startswith("#") else "#" + color2
 
-    # Regex to test for valid hex color (3 or 6 hex digits)
-    rgx = re.compile(r"^#+([a-fA-F\d]{6}|[a-fA-F\d]{3})$")
-    if rgx.match(c1) and rgx.match(c2):
-        # Remove leading '#' and expand shorthand if necessary.
-        col1 = c1[1:]
-        col2 = c2[1:]
-        if len(col1) == 3:
-            col1 = "".join([ch * 2 for ch in col1])
-        if len(col2) == 3:
-            col2 = "".join([ch * 2 for ch in col2])
-        try:
-            r1 = int(col1[0:2], 16)
-            r2 = int(col2[0:2], 16)
-            r = math_round((1 - proportion) * r1 + proportion * r2)
-            g1 = int(col1[2:4], 16)
-            g2 = int(col2[2:4], 16)
-            g = math_round((1 - proportion) * g1 + proportion * g2)
-            b1 = int(col1[4:6], 16)
-            b2 = int(col2[4:6], 16)
-            b = math_round((1 - proportion) * b1 + proportion * b2)
-            return "#" + hexStr(r) + hexStr(g) + hexStr(b)
-        except ValueError:
-            return "#000000"
-    else:
+    try:
+        r1, g1, b1, a1 = color_to_rgba(color1)
+        r2, g2, b2, a2 = color_to_rgba(color2)
+    except ValueError:
         return "#000000"
+
+    r = math_round((1 - proportion) * r1 + proportion * r2)
+    g = math_round((1 - proportion) * g1 + proportion * g2)
+    b = math_round((1 - proportion) * b1 + proportion * b2)
+    a = (1 - proportion) * a1 + proportion * a2
+
+    if a >= 1:
+        return rgb_to_hex((r, g, b))
+    return f"rgba({r}, {g}, {b}, {_format_alpha(a)})"
+
+
+def blend_colors(color1: ColorInput, color2: ColorInput, proportion: float) -> str:
+    """
+    Alias for blend() with an explicit two-color name.
+    """
+    return blend(color1, color2, proportion)
+
+
+def blend_color(color1: ColorInput, color2: ColorInput, proportion: float) -> str:
+    """
+    Backward-compatible singular alias for blend_colors().
+    """
+    return blend_colors(color1, color2, proportion)
 
 
 def random_color():

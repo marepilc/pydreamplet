@@ -1,6 +1,7 @@
 from pydreamplet.core import (
     SVG,
     Animate,
+    AnimateTransform,
     BoundingBox,
     Circle,
     ClipPath,
@@ -72,7 +73,10 @@ from pydreamplet.path_data import (
     tangent_at_length,
 )
 from pydreamplet.colors import (
+    Color,
+    Theme,
     blend,
+    blend_colors,
     color2rgba,
     generate_colors,
     hex_to_rgb,
@@ -110,6 +114,7 @@ from pydreamplet.shapes import (
 __all__ = [
     "SVG",
     "Animate",
+    "AnimateTransform",
     "ArcGenerator",
     "AreaGenerator",
     "BandScale",
@@ -117,6 +122,7 @@ __all__ = [
     "Circle",
     "CircleScale",
     "ClipPath",
+    "Color",
     "ColorScale",
     "Defs",
     "Ellipse",
@@ -150,6 +156,7 @@ __all__ = [
     "SvgElement",
     "Text",
     "TextOnPath",
+    "Theme",
     "Tile",
     "Transform",
     "TransformList",
@@ -160,6 +167,7 @@ __all__ = [
     "arc",
     "basis_spline",
     "blend",
+    "blend_colors",
     "blob",
     "cardinal_spline",
     "catmull_rom_path",

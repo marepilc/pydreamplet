@@ -1,10 +1,15 @@
 import pydreamplet as dp
-from pydreamplet import colors, scales, shapes
+from pydreamplet import colors, core, scales, shapes
 
 
 def test_all_exports_are_public_attributes():
     for name in dp.__all__:
         assert hasattr(dp, name), name
+
+
+def test_animation_classes_are_exported_from_top_level():
+    assert dp.Animate is core.Animate
+    assert dp.AnimateTransform is core.AnimateTransform
 
 
 def test_scale_classes_are_exported_from_top_level():
@@ -36,6 +41,9 @@ def test_shape_helpers_are_exported_from_top_level():
 
 
 def test_color_helpers_are_exported_from_top_level():
+    assert dp.Color is colors.Color
+    assert dp.Theme is colors.Theme
+    assert dp.blend_colors is colors.blend_colors
     assert dp.hex_to_rgb is colors.hex_to_rgb
     assert dp.rgb_to_hex is colors.rgb_to_hex
     assert dp.color2rgba is colors.color2rgba

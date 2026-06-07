@@ -1,4 +1,5 @@
 import colorsys
+import json
 import re
 
 import pytest
@@ -6,7 +7,10 @@ import pytest
 # Import the functions from your module.
 # Adjust the import path as necessary.
 from pydreamplet.colors import (
+    Color,
+    Theme,
     blend,
+    blend_colors,
     color2rgba,
     generate_colors,
     hex_to_rgb,
@@ -16,6 +20,132 @@ from pydreamplet.colors import (
     rgb_to_hex,
     str2rgb,
 )
+
+
+def test_color_defaults_support_attribute_and_mapping_access():
+    colors = Color()
+
+    assert colors.blue == "oklch(62.3% 0.214 259.815)"
+    assert colors["blue"] == "oklch(62.3% 0.214 259.815)"
+
+
+def test_color_defaults_use_tailwind_500_with_zinc_surface_and_ink():
+    colors = Color()
+
+    assert colors.amber == "oklch(76.9% 0.188 70.08)"
+    assert colors.red == "oklch(63.7% 0.237 25.331)"
+    assert colors.slate == "oklch(55.4% 0.046 257.417)"
+    assert colors.surface == "oklch(96.7% 0.001 286.375)"
+    assert colors.ink == "oklch(27.4% 0.006 286.033)"
+
+
+def test_color_allows_custom_tokens():
+    colors = Color(brand="#123456")
+    colors.accent = "#abcdef"
+
+    assert colors.brand == "#123456"
+    assert colors["accent"] == "#abcdef"
+    assert colors.to_dict()["black"] == "#000000"
+
+
+def test_color_normalizes_python_color_values():
+    colors = Color()
+
+    colors.brand = "oklch(0.7 0.1 38)"
+    assert colors.brand == "oklch(0.7 0.1 38)"
+
+    colors.brand = (212, 136, 113)
+    assert colors.brand == "#d48871"
+
+    colors.brand = (212, 136, 113, 0.5)
+    assert colors.brand == "rgba(212, 136, 113, 0.5)"
+
+    colors.brand = "#d48871"
+    assert colors.brand == "#d48871"
+
+    colors.gray = 128
+    assert colors.gray == "#808080"
+
+
+def test_theme_uses_default_font_and_colors():
+    theme = Theme()
+
+    assert theme.font_family == "sans-serif"
+    assert theme.font_size == 14
+    assert theme.font_weight == 400
+    assert theme.line_height == 1.5
+    assert theme.colors.ink == "oklch(27.4% 0.006 286.033)"
+    assert theme.color is theme.colors
+
+
+def test_theme_exposes_colors_as_direct_attributes():
+    theme = Theme()
+
+    assert theme.amber == "oklch(76.9% 0.188 70.08)"
+
+    theme.brand = (212, 136, 113)
+    theme.gray = 128
+    theme.font_weight = 600
+
+    assert theme.brand == "#d48871"
+    assert theme.colors.brand == "#d48871"
+    assert theme.gray == "#808080"
+    assert theme.font_weight == 600
+
+
+def test_theme_dir_includes_current_color_tokens():
+    theme = Theme()
+    theme.brand = "#123456"
+
+    names = dir(theme)
+
+    assert "amber" in names
+    assert "brand" in names
+    assert "font_weight" in names
+
+
+def test_theme_loads_json_and_merges_with_defaults(tmp_path):
+    theme_path = tmp_path / "theme.json"
+    theme_path.write_text(
+        json.dumps(
+            {
+                "font": {
+                    "fontFamily": "Roboto",
+                    "fontSize": 12,
+                },
+                "colors": {
+                    "blue": "#0055ff",
+                    "brand": "#123456",
+                },
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    theme = Theme(theme_path)
+
+    assert theme.font_family == "Roboto"
+    assert theme.font_size == 12
+    assert theme.font_weight == 400
+    assert theme.colors.blue == "#0055ff"
+    assert theme.colors.brand == "#123456"
+    assert theme.colors.black == "#000000"
+
+
+def test_theme_font_properties_can_be_updated():
+    theme = Theme()
+
+    theme.font_family = "Roboto"
+    theme.font_size = 12
+    theme.font_weight = 500
+    theme.line_height = 1.4
+
+    assert theme.to_dict()["font"] == {
+        "fontFamily": "Roboto",
+        "fontSize": 12,
+        "fontWeight": 500,
+        "lineHeight": 1.4,
+    }
 
 
 # === Tests for hexStr ===
@@ -84,6 +214,11 @@ def test_color2rgba_hex():
     assert result == "rgba(0, 255, 0, 0.3)"
 
 
+def test_color2rgba_uses_tuple_alpha():
+    result = color2rgba((212, 136, 113, 0.5))
+    assert result == "rgba(212, 136, 113, 0.5)"
+
+
 # === Tests for blend ===
 def test_blend_zero_proportion():
     # With proportion 0, should return the first color exactly.
@@ -105,6 +240,17 @@ def test_blend_half_proportion():
 def test_blend_invalid():
     # When one or both colors are invalid, should return "#000000".
     assert blend("invalid", "#abcdef", 0.5) == "#000000"
+
+
+def test_blend_colors_accepts_supported_color_inputs():
+    assert blend_colors((0, 0, 0), 255, 0.5) in ("#7f7f7f", "#808080")
+    assert blend_colors((212, 136, 113, 0.5), "#000000", 0) == (
+        "rgba(212, 136, 113, 0.5)"
+    )
+    assert re.match(
+        r"^#[0-9a-f]{6}$",
+        blend_colors("oklch(0.7 0.1 38)", "#000000", 0.5),
+    )
 
 
 # === Tests for random_color ===

@@ -116,6 +116,13 @@ const showcaseSlides = [
     light: '/showcase/soap_bubble_light.svg',
     dark: '/showcase/soap_bubble_dark.svg',
     alt: 'Soap bubble illustration generated with pyDreamplet'
+  },
+  {
+    title: 'Dancing circles',
+    description: 'An animated radial SVG composition using theme colors and blended strokes.',
+    light: '/showcase/dancing_circles_light.svg',
+    dark: '/showcase/dancing_circles_dark.svg',
+    alt: 'Dancing circles animation generated with pyDreamplet'
   }
 ]
 

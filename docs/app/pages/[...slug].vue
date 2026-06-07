@@ -41,6 +41,10 @@ const navigation = [
         path: '/tutorials'
       },
       {
+        title: 'Dancing circles',
+        path: '/tutorials/dancing-circles'
+      },
+      {
         title: 'Layered SVG art',
         path: '/tutorials/layered-svg-art'
       },

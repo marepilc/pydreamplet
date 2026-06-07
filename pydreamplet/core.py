@@ -1465,6 +1465,48 @@ class Animate(SvgElement):
         self.attrs({"values": ";".join([str(v) for v in value])})
 
 
+class AnimateTransform(SvgElement):
+    def __init__(self, transform_type: str, **kwargs: Any):
+        repeat_count = kwargs.pop("repeatCount", "indefinite")
+        values_arg = kwargs.pop("values", None)
+        from_arg = kwargs.pop("from_", None)
+        dur = kwargs.pop("dur", "2s")
+        super().__init__("animateTransform", **kwargs)
+        self._repeat_count: int | str = repeat_count
+        self._values: list[Any] = []
+        if isinstance(values_arg, list):
+            self._values = values_arg
+            self.attrs({"values": ";".join(str(v) for v in self._values)})
+        if from_arg is not None:
+            self.attrs({"from": from_arg})
+        self.attrs(
+            {
+                "dur": dur,
+                "attributeName": "transform",
+                "type": transform_type,
+                "repeatCount": self._repeat_count,
+            }
+        )
+
+    @property
+    def repeat_count(self) -> int | str:
+        return self._repeat_count
+
+    @repeat_count.setter
+    def repeat_count(self, value: int | str):
+        self._repeat_count = value
+        self.attrs({"repeatCount": value})
+
+    @property
+    def values(self) -> list[str]:
+        return self._values
+
+    @values.setter
+    def values(self, value: list[Any]) -> None:
+        self._values = value
+        self.attrs({"values": ";".join([str(v) for v in value])})
+
+
 class Circle(SvgElement):
     def __init__(
         self,
@@ -2181,6 +2223,8 @@ class TextOnPath(SvgElement):
 # Register element classes so that find/find_all returns the proper type.
 # -----------------------------------------------------------------------------
 SvgElement.register("g", G)
+SvgElement.register("animate", Animate)
+SvgElement.register("animateTransform", AnimateTransform)
 SvgElement.register("defs", Defs)
 SvgElement.register("stop", Stop)
 SvgElement.register("linearGradient", LinearGradient)
