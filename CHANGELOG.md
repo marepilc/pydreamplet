@@ -10,6 +10,7 @@ branch is in progress.
 - Added `Theme` and `Color` for reusable font settings and color tokens.
 - Added `blend_colors()` as the explicit two-color blending helper. The shorter
   `blend()` name remains available for compatibility.
+- Added `AnimateTransform` for SVG `<animateTransform>` transform animations.
 
 ### Changed
 

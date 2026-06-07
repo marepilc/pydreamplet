@@ -99,6 +99,12 @@ Each circle starts with the same small radius. The stroke color comes from the
 blended palette, and the fill is transparent.
 
 ```python
+for i in range(circle_count):
+    angle = radians(i * angle_step)
+    r = min_radius + i * radius_step
+    final_cx = max_radius * cos(angle)
+    final_cy = max_radius * sin(angle)
+
     circle = dp.Circle(
         pos=(final_cx, final_cy),
         r=min_radius,
@@ -111,6 +117,13 @@ Add three animations: one for radius, one for `cx`, and one for `cy`. The radius
 grows and shrinks; the center point moves inward and back out.
 
 ```python
+for i in range(circle_count):
+    angle = radians(i * angle_step)
+    r = min_radius + i * radius_step
+    final_cx = max_radius * cos(angle)
+    final_cy = max_radius * sin(angle)
+    circle = dp.Circle(pos=(final_cx, final_cy), r=min_radius)
+
     circle.append(dp.Animate("r", values=[min_radius, r, min_radius], dur="5s"))
     circle.append(dp.Animate("cx", values=[final_cx, 0, final_cx], dur="5s"))
     circle.append(dp.Animate("cy", values=[final_cy, 0, final_cy], dur="5s"))
