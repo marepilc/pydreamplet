@@ -68,6 +68,21 @@ def test_theme_uses_default_font_and_colors():
     assert theme.color is theme.colors
 
 
+def test_theme_exposes_colors_as_direct_attributes():
+    theme = Theme()
+
+    assert theme.amber == "#bb4d00"
+
+    theme.brand = (212, 136, 113)
+    theme.gray = 128
+    theme.font_weight = 600
+
+    assert theme.brand == "#d48871"
+    assert theme.colors.brand == "#d48871"
+    assert theme.gray == "#808080"
+    assert theme.font_weight == 600
+
+
 def test_theme_loads_json_and_merges_with_defaults(tmp_path):
     theme_path = tmp_path / "theme.json"
     theme_path.write_text(

@@ -281,6 +281,9 @@ class Theme:
     Font settings and color tokens loaded from defaults or a theme JSON file.
     """
 
+    _INTERNAL_ATTRIBUTES = {"font", "colors"}
+    _FONT_ATTRIBUTES = {"font_family", "font_size", "font_weight", "line_height"}
+
     def __init__(self, path: str | Path | None = None):
         theme_values = self._load_theme(path)
         font_values = theme_values.get("font", {})
@@ -314,6 +317,20 @@ class Theme:
     @property
     def color(self) -> Color:
         return self.colors
+
+    def __getattr__(self, name: str) -> str:
+        try:
+            return self.colors[name]
+        except KeyError as exc:
+            raise AttributeError(name) from exc
+
+    def __setattr__(self, name: str, value: Any) -> None:
+        if name in self._INTERNAL_ATTRIBUTES:
+            super().__setattr__(name, value)
+        elif name in self._FONT_ATTRIBUTES:
+            super().__setattr__(name, value)
+        else:
+            self.colors[name] = value
 
     @property
     def font_family(self) -> str:

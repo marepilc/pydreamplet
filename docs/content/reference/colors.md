@@ -28,7 +28,7 @@ theme = dp.Theme()
 
 assert theme.font_family == "sans-serif"
 assert theme.font_size == 14
-assert theme.colors.blue == "#1447e6"
+assert theme.blue == "#1447e6"
 assert theme.color is theme.colors
 ```
 
@@ -54,21 +54,23 @@ Pass a JSON file path to override part or all of the default theme:
 theme = dp.Theme("themes/light.json")
 theme.font_family = "Roboto"
 theme.font_size = 12
+theme.font_weight = 600
 
-theme.color.brand = (212, 136, 113)
-theme.color.muted = (212, 136, 113, 0.5)
-theme.color.gray = 128
+theme.brand = (212, 136, 113)
+theme.muted = (212, 136, 113, 0.5)
+theme.gray = 128
 
-assert theme.color.brand == "#d48871"
-assert theme.color.muted == "rgba(212, 136, 113, 0.5)"
-assert theme.color.gray == "#808080"
+assert theme.brand == "#d48871"
+assert theme.muted == "rgba(212, 136, 113, 0.5)"
+assert theme.gray == "#808080"
 assert theme.colors.brand == "#d48871"
 assert theme.colors["surface"] == "#e4e4e7"
 ```
 
 `Color` is the token container used by `Theme.colors`. It supports attribute
 access, mapping access, custom tokens, hex strings, CSS color strings, grayscale
-integers, RGB tuples, and RGBA tuples.
+integers, RGB tuples, and RGBA tuples. `Theme` also exposes color tokens
+directly, so `theme.amber` is equivalent to `theme.colors.amber`.
 
 ## Visual Example
 
