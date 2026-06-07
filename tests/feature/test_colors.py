@@ -10,6 +10,7 @@ from pydreamplet.colors import (
     Color,
     Theme,
     blend,
+    blend_colors,
     color2rgba,
     generate_colors,
     hex_to_rgb,
@@ -37,6 +38,25 @@ def test_color_allows_custom_tokens():
     assert colors.to_dict()["black"] == "#000000"
 
 
+def test_color_normalizes_python_color_values():
+    colors = Color()
+
+    colors.brand = "oklch(0.7 0.1 38)"
+    assert colors.brand == "oklch(0.7 0.1 38)"
+
+    colors.brand = (212, 136, 113)
+    assert colors.brand == "#d48871"
+
+    colors.brand = (212, 136, 113, 0.5)
+    assert colors.brand == "rgba(212, 136, 113, 0.5)"
+
+    colors.brand = "#d48871"
+    assert colors.brand == "#d48871"
+
+    colors.gray = 128
+    assert colors.gray == "#808080"
+
+
 def test_theme_uses_default_font_and_colors():
     theme = Theme()
 
@@ -45,6 +65,7 @@ def test_theme_uses_default_font_and_colors():
     assert theme.font_weight == 400
     assert theme.line_height == 1.5
     assert theme.colors.ink == "#18181b"
+    assert theme.color is theme.colors
 
 
 def test_theme_loads_json_and_merges_with_defaults(tmp_path):
@@ -157,6 +178,11 @@ def test_color2rgba_hex():
     assert result == "rgba(0, 255, 0, 0.3)"
 
 
+def test_color2rgba_uses_tuple_alpha():
+    result = color2rgba((212, 136, 113, 0.5))
+    assert result == "rgba(212, 136, 113, 0.5)"
+
+
 # === Tests for blend ===
 def test_blend_zero_proportion():
     # With proportion 0, should return the first color exactly.
@@ -178,6 +204,17 @@ def test_blend_half_proportion():
 def test_blend_invalid():
     # When one or both colors are invalid, should return "#000000".
     assert blend("invalid", "#abcdef", 0.5) == "#000000"
+
+
+def test_blend_colors_accepts_supported_color_inputs():
+    assert blend_colors((0, 0, 0), 255, 0.5) in ("#7f7f7f", "#808080")
+    assert blend_colors((212, 136, 113, 0.5), "#000000", 0) == (
+        "rgba(212, 136, 113, 0.5)"
+    )
+    assert re.match(
+        r"^#[0-9a-f]{6}$",
+        blend_colors("oklch(0.7 0.1 38)", "#000000", 0.5),
+    )
 
 
 # === Tests for random_color ===

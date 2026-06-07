@@ -29,6 +29,7 @@ theme = dp.Theme()
 assert theme.font_family == "sans-serif"
 assert theme.font_size == 14
 assert theme.colors.blue == "#1447e6"
+assert theme.color is theme.colors
 ```
 
 Pass a JSON file path to override part or all of the default theme:
@@ -54,12 +55,20 @@ theme = dp.Theme("themes/light.json")
 theme.font_family = "Roboto"
 theme.font_size = 12
 
-assert theme.colors.brand == "#1447e6"
+theme.color.brand = (212, 136, 113)
+theme.color.muted = (212, 136, 113, 0.5)
+theme.color.gray = 128
+
+assert theme.color.brand == "#d48871"
+assert theme.color.muted == "rgba(212, 136, 113, 0.5)"
+assert theme.color.gray == "#808080"
+assert theme.colors.brand == "#d48871"
 assert theme.colors["surface"] == "#e4e4e7"
 ```
 
 `Color` is the token container used by `Theme.colors`. It supports attribute
-access, mapping access, and custom tokens.
+access, mapping access, custom tokens, hex strings, CSS color strings, grayscale
+integers, RGB tuples, and RGBA tuples.
 
 ## Visual Example
 
@@ -84,11 +93,12 @@ for index, color in enumerate(palette):
 
 ```python
 Theme(path: str | Path | None = None)
-Color(**values: str)
+Color(**values: ColorInput)
 hex_to_rgb(hex_color: str) -> tuple[int, int, int]
 rgb_to_hex(rgb: tuple[int, int, int]) -> str
-color2rgba(c: str | int | list[int] | tuple[int, int, int], alpha: float = 1) -> str
-blend(color1: str, color2: str, proportion: float) -> str
+color2rgba(c: ColorInput, alpha: float = 1) -> str
+blend_colors(color1: ColorInput, color2: ColorInput, proportion: float) -> str
+blend(color1: ColorInput, color2: ColorInput, proportion: float) -> str
 random_color() -> str
 generate_colors(base_color: str, n: int = 10) -> list[str]
 ```
@@ -126,18 +136,20 @@ assert dp.color2rgba("#00ff00", alpha=0.3) == "rgba(0, 255, 0, 0.3)"
 
 RGB channels and alpha are constrained to their valid ranges.
 
-### `blend`
+### `blend_colors`
 
-Blends two hex colors. `proportion=0` returns the first color and
+Blends two supported color values. `proportion=0` returns the first color and
 `proportion=1` returns the second. Proportions outside `[0, 1]` are constrained.
+Opaque blends return hex. Blends involving alpha return `rgba(...)`.
 
 ```python
-assert dp.blend("#123456", "#abcdef", 0) == "#123456"
-assert dp.blend("#123456", "#abcdef", 1) == "#abcdef"
+assert dp.blend_colors("#123456", "#abcdef", 0) == "#123456"
+assert dp.blend_colors((0, 0, 0), 255, 0.5) in ("#7f7f7f", "#808080")
+assert dp.blend_colors((212, 136, 113, 0.5), "#000000", 0) == "rgba(212, 136, 113, 0.5)"
 assert dp.blend("invalid", "#abcdef", 0.5) == "#000000"
 ```
 
-Both three-digit and six-digit hex values are accepted.
+`blend` remains available as the shorter legacy name.
 
 ### `random_color`
 
