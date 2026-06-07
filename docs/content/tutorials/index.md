@@ -16,6 +16,8 @@ updated for the current API and type behavior.
 
 ## Available Tutorials
 
+- [Dancing circles](/tutorials/dancing-circles) builds an animated radial SVG
+  composition with theme colors, blended strokes, groups, and SVG animations.
 - [Layered SVG art](/tutorials/layered-svg-art) builds a two-layer animated SVG
   from arcs, gradients, groups, and animations.
 - [Line chart](/tutorials/line-chart) creates a multi-series chart with scales,
