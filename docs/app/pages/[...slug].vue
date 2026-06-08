@@ -2,6 +2,8 @@
 const route = useRoute()
 const path = route.path === '' ? '/' : route.path
 const mobileNavigationOpen = ref(false)
+const siteUrl = useRuntimeConfig().public.siteUrl.replace(/\/+$/, '')
+const canonicalUrl = `${siteUrl}${path}`
 
 const navigation = [
   {
@@ -171,7 +173,23 @@ if (!page.value) {
 
 useSeoMeta({
   title: page.value.title,
-  description: page.value.description
+  description: page.value.description,
+  ogTitle: page.value.title,
+  ogDescription: page.value.description,
+  ogType: 'article',
+  ogUrl: canonicalUrl,
+  twitterCard: 'summary',
+  twitterTitle: page.value.title,
+  twitterDescription: page.value.description
+})
+
+useHead({
+  link: [
+    {
+      rel: 'canonical',
+      href: canonicalUrl
+    }
+  ]
 })
 
 </script>

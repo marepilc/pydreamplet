@@ -1,10 +1,13 @@
 <script setup lang="ts">
+const siteUrl = useRuntimeConfig().public.siteUrl.replace(/\/+$/, '')
+
 useSeoMeta({
-  title: 'pyDreamplet - Advanced Charts and Creative Coding with Python',
+  title: 'Advanced Charts and Creative Coding with Python',
   description: 'Build advanced charts, custom SVG visualizations, and creative coding graphics with Python. pyDreamplet gives you composable SVG elements, scales, generators, and precise export control.',
   ogTitle: 'pyDreamplet - Advanced Charts and Creative Coding with Python',
   ogDescription: 'A Python toolkit for advanced charts, custom SVG visualizations, generative graphics, and creative coding workflows.',
   ogType: 'website',
+  ogUrl: siteUrl,
   ogImage: '/showcase/supplier_performance_chart_light.svg',
   twitterCard: 'summary_large_image',
   twitterTitle: 'pyDreamplet - Advanced Charts and Creative Coding with Python',
@@ -12,6 +15,12 @@ useSeoMeta({
 })
 
 useHead({
+  link: [
+    {
+      rel: 'canonical',
+      href: siteUrl
+    }
+  ],
   script: [
     {
       type: 'application/ld+json',
@@ -35,6 +44,15 @@ useHead({
           price: '0',
           priceCurrency: 'USD'
         }
+      })
+    },
+    {
+      type: 'application/ld+json',
+      innerHTML: JSON.stringify({
+        '@context': 'https://schema.org',
+        '@type': 'WebSite',
+        name: 'pyDreamplet',
+        url: siteUrl
       })
     }
   ]

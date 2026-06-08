@@ -2,6 +2,11 @@ export default defineNuxtConfig({
   compatibilityDate: '2026-05-30',
   modules: ['@nuxt/content', '@nuxt/ui'],
   css: ['~/assets/css/main.css'],
+  runtimeConfig: {
+    public: {
+      siteUrl: process.env.NUXT_PUBLIC_SITE_URL || 'https://py.dreamplet.com'
+    }
+  },
   devtools: {
     enabled: false
   },
