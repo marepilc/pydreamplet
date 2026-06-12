@@ -146,17 +146,20 @@ def pure_linspace(start: Real, stop: Real, num: int) -> list[Real]:
 
 
 def sample_uniform(
-    input_list: list[Any], n: int, precedence: Precedence = "first"
+    input_list: list[Any], n: int, precedence: Precedence = None
 ) -> tuple[int, ...]:
     L = len(input_list)
+    if precedence not in ("first", "last", None):
+        raise ValueError("precedence must be 'first', 'last', or None")
+
+    if L == 0 or n <= 0:
+        return ()
+
     if n <= 1:
         # if only one item is needed, return an anchor based on precedence.
         if precedence == "last":
             return (L - 1,)
-        elif precedence is None:
-            return (L // 2,)
-        else:
-            return (0,)
+        return (0,)
 
     # For "first" and "last" we use the idea of fixed endpoints.
     if precedence == "first":
@@ -171,18 +174,12 @@ def sample_uniform(
         return tuple(sorted(L - 1 - i * step for i in range(n)))
 
     elif precedence is None:
-        # When neither end is anchored, split the list into n buckets and choose
-        # an index from each bucket. Compute the indices using pure Python.
-        idx = [floor(x) for x in pure_linspace(0, L - 1, n)]
-        # Adjust endpoints inward if possible.
-        if idx[0] == 0 and L > n:
-            idx[0] = 1
-        if idx[-1] == L - 1 and L > n:
-            idx[-1] = L - 2
-        return tuple(idx)
+        count = min(n, L)
+        if count == L:
+            return tuple(range(L))
 
-    else:
-        raise ValueError("precedence must be 'first', 'last', or None")
+        uniform_step = (L - 1) / (count - 1)
+        return tuple(round(i * uniform_step) for i in range(count))
 
 
 def create_pool(

@@ -159,21 +159,26 @@ A list whose sum is zero raises `ZeroDivisionError`.
 sample_uniform(
     input_list: list[Any],
     n: int,
-    precedence: Literal["first", "last"] | None = "first",
+    precedence: Literal["first", "last"] | None = None,
 ) -> tuple[int, ...]
 ```
 
-Returns evenly spaced indices. `precedence="first"` anchors the first index,
-`"last"` anchors the last index, and `None` chooses balanced interior indices.
+Returns evenly spaced indices. By default, the first and last indices are
+included, and `n` is the maximum number of indices returned. If `n` is greater
+than the input length, every index is returned. With `n=1`, the default mode
+returns the first index.
+
+`precedence="first"` and `"last"` retain the anchored sampling behavior.
 
 ```python
 from pydreamplet.utils import sample_uniform
 
 items = list(range(10))
 
+assert sample_uniform(items, n=4) == (0, 3, 6, 9)
+assert sample_uniform(items, n=20) == tuple(range(10))
 assert sample_uniform(items, n=4, precedence="first") == (0, 3, 6, 9)
 assert sample_uniform(items, n=3, precedence="last") == (1, 5, 9)
-assert sample_uniform(list(range(12)), n=4, precedence=None) == (1, 3, 7, 10)
 ```
 
 Invalid precedence values raise `ValueError`.
