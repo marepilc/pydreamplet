@@ -91,6 +91,7 @@ from pydreamplet.scales import (
     OrdinalScale,
     PointScale,
     SquareScale,
+    map,
 )
 from pydreamplet.shapes import (
     arc,
@@ -183,6 +184,7 @@ __all__ = [
     "linear_path",
     "line_generator",
     "link_generator",
+    "map",
     "monotone_x_path",
     "monotone_y_path",
     "noise_points",

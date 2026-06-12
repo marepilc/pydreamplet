@@ -2,7 +2,26 @@ import math
 from typing import Any, Iterable, Sequence
 
 from pydreamplet.colors import hex_to_rgb, rgb_to_hex
-from pydreamplet.types import NumericPair
+from pydreamplet.types import NumericPair, Real
+
+
+def map(
+    value: Real,
+    start1: Real,
+    stop1: Real,
+    start2: Real,
+    stop2: Real,
+    within_bounds: bool = False,
+) -> float:
+    """Linearly map a value from one numeric range to another."""
+    if start1 == stop1:
+        raise ValueError("Input range must have distinct start and stop values")
+
+    result = start2 + ((value - start1) * (stop2 - start2)) / (stop1 - start1)
+    if within_bounds:
+        lower, upper = sorted((start2, stop2))
+        return max(lower, min(upper, result))
+    return result
 
 
 class LinearScale:

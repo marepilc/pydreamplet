@@ -13,6 +13,7 @@ def test_animation_classes_are_exported_from_top_level():
 
 
 def test_scale_classes_are_exported_from_top_level():
+    assert dp.map is scales.map
     assert dp.LinearScale is scales.LinearScale
     assert dp.BandScale is scales.BandScale
     assert dp.PointScale is scales.PointScale

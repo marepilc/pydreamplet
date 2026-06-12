@@ -11,7 +11,7 @@ category: reference
 Scales map data values into visual values such as positions, widths, radii, or
 colors.
 
-Scale classes are exported from top-level `pydreamplet`.
+Scale classes and the `map()` helper are exported from top-level `pydreamplet`.
 
 ```python
 import pydreamplet as dp
@@ -44,6 +44,32 @@ for label, value in zip(labels, values):
 
 ::svg-preview{src="/showcase/ref_scales_bubbles.svg" alt="Bubble chart generated from band, linear, color, and circle scales."}
 ::
+
+## map
+
+```python
+map(
+    value: Real,
+    start1: Real,
+    stop1: Real,
+    start2: Real,
+    stop2: Real,
+    within_bounds: bool = False,
+) -> float
+```
+
+Linearly remaps a number from one range to another without creating a scale
+instance. Values outside the input range are extrapolated by default. Set
+`within_bounds=True` to constrain the result to the target range.
+
+```python
+assert dp.map(2, 0, 10, 0, 100) == 20
+assert dp.map(11, 0, 10, 0, 100) == 110
+assert dp.map(11, 0, 10, 0, 100, within_bounds=True) == 100
+```
+
+Reversed input and target ranges are supported. A zero-length input range
+raises `ValueError`.
 
 ## LinearScale
 
