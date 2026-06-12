@@ -1,15 +1,41 @@
 [project]
 name = "pydreamplet"
 version = "2.1.0"
-description = "A versatile Python toolkit for programmatically generating, manipulating, and assembling scalable vector graphics (SVG) images."
+description = "A typed Python library for creating SVG graphics, data visualizations, charts, maps, and generative art."
 authors = [{ name = "Marek Pilczuk", email = "user@mp76.pl" }]
 license = "MIT"
 readme = "README.md"
-keywords = ["svg", "graphics", "design"]
+keywords = [
+    "svg",
+    "data-visualization",
+    "charts",
+    "graphics",
+    "generative-art",
+    "creative-coding",
+    "jupyter",
+    "vector-graphics",
+    "dataviz",
+    "visualization",
+]
 requires-python = ">=3.12"
 dependencies = [
     "fonttools (>=4.56.0,<5.0.0)",
     "uharfbuzz>=0.52.0",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Topic :: Multimedia :: Graphics",
+    "Topic :: Scientific/Engineering :: Visualization",
+    "Typing :: Typed",
 ]
 
 [project.urls]

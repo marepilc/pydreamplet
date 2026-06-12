@@ -1,13 +1,30 @@
 # pyDreamplet
 
-**pyDreamplet** is a low-level library for SVG image generation — **perfect for creating beautiful data visualizations with Python**. Its intuitive API lets you build complex, scalable SVG graphics effortlessly, making it an ideal choice for projects ranging from simple charts to intricate visualizations.
+**pyDreamplet is a typed Python library for creating SVG graphics, data
+visualizations, charts, maps, and generative art.** It provides a flexible,
+low-level API for building and manipulating scalable vector graphics directly
+from Python.
+
+Use pyDreamplet for custom data visualization, creative coding, report
+graphics, diagrams, and other projects where you need precise control over the
+generated SVG. It works in Python scripts, Jupyter notebooks, and web
+applications, and the resulting files remain resolution-independent and easy
+to style or edit.
 
 ## Features
 
-- **Lightweight & Flexible:** Generate SVG images with minimal overhead.
-- **Easy Integration:** Works seamlessly in Jupyter notebooks, scripts, or web applications.
-- **Customizable:** Set any attribute on your SVG elements using simple keyword arguments.
-- **No Heavy Dependencies:** Designed to work with a small core dependency set. Notebook display support is optional.
+- **Programmatic SVG generation:** Create, compose, query, and manipulate SVG
+  elements with a Pythonic API.
+- **Data visualization tools:** Use numeric, categorical, color, square, and
+  circle scales alongside helpers for ticks, labels, and chart geometry.
+- **Paths and shapes:** Generate lines, curves, splines, arcs, stars, polygons,
+  and other reusable SVG path data.
+- **Maps and creative coding:** Build geographic visualizations, generative
+  art, grids, waves, spirals, noise-based layouts, and animations.
+- **Typography support:** Measure text accurately using installed OpenType and
+  TrueType fonts.
+- **Typed and lightweight:** Benefit from inline type information, a compact
+  dependency set, and optional Jupyter notebook display support.
 
 ## Installation
 
