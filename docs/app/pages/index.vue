@@ -141,6 +141,13 @@ const showcaseSlides = [
     light: '/showcase/dancing_circles_light.svg',
     dark: '/showcase/dancing_circles_dark.svg',
     alt: 'Dancing circles animation generated with pyDreamplet'
+  },
+  {
+    title: 'Polar noise',
+    description: 'Layered animated contours shaped by polar vectors and simplex noise.',
+    light: '/showcase/polar_noise.svg',
+    dark: '/showcase/polar_noise.svg',
+    alt: 'Polar noise animation generated with pyDreamplet'
   }
 ]
 

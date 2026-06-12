@@ -9,6 +9,12 @@ class Vector:
         self._x: float = float(x)
         self._y: float = float(y)
 
+    @classmethod
+    def from_polar(cls, angle: Real, radius: Real = 1) -> "Vector":
+        """Create a vector from an angle in degrees and a radius."""
+        angle_rad = math.radians(angle)
+        return cls(math.cos(angle_rad) * radius, math.sin(angle_rad) * radius)
+
     def set(self, x: Real, y: Real) -> None:
         """Changes the x and y coordinates."""
         self._x = float(x)

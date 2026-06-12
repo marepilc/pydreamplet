@@ -10,7 +10,35 @@ from pydreamplet.scales import (
     OrdinalScale,
     PointScale,
     SquareScale,
+    map,
 )
+
+
+# ----- map Tests -----
+def test_map_remaps_value_linearly():
+    assert map(2, 0, 10, 0, 100) == 20
+    assert map(5, 0, 10, 100, 200) == 150
+
+
+def test_map_extrapolates_by_default():
+    assert map(11, 0, 10, 0, 100) == 110
+    assert map(-1, 0, 10, 0, 100) == -10
+
+
+def test_map_constrains_to_target_range():
+    assert map(11, 0, 10, 0, 100, within_bounds=True) == 100
+    assert map(-1, 0, 10, 0, 100, within_bounds=True) == 0
+
+
+def test_map_handles_reversed_ranges():
+    assert map(2, 0, 10, 100, 0) == 80
+    assert map(11, 0, 10, 100, 0, within_bounds=True) == 0
+    assert map(2, 10, 0, 0, 100) == 80
+
+
+def test_map_rejects_zero_length_input_range():
+    with pytest.raises(ValueError, match="Input range"):
+        map(2, 10, 10, 0, 100)
 
 
 # ----- LinearScale Tests -----

@@ -68,6 +68,27 @@ assert v.y == 4
 assert v.xy == (3, 4)
 ```
 
+## Polar Coordinates
+
+```python
+Vector.from_polar(angle: Real, radius: Real = 1) -> Vector
+```
+
+Creates a vector from an angle in degrees and an optional radius. Angles follow
+the SVG coordinate system: `0` points right, `90` points down, `180` points
+left, and `270` points up.
+
+```python
+right = dp.Vector.from_polar(0, 10)
+down = dp.Vector.from_polar(90, 10)
+unit = dp.Vector.from_polar(45)
+
+assert right == dp.Vector(10, 0)
+assert round(down.x, 6) == 0
+assert round(down.y, 6) == 10
+assert round(unit.magnitude, 6) == 1
+```
+
 ## Properties
 
 | Property | Type | Notes |

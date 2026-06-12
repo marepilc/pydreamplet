@@ -22,6 +22,8 @@ updated for the current API and type behavior.
   from arcs, gradients, groups, and animations.
 - [Line chart](/tutorials/line-chart) creates a multi-series chart with scales,
   generated data, markers, labels, and grid lines.
+- [Polar noise](/tutorials/polar-noise) creates layered animated contours from
+  polar vectors, simplex noise, generated colors, and SVG path morphing.
 - [Waffle chart](/tutorials/waffle-chart) turns proportional data into a compact
   10 by 10 square chart.
 

@@ -20,10 +20,14 @@ def test_last_precedence():
 
 
 def test_none_precedence():
-    # With no precedence, indices are balanced and endpoints nudged inward.
+    # With no precedence, both endpoints are included by default.
     my_list = list(range(12))
-    # Expected: (1, 3, 7, 10)
-    assert sample_uniform(my_list, n=4, precedence=None) == (1, 3, 7, 10)
+    assert sample_uniform(my_list, n=4) == (0, 4, 7, 11)
+
+
+def test_none_precedence_treats_n_as_maximum():
+    my_list = list(range(4))
+    assert sample_uniform(my_list, n=10) == (0, 1, 2, 3)
 
 
 def test_single_item():
@@ -31,8 +35,13 @@ def test_single_item():
     my_list = list(range(10))
     assert sample_uniform(my_list, n=1, precedence="first") == (0,)
     assert sample_uniform(my_list, n=1, precedence="last") == (9,)
-    # For precedence None, it should return the middle index.
-    assert sample_uniform(my_list, n=1, precedence=None) == (5,)
+    assert sample_uniform(my_list, n=1) == (0,)
+
+
+def test_empty_input_or_non_positive_limit():
+    assert sample_uniform([], n=4) == ()
+    assert sample_uniform(list(range(10)), n=0) == ()
+    assert sample_uniform(list(range(10)), n=-1) == ()
 
 
 def test_invalid_precedence():
