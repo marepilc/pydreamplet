@@ -23,6 +23,27 @@ def test_initialization(vector_3_4):
     assert vector_3_4.xy == (3, 4)
 
 
+@pytest.mark.parametrize(
+    ("angle", "expected"),
+    [
+        (0, (10, 0)),
+        (90, (0, 10)),
+        (180, (-10, 0)),
+        (270, (0, -10)),
+    ],
+)
+def test_from_polar(angle, expected):
+    vector = Vector.from_polar(angle, 10)
+    assert math.isclose(vector.x, expected[0], abs_tol=1e-12)
+    assert math.isclose(vector.y, expected[1], abs_tol=1e-12)
+
+
+def test_from_polar_default_radius():
+    vector = Vector.from_polar(45)
+    assert math.isclose(vector.magnitude, 1)
+    assert math.isclose(vector.direction, 45)
+
+
 def test_set_method(vector_3_4):
     v = vector_3_4.copy()
     v.set(7, 8)
