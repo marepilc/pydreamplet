@@ -55,6 +55,10 @@ const navigation = [
         path: '/tutorials/line-chart'
       },
       {
+        title: 'Polar noise',
+        path: '/tutorials/polar-noise'
+      },
+      {
         title: 'Waffle chart',
         path: '/tutorials/waffle-chart'
       }
