@@ -42,7 +42,7 @@ const projects = [
     category: 'data-visualization',
     categoryLabel: 'Data visualization',
     tags: ['scales', 'labels', 'custom chart'],
-    source: 'supplier_performance.py'
+    sourceDirectory: 'supplier_performance'
   },
   {
     title: 'Polar noise',
@@ -53,7 +53,7 @@ const projects = [
     category: 'generative-art',
     categoryLabel: 'Generative art',
     tags: ['simplex noise', 'paths', 'morphing'],
-    source: 'polar_noise.py'
+    sourceDirectory: 'polar_noise'
   },
   {
     title: 'Alice word cloud',
@@ -64,7 +64,7 @@ const projects = [
     category: 'data-visualization',
     categoryLabel: 'Data visualization',
     tags: ['typography', 'layout', 'text data'],
-    source: 'alice_word_cloud.py'
+    sourceDirectory: 'alice_word_cloud'
   },
   {
     title: 'Soap bubble',
@@ -75,7 +75,7 @@ const projects = [
     category: 'animation',
     categoryLabel: 'Animation',
     tags: ['filters', 'gradients', 'clipping'],
-    source: 'soap_bubble.py'
+    sourceDirectory: 'soap_bubble'
   },
   {
     title: 'Dancing circles',
@@ -86,7 +86,7 @@ const projects = [
     category: 'animation',
     categoryLabel: 'Animation',
     tags: ['animation', 'groups', 'color'],
-    source: 'dancing_circles.py'
+    sourceDirectory: 'dancing_circles'
   },
   {
     title: 'Multi-series line chart',
@@ -97,7 +97,7 @@ const projects = [
     category: 'data-visualization',
     categoryLabel: 'Data visualization',
     tags: ['scales', 'markers', 'lines'],
-    source: 'line_chart.py'
+    sourceDirectory: 'line_chart'
   },
   {
     title: 'Waffle chart',
@@ -108,7 +108,7 @@ const projects = [
     category: 'data-visualization',
     categoryLabel: 'Data visualization',
     tags: ['proportions', 'grid', 'color'],
-    source: 'waffle_chart.py'
+    sourceDirectory: 'waffle_chart'
   },
   {
     title: 'Creative coding study',
@@ -119,7 +119,7 @@ const projects = [
     category: 'generative-art',
     categoryLabel: 'Generative art',
     tags: ['procedural', 'geometry', 'color'],
-    source: 'creative_coding_study.py'
+    sourceDirectory: 'creative_coding_study'
   }
 ]
 
@@ -132,7 +132,7 @@ const visibleProjects = computed(() => {
   return projects.filter(project => project.category === activeCategory.value)
 })
 
-const sourceUrl = (source: string) => `${showcaseRepository}/blob/master/scripts/${source}`
+const sourceUrl = (directory: string) => `${showcaseRepository}/tree/master/scripts/${directory}`
 </script>
 
 <template>
@@ -205,7 +205,7 @@ const sourceUrl = (source: string) => `${showcaseRepository}/blob/master/scripts
         <div class="grid gap-6 md:grid-cols-2 xl:grid-cols-3">
           <article
             v-for="project in visibleProjects"
-            :key="project.source"
+            :key="project.sourceDirectory"
             class="group overflow-hidden rounded-xl border border-neutral-200 bg-white transition hover:-translate-y-1 hover:shadow-lg dark:border-neutral-800 dark:bg-neutral-900"
           >
             <div class="aspect-[4/3] overflow-hidden border-b border-neutral-200 bg-neutral-100 p-5 dark:border-neutral-800 dark:bg-neutral-950">
@@ -258,7 +258,7 @@ const sourceUrl = (source: string) => `${showcaseRepository}/blob/master/scripts
                 </li>
               </ul>
               <UButton
-                :to="sourceUrl(project.source)"
+                :to="sourceUrl(project.sourceDirectory)"
                 target="_blank"
                 rel="noopener noreferrer"
                 icon="i-lucide-code-xml"
