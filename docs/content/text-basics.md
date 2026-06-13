@@ -111,7 +111,7 @@ from pydreamplet.typography import TypographyMeasurer
 
 label = dp.Text(
     "Measured label",
-    font_family="Arial",
+    font_family="sans-serif",
     font_size=18,
     font_weight=400,
 )
@@ -131,15 +131,15 @@ example draws a rectangle centered on text whose anchor is also centered.
 ```python
 from pydreamplet.typography import TypographyMeasurer, get_system_font_path
 
-font_path = get_system_font_path("Arial", 700)
+font_path = get_system_font_path("sans-serif", 700)
 if font_path is None:
-    raise RuntimeError("Arial is not available on this system.")
+    raise RuntimeError("No sans-serif font is available on this system.")
 
 label = dp.Text(
     "pyDreamplet",
     x=0,
     y=0,
-    font_family="Arial",
+    font_family="sans-serif",
     font_size=42,
     font_weight=700,
     fill="currentColor",
