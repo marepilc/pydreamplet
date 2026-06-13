@@ -3,6 +3,14 @@
 All notable changes for pyDreamplet 2.x are tracked here while the `version-2`
 branch is in progress.
 
+## 2.1.4
+
+### Fixed
+
+- `resolve_collisions_1d()` no longer shifts unrelated labels when resolving
+  overflow at the upper bound. Boundary corrections now propagate only through
+  the adjacent collision chain.
+
 ## 2.1.3
 
 ### Changed
