@@ -56,6 +56,19 @@ def test_place_labels_1d_returns_extents():
     assert placements[1].end == 7
 
 
+def test_place_labels_bounds_move_only_colliding_labels():
+    placements = place_labels_1d(
+        [139.82, 92.97, 291.10, 331.26, 340.63, 221.48],
+        [19.11] * 6,
+        gap=4,
+        bounds=(18, 350),
+    )
+
+    assert [item.position for item in placements] == pytest.approx(
+        [139.82, 92.97, 291.10, 317.335, 340.445, 221.48]
+    )
+
+
 @pytest.mark.parametrize(
     ("factory", "match"),
     [

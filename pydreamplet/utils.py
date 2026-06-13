@@ -305,7 +305,9 @@ def resolve_collisions_1d(
 
     The returned positions preserve input order and stay close to `anchors`
     using a deterministic forward/backward relaxation pass. `sizes` are full
-    widths or heights, depending on the axis being solved.
+    widths or heights, depending on the axis being solved. When `bounds` are
+    provided, boundary corrections propagate only through adjacent colliding
+    items; unrelated items remain at their resolved positions.
     """
     if len(anchors) != len(sizes):
         raise ValueError("anchors and sizes must have the same length")
@@ -343,10 +345,6 @@ def resolve_collisions_1d(
         positions[i] = max(positions[i], min_position)
 
     if bounds is not None:
-        overflow = positions[-1] + float_sizes[-1] / 2 - max_bound
-        if overflow > 0:
-            positions = [position - overflow for position in positions]
-
         positions[-1] = min(positions[-1], max_bound - float_sizes[-1] / 2)
         for i in range(len(positions) - 2, -1, -1):
             max_position = (

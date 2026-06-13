@@ -211,12 +211,37 @@ resolve_collisions_1d(
 
 Resolves centered 1D items so their extents do not overlap. `anchors` and
 `sizes` must have the same length. `gap` and every size must be non-negative.
+When `bounds` are provided, each item's full extent is kept inside the range.
+If the last item exceeds the upper bound, the backward pass moves only its
+adjacent collision chain. Earlier, non-colliding items are not shifted as a
+group.
 
 ```python
 from pydreamplet.utils import resolve_collisions_1d
 
 assert resolve_collisions_1d([0, 1, 10], [4, 4, 4], gap=1) == [0, 5, 10]
 assert resolve_collisions_1d([5, 0, 1], [4, 4, 4], gap=1) == [10, 0, 5]
+```
+
+For bounded layouts, labels outside the affected collision chain retain their
+positions:
+
+```python
+positions = resolve_collisions_1d(
+    [139.82, 92.97, 291.10, 331.26, 340.63, 221.48],
+    [19.11] * 6,
+    gap=4,
+    bounds=(18, 350),
+)
+
+assert [round(position, 3) for position in positions] == [
+    139.82,
+    92.97,
+    291.1,
+    317.335,
+    340.445,
+    221.48,
+]
 ```
 
 ```python
