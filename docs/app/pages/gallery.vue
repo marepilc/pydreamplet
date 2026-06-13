@@ -91,35 +91,13 @@ const projects = [
   {
     title: 'Multi-series line chart',
     description: 'A compact chart with generated data, scales, markers, labels, and grid lines.',
-    image: '/showcase/tutorial_line_chart_final.svg',
-    darkImage: '/showcase/tutorial_line_chart_final.svg',
+    image: '/showcase/line_chart_light.svg',
+    darkImage: '/showcase/line_chart_dark.svg',
     alt: 'Multi-series line chart made with pyDreamplet',
     category: 'data-visualization',
     categoryLabel: 'Data visualization',
     tags: ['scales', 'markers', 'lines'],
     sourceDirectory: 'line_chart'
-  },
-  {
-    title: 'Waffle chart',
-    description: 'A direct visual comparison of proportions using a precise ten-by-ten grid.',
-    image: '/showcase/tutorial_waffle_chart.svg',
-    darkImage: '/showcase/tutorial_waffle_chart.svg',
-    alt: 'Waffle chart made with pyDreamplet',
-    category: 'data-visualization',
-    categoryLabel: 'Data visualization',
-    tags: ['proportions', 'grid', 'color'],
-    sourceDirectory: 'waffle_chart'
-  },
-  {
-    title: 'Creative coding study',
-    description: 'An expressive procedural graphic exploring repeated geometry and SVG color.',
-    image: '/showcase/creative-coding.svg',
-    darkImage: '/showcase/creative-coding.svg',
-    alt: 'Creative coding study made with Python and pyDreamplet',
-    category: 'generative-art',
-    categoryLabel: 'Generative art',
-    tags: ['procedural', 'geometry', 'color'],
-    sourceDirectory: 'creative_coding_study'
   }
 ]
 
