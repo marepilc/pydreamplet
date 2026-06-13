@@ -76,9 +76,11 @@ get_system_font_path(
 ) -> str | None
 ```
 
-Searches common system font directories for a `.ttf` or `.otf` file whose name
-records contain `font_family`. If the font has an `OS/2` table, its
-`usWeightClass` must be within `weight_tolerance` of `weight`.
+Searches common system font directories for a regular `.ttf` or `.otf` file.
+`font_family` may be a single family or a CSS fallback list. Generic families
+such as `sans-serif`, `serif`, and `monospace` are mapped to common system fonts.
+If the font has an `OS/2` table, its `usWeightClass` must be within
+`weight_tolerance` of `weight`.
 
 ```python
 font_path = get_system_font_path("Arial", 700)
@@ -95,15 +97,31 @@ project or CI job, pass a known font file path to `TypographyMeasurer`.
 ## TypographyMeasurer
 
 ```python
-TypographyMeasurer(dpi: float = 72.0, font_path: str | None = None)
+TypographyMeasurer(
+    dpi: float = 72.0,
+    font_path: str | None = None,
+    *,
+    font_family: str | None = None,
+    weight: int = 400,
+)
 ```
 
 `dpi` controls point-to-pixel conversion. At the default `72.0`, one point maps
 to one pixel. `font_path` can be set once so later measurements do not need a
-system font lookup.
+system font lookup. Alternatively, set `font_family` and `weight` once. CSS
+fallback lists from a `Theme` are supported directly.
 
 ```python
 measurer = TypographyMeasurer(font_path="assets/fonts/Inter-Regular.ttf")
+```
+
+```python
+theme = dp.Theme()
+measurer = TypographyMeasurer(
+    font_family=theme.font_family,
+    weight=theme.font_weight,
+)
+width, height = measurer.measure_text("Measured label", font_size=18)
 ```
 
 ## measure_text

@@ -3,6 +3,14 @@
 All notable changes for pyDreamplet 2.x are tracked here while the `version-2`
 branch is in progress.
 
+## 2.1.3
+
+### Changed
+
+- `TypographyMeasurer` now accepts default `font_family` and `weight` values,
+  resolves CSS font fallback lists, maps generic font families to system fonts,
+  and avoids italic or oblique variants when measuring regular text.
+
 ## 2.1.2
 
 ### Fixed
