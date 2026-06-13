@@ -23,6 +23,15 @@ def test_get_system_font_path_not_found():
     assert font_path is None, "Non-existent font should return None."
 
 
+def test_get_system_font_path_accepts_css_fallback_list():
+    font_path = get_system_font_path(
+        "'This Font Does Not Exist', Arial, sans-serif", 400
+    )
+
+    assert font_path is not None, "Arial should be selected from the fallback list."
+    assert "italic" not in Path(font_path).stem.lower()
+
+
 def test_measure_text_returns_positive_dimensions():
     """
     Test that the text measurement returns positive width and height.
@@ -31,6 +40,18 @@ def test_measure_text_returns_positive_dimensions():
     width, height = measurer.measure_text(
         "Test", font_family="Arial", weight=400, font_size=16
     )
+    assert width > 0, "Width should be positive."
+    assert height > 0, "Height should be positive."
+
+
+def test_measure_text_uses_constructor_font_defaults():
+    measurer = TypographyMeasurer(
+        font_family="'This Font Does Not Exist', Arial, sans-serif",
+        weight=400,
+    )
+
+    width, height = measurer.measure_text("Test", font_size=16)
+
     assert width > 0, "Width should be positive."
     assert height > 0, "Height should be positive."
 

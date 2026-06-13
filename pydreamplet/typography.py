@@ -11,11 +11,62 @@ from pydreamplet.types import Real
 
 hb = cast(Any, _hb)
 FontSize = Real | str
+_GENERIC_FONT_FAMILIES: dict[str, dict[str, tuple[str, ...]]] = {
+    "Windows": {
+        "sans-serif": ("Arial",),
+        "serif": ("Times New Roman",),
+        "monospace": ("Consolas", "Courier New"),
+    },
+    "Darwin": {
+        "sans-serif": ("Helvetica", "Arial"),
+        "serif": ("Times", "Times New Roman"),
+        "monospace": ("Menlo", "Courier"),
+    },
+    "Linux": {
+        "sans-serif": ("DejaVu Sans", "Liberation Sans"),
+        "serif": ("DejaVu Serif", "Liberation Serif"),
+        "monospace": ("DejaVu Sans Mono", "Liberation Mono"),
+    },
+}
 
 
 class TextElementLike(Protocol):
     @property
     def content(self) -> str: ...
+
+
+def _font_family_candidates(font_family: str) -> list[str]:
+    system_families = _GENERIC_FONT_FAMILIES.get(
+        platform.system(), _GENERIC_FONT_FAMILIES["Linux"]
+    )
+    candidates: list[str] = []
+    for family in font_family.split(","):
+        family = family.strip().strip("'\"")
+        if not family:
+            continue
+        replacements = system_families.get(family.lower(), (family,))
+        for replacement in replacements:
+            if replacement not in candidates:
+                candidates.append(replacement)
+    return candidates
+
+
+def _font_record_values(font: TTFont, name_ids: set[int]) -> list[str]:
+    values: list[str] = []
+    for record in font["name"].names:  # type: ignore[index]
+        if record.nameID not in name_ids:
+            continue
+        try:
+            value = record.toUnicode().strip()
+        except UnicodeError:
+            value = record.string.decode("utf-8", errors="ignore").strip()
+        if value:
+            values.append(value)
+    return values
+
+
+def _normalize_font_name(value: str) -> str:
+    return re.sub(r"[^a-z0-9]", "", value.lower())
 
 
 def get_system_font_path(
@@ -27,7 +78,8 @@ def get_system_font_path(
     the desired weight.
 
     Args:
-        font_family: The desired system font name (e.g. "Arial").
+        font_family: A system font name or CSS fallback list
+            (e.g. "Inter, Arial, sans-serif").
         weight: Numeric weight (e.g., 400 for regular, 700 for bold).
         weight_tolerance: Allowed difference between the desired weight and the
             font's actual weight.
@@ -35,6 +87,11 @@ def get_system_font_path(
     Returns:
         The full path to the matching font file, or None if no match is found.
     """
+    candidates = _font_family_candidates(font_family)
+    if not candidates:
+        return None
+
+    normalized_candidates = [_normalize_font_name(name) for name in candidates]
     system = platform.system()
     font_dirs = []
 
@@ -76,6 +133,7 @@ def get_system_font_path(
     # Consider both TTF and OTF files.
     extensions = (".ttf", ".otf")
 
+    matches: list[tuple[int, int, str]] = []
     for font_dir in font_dirs:
         if not os.path.exists(font_dir):
             continue
@@ -90,65 +148,88 @@ def get_system_font_path(
                 except (OSError, TTLibError):
                     continue
 
-                # Loop over all name records for a looser match.
-                family_matches = False
-
-                for record in font["name"].names:  # type: ignore[index]
-                    try:
-                        record_value = record.toUnicode().strip()
-                    except UnicodeError:
-                        record_value = record.string.decode(
-                            "utf-8", errors="ignore"
-                        ).strip()
-                    if font_family.lower() in record_value.lower():
-                        family_matches = True
-                        break
-                if not family_matches:
+                family_names = _font_record_values(font, {1, 16})
+                normalized_names = {
+                    _normalize_font_name(name) for name in family_names
+                }
+                try:
+                    family_index = next(
+                        index
+                        for index, candidate in enumerate(normalized_candidates)
+                        if candidate in normalized_names
+                    )
+                except StopIteration:
                     continue
 
-                # If the OS/2 table exists, check the weight.
+                style_names = _font_record_values(font, {2, 17})
+                style_description = " ".join(style_names + [Path(file_path).stem])
+                if "italic" in style_description.lower() or "oblique" in (
+                    style_description.lower()
+                ):
+                    continue
+
+                font_weight = 400
                 if "OS/2" in font:
                     os2_table = font["OS/2"]
                     font_weight = getattr(os2_table, "usWeightClass", 400)
-                    if abs(font_weight - weight) <= weight_tolerance:
-                        return file_path
-                    else:
-                        continue  # Weight doesn't match, keep searching.
-                else:
-                    # If no OS/2 table exists, return the first matching family.
-                    return file_path
-    return None
+                weight_difference = abs(font_weight - weight)
+                if weight_difference <= weight_tolerance:
+                    matches.append((family_index, weight_difference, file_path))
+
+    if not matches:
+        return None
+    return min(matches)[2]
 
 
 class TypographyMeasurer:
-    def __init__(self, dpi: float = 72.0, font_path: str | None = None):
+    def __init__(
+        self,
+        dpi: float = 72.0,
+        font_path: str | None = None,
+        *,
+        font_family: str | None = None,
+        weight: int = 400,
+    ):
         """
         Initialize with a given DPI (dots per inch). The default is 72 DPI,
         meaning 1 point equals 1 pixel. With higher DPI values, the point-to-pixel
         conversion increases accordingly.
 
-        If a font_path is provided, it will be used; otherwise the system is searched.
+        If a font_path is provided, it will be used. Otherwise font_family and
+        weight provide defaults for system font lookup during measurement.
         """
         self.dpi = dpi
         self.font_path = font_path
+        self.font_family = font_family
+        self.weight = weight
+        self._resolved_font_paths: dict[tuple[str, int], str] = {}
         self._font_data_cache: dict[str, bytes] = {}
         self._ttfont_cache: dict[str, TTFont] = {}
 
     def _resolve_font_path(
         self, font_family: str | None, weight: int | None
     ) -> str:
-        if not self.font_path:
-            if font_family is None or weight is None:
-                raise ValueError(
-                    "A font path was not provided and font_family and weight are "
-                    "required to search for a font."
-                )
-            self.font_path = get_system_font_path(font_family, weight)
-        if self.font_path is None:
+        if self.font_path:
+            return self.font_path
+
+        font_family = font_family or self.font_family
+        weight = weight if weight is not None else self.weight
+        if font_family is None:
+            raise ValueError(
+                "A font path was not provided and font_family is required to "
+                "search for a font."
+            )
+
+        cache_key = (font_family, weight)
+        if cache_key not in self._resolved_font_paths:
+            resolved_path = get_system_font_path(font_family, weight)
+            if resolved_path is not None:
+                self._resolved_font_paths[cache_key] = resolved_path
+        if cache_key not in self._resolved_font_paths:
             raise ValueError(
                 f"Font '{font_family}' with weight {weight} not found on the system."
             )
-        return self.font_path
+        return self._resolved_font_paths[cache_key]
 
     def _get_font_data(self, font_path: str) -> bytes:
         if font_path not in self._font_data_cache:
