@@ -1,5 +1,6 @@
 <script setup lang="ts">
 const siteUrl = useRuntimeConfig().public.siteUrl.replace(/\/+$/, '')
+const libraryRepository = 'https://github.com/marepilc/pydreamplet'
 const showcaseRepository = 'https://github.com/marepilc/pydreamplet-showcase'
 
 useSeoMeta({
@@ -154,13 +155,13 @@ const sourceUrl = (source: string) => `${showcaseRepository}/blob/master/scripts
         <div class="flex items-center gap-1">
           <SearchButton />
           <UButton
-            :to="showcaseRepository"
+            :to="libraryRepository"
             target="_blank"
             rel="noopener noreferrer"
             icon="i-lucide-github"
             color="neutral"
             variant="ghost"
-            aria-label="Open the pyDreamplet showcase repository"
+            aria-label="Open pyDreamplet on GitHub"
           />
           <ThemeToggle />
         </div>
