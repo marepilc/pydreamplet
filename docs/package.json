@@ -11,13 +11,16 @@
   },
   "dependencies": {
     "@nuxt/content": "3.14.0",
-    "@nuxt/ui": "4.8.1",
-    "nuxt": "4.4.6",
-    "tailwindcss": "4.3.0",
-    "vue": "3.5.35",
-    "vue-router": "5.0.7"
+    "@nuxt/ui": "4.8.2",
+    "nuxt": "4.4.8",
+    "tailwindcss": "4.3.1",
+    "vue": "3.5.38",
+    "vue-router": "5.1.0"
   },
   "devDependencies": {
-    "@iconify-json/lucide": "^1.2.111"
+    "@iconify-json/lucide": "1.2.112"
+  },
+  "overrides": {
+    "esbuild": "0.28.1"
   }
 }

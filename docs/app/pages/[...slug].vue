@@ -155,6 +155,10 @@ const topNavigation = [
     path: '/getting-started'
   },
   {
+    title: 'Gallery',
+    path: '/gallery'
+  },
+  {
     title: 'Tutorials',
     path: '/tutorials'
   },

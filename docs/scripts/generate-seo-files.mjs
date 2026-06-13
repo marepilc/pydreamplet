@@ -47,7 +47,8 @@ function escapeXml(value) {
 }
 
 const files = await collectMarkdownFiles(contentDir)
-const routes = [...new Set(files.map(routeFromFile))].sort()
+const applicationRoutes = ['/gallery']
+const routes = [...new Set([...files.map(routeFromFile), ...applicationRoutes])].sort()
 const urls = routes.map((route) => {
   const location = route === '/' ? siteUrl : `${siteUrl}${route}`
   return `  <url><loc>${escapeXml(location)}</loc></url>`

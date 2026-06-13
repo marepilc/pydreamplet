@@ -151,6 +151,30 @@ const showcaseSlides = [
   }
 ]
 
+const featuredGallery = [
+  {
+    title: 'Supplier performance',
+    category: 'Data visualization',
+    image: '/showcase/supplier_performance_chart_light.svg',
+    darkImage: '/showcase/supplier_performance_chart_dark.svg',
+    alt: 'Supplier performance chart made with pyDreamplet'
+  },
+  {
+    title: 'Polar noise',
+    category: 'Generative art',
+    image: '/showcase/polar_noise.svg',
+    darkImage: '/showcase/polar_noise.svg',
+    alt: 'Polar noise generative artwork made with pyDreamplet'
+  },
+  {
+    title: 'Dancing circles',
+    category: 'Animation',
+    image: '/showcase/dancing_circles_light.svg',
+    darkImage: '/showcase/dancing_circles_dark.svg',
+    alt: 'Dancing circles animation made with pyDreamplet'
+  }
+]
+
 const activeSlide = ref(0)
 const currentSlide = computed(() => showcaseSlides[activeSlide.value])
 let carouselTimer: ReturnType<typeof setInterval> | undefined
@@ -190,6 +214,9 @@ onBeforeUnmount(() => {
         <nav class="hidden items-center gap-6 text-sm text-neutral-600 dark:text-neutral-300 md:flex">
           <NuxtLink to="/getting-started">
             Getting started
+          </NuxtLink>
+          <NuxtLink to="/gallery">
+            Gallery
           </NuxtLink>
           <NuxtLink to="/tutorials">
             Tutorials
@@ -244,6 +271,9 @@ onBeforeUnmount(() => {
             </UButton>
             <UButton to="/tutorials" icon="i-lucide-graduation-cap" color="neutral" variant="outline" size="lg">
               Tutorials
+            </UButton>
+            <UButton to="/gallery" icon="i-lucide-images" color="neutral" variant="outline" size="lg">
+              Gallery
             </UButton>
             <UButton to="/reference" icon="i-lucide-book-open" color="neutral" variant="outline" size="lg">
               API reference
@@ -349,6 +379,61 @@ onBeforeUnmount(() => {
               @click="goToSlide(index)"
             />
           </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="border-y border-neutral-200 bg-white px-6 py-14 dark:border-neutral-800 dark:bg-neutral-950">
+      <div class="mx-auto max-w-7xl">
+        <div class="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+          <div>
+            <p class="text-sm font-semibold uppercase tracking-[0.16em] text-teal-700 dark:text-teal-300">
+              Gallery
+            </p>
+            <h2 class="mt-3 text-2xl font-semibold leading-9 text-neutral-950 dark:text-white">
+              See what Python can draw.
+            </h2>
+            <p class="mt-3 max-w-2xl text-base leading-7 text-neutral-600 dark:text-neutral-300">
+              Explore data visualizations and generative graphics, then open the complete source code behind each project.
+            </p>
+          </div>
+          <UButton to="/gallery" trailing-icon="i-lucide-arrow-right" color="neutral" variant="outline">
+            Explore the gallery
+          </UButton>
+        </div>
+
+        <div class="mt-8 grid gap-5 md:grid-cols-3">
+          <NuxtLink
+            v-for="project in featuredGallery"
+            :key="project.title"
+            to="/gallery"
+            class="group overflow-hidden rounded-lg border border-neutral-200 bg-neutral-50 transition hover:-translate-y-1 hover:shadow-md dark:border-neutral-800 dark:bg-neutral-900"
+          >
+            <div class="aspect-[4/3] overflow-hidden border-b border-neutral-200 p-4 dark:border-neutral-800">
+              <img
+                :src="project.image"
+                :alt="project.alt"
+                width="720"
+                height="540"
+                loading="lazy"
+                class="h-full w-full object-contain transition duration-300 group-hover:scale-[1.03] dark:hidden"
+              >
+              <img
+                :src="project.darkImage"
+                :alt="project.alt"
+                width="720"
+                height="540"
+                loading="lazy"
+                class="hidden h-full w-full object-contain transition duration-300 group-hover:scale-[1.03] dark:block"
+              >
+            </div>
+            <div class="p-4">
+              <p class="text-xs font-semibold uppercase tracking-[0.12em] text-teal-700 dark:text-teal-300">
+                {{ project.category }}
+              </p>
+              <h3 class="mt-2 font-semibold">{{ project.title }}</h3>
+            </div>
+          </NuxtLink>
         </div>
       </div>
     </section>
