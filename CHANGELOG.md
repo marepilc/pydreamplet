@@ -3,6 +3,13 @@
 All notable changes for pyDreamplet 2.x are tracked here while the `version-2`
 branch is in progress.
 
+## 2.1.2
+
+### Fixed
+
+- `ColorScale` now accepts supported CSS color strings such as `oklch(...)`,
+  allowing it to work directly with `Theme` color tokens.
+
 ## 2.1.0
 
 ### Added

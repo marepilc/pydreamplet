@@ -2,6 +2,7 @@ import math
 
 import pytest
 
+from pydreamplet.colors import Theme
 from pydreamplet.scales import (
     BandScale,
     CircleScale,
@@ -164,6 +165,14 @@ def test_color_scale_map_and_clamping():
     # Test clamping: values outside the domain are clamped
     assert scale.map(-20) == "#000000"
     assert scale.map(150) == "#ffffff"
+
+
+def test_color_scale_accepts_theme_oklch_colors():
+    theme = Theme()
+    scale = ColorScale((0, 100), (theme.surface, theme.red))
+
+    assert scale.map(0) == "#f4f4f5"
+    assert scale.map(100) == "#fb2c36"
 
 
 def test_color_scale_invalid_domain():

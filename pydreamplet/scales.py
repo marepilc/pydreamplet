@@ -1,7 +1,7 @@
 import math
 from typing import Any, Iterable, Sequence
 
-from pydreamplet.colors import hex_to_rgb, rgb_to_hex
+from pydreamplet.colors import color_to_rgba, rgb_to_hex
 from pydreamplet.types import NumericPair, Real
 
 
@@ -276,7 +276,7 @@ class OrdinalScale:
 class ColorScale:
     """
     Creates a color scale that maps a numeric value (from a given domain)
-    to an interpolated hex color between two provided hex color strings.
+    to an interpolated hex color between two supported color strings.
     """
 
     def __init__(
@@ -291,8 +291,12 @@ class ColorScale:
             raise ValueError("Domain minimum and maximum must be distinct")
         self._start_color = output_range[0]
         self._end_color = output_range[1]
-        self._rgb_start = hex_to_rgb(self._start_color)
-        self._rgb_end = hex_to_rgb(self._end_color)
+        self._rgb_start = self._to_rgb(self._start_color)
+        self._rgb_end = self._to_rgb(self._end_color)
+
+    @staticmethod
+    def _to_rgb(color: str) -> tuple[int, int, int]:
+        return color_to_rgba(color)[:3]
 
     def map(self, value: float) -> str:
         """Maps the input value to an interpolated hex color."""
@@ -323,8 +327,8 @@ class ColorScale:
         self._output_range = new_output_range
         self._start_color = new_output_range[0]
         self._end_color = new_output_range[1]
-        self._rgb_start = hex_to_rgb(self._start_color)
-        self._rgb_end = hex_to_rgb(self._end_color)
+        self._rgb_start = self._to_rgb(self._start_color)
+        self._rgb_end = self._to_rgb(self._end_color)
 
 
 class SquareScale:
