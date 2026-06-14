@@ -19,6 +19,7 @@ from pydreamplet.colors import (
     random_int,
     rgb_to_hex,
     str2rgb,
+    tone,
 )
 
 
@@ -251,6 +252,31 @@ def test_blend_colors_accepts_supported_color_inputs():
         r"^#[0-9a-f]{6}$",
         blend_colors("oklch(0.7 0.1 38)", "#000000", 0.5),
     )
+
+
+# === Tests for tone ===
+def test_tone_lightens_and_darkens_color():
+    assert tone("#808080", 0.25) == "#a0a0a0"
+    assert tone("#808080", -0.25) == "#606060"
+
+
+def test_tone_constrains_amount():
+    assert tone("#123456", 2) == "#ffffff"
+    assert tone("#123456", -2) == "#000000"
+
+
+def test_tone_preserves_alpha():
+    assert tone((128, 64, 32, 0.5), 0.5) == "rgba(192, 160, 144, 0.5)"
+
+
+def test_tone_accepts_theme_oklch_color():
+    result = tone(Theme().red, -0.2)
+
+    assert re.match(r"^#[0-9a-f]{6}$", result)
+
+
+def test_tone_invalid():
+    assert tone("invalid", 0.2) == "#000000"
 
 
 # === Tests for random_color ===

@@ -109,6 +109,7 @@ rgb_to_hex(rgb: tuple[int, int, int]) -> str
 color2rgba(c: ColorInput, alpha: float = 1) -> str
 blend_colors(color1: ColorInput, color2: ColorInput, proportion: float) -> str
 blend(color1: ColorInput, color2: ColorInput, proportion: float) -> str
+tone(color: ColorInput, amount: float) -> str
 random_color() -> str
 generate_colors(base_color: str, n: int = 10) -> list[str]
 ```
@@ -160,6 +161,23 @@ assert dp.blend("invalid", "#abcdef", 0.5) == "#000000"
 ```
 
 `blend` remains available as the shorter legacy name.
+
+### `tone`
+
+::version-badge{version="2.2.0"}
+::
+
+Lightens or darkens a supported color. Positive amounts blend toward white,
+negative amounts blend toward black, and values outside `[-1, 1]` are
+constrained. Alpha is preserved.
+
+```python
+assert dp.tone("#808080", 0.25) == "#a0a0a0"
+assert dp.tone("#808080", -0.25) == "#606060"
+
+theme = dp.Theme()
+dark_red = dp.tone(theme.red, -0.2)
+```
 
 ### `random_color`
 

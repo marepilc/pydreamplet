@@ -1,6 +1,6 @@
 [project]
 name = "pydreamplet"
-version = "2.1.4"
+version = "2.2.0"
 description = "A typed Python library for creating SVG graphics, data visualizations, charts, maps, and generative art."
 authors = [{ name = "Marek Pilczuk", email = "user@mp76.pl" }]
 license = "MIT"

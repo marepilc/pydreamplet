@@ -51,3 +51,4 @@ def test_color_helpers_are_exported_from_top_level():
     assert dp.blend is colors.blend
     assert dp.random_color is colors.random_color
     assert dp.generate_colors is colors.generate_colors
+    assert dp.tone is colors.tone

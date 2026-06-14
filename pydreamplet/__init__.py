@@ -82,6 +82,7 @@ from pydreamplet.colors import (
     hex_to_rgb,
     random_color,
     rgb_to_hex,
+    tone,
 )
 from pydreamplet.scales import (
     BandScale,
@@ -211,5 +212,6 @@ __all__ = [
     "superellipse",
     "symbol_generator",
     "tangent_at_length",
+    "tone",
     "wave_points",
 ]

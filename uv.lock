@@ -449,7 +449,7 @@ wheels = [
 
 [[package]]
 name = "pydreamplet"
-version = "2.1.4"
+version = "2.2.0"
 source = { editable = "." }
 dependencies = [
     { name = "fonttools" },
