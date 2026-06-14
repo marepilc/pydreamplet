@@ -16,7 +16,7 @@ only inside the columns.
 The visual treatment was inspired by one of the charts published by Visual
 Capitalist.
 
-::svg-preview{src="/showcase/combo_chart_light.svg" alt="Apple annual revenue columns combined with a monthly stock price line from 2014 through 2025."}
+::svg-preview{src="/showcase/combo_chart_light.svg" dark-src="/showcase/combo_chart_dark.svg" alt="Apple annual revenue columns combined with a monthly stock price line from 2014 through 2025."}
 ::
 
 ## What You Will Learn
