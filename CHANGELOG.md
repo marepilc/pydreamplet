@@ -3,6 +3,13 @@
 All notable changes for pyDreamplet 2.x are tracked here while the `version-2`
 branch is in progress.
 
+## 2.2.0
+
+### Added
+
+- Added `tone()` for lightening or darkening supported colors while preserving
+  alpha.
+
 ## 2.1.4
 
 ### Fixed

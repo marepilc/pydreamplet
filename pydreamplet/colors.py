@@ -541,6 +541,33 @@ def blend_color(color1: ColorInput, color2: ColorInput, proportion: float) -> st
     return blend_colors(color1, color2, proportion)
 
 
+def tone(color: ColorInput, amount: float) -> str:
+    """
+    Lightens or darkens a supported color while preserving its alpha.
+
+    Positive amounts blend toward white and negative amounts blend toward
+    black. The amount is constrained to the range [-1, 1].
+    """
+    amount = constrain(amount, -1, 1)
+
+    try:
+        r, g, b, alpha = color_to_rgba(color)
+    except ValueError:
+        return "#000000"
+
+    target = 255 if amount > 0 else 0
+    proportion = abs(amount)
+    toned = (
+        math_round((1 - proportion) * r + proportion * target),
+        math_round((1 - proportion) * g + proportion * target),
+        math_round((1 - proportion) * b + proportion * target),
+    )
+
+    if alpha >= 1:
+        return rgb_to_hex(toned)
+    return f"rgba({toned[0]}, {toned[1]}, {toned[2]}, {_format_alpha(alpha)})"
+
+
 def random_color():
     """
     Generates a random hex color string.
