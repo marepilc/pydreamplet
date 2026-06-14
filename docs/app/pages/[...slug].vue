@@ -59,6 +59,10 @@ const navigation = [
         path: '/tutorials/polar-noise'
       },
       {
+        title: 'Revenue and stock price',
+        path: '/tutorials/combo-chart'
+      },
+      {
         title: 'Waffle chart',
         path: '/tutorials/waffle-chart'
       }

@@ -98,6 +98,17 @@ const projects = [
     categoryLabel: 'Data visualization',
     tags: ['scales', 'markers', 'lines'],
     sourceDirectory: 'line_chart'
+  },
+  {
+    title: 'Apple revenue and stock price',
+    description: 'A combination chart comparing annual revenue bars with a stock price area series across two value scales.',
+    image: '/showcase/combo_chart_light.svg',
+    darkImage: '/showcase/combo_chart_dark.svg',
+    alt: 'Apple revenue and stock price combination chart made with pyDreamplet',
+    category: 'data-visualization',
+    categoryLabel: 'Data visualization',
+    tags: ['bars', 'area chart', 'dual axis'],
+    sourceDirectory: 'combo_chart'
   }
 ]
 

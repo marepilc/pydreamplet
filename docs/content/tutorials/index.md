@@ -24,6 +24,8 @@ updated for the current API and type behavior.
   generated data, markers, labels, and grid lines.
 - [Polar noise](/tutorials/polar-noise) creates layered animated contours from
   polar vectors, simplex noise, generated colors, and SVG path morphing.
+- [Revenue and stock price](/tutorials/combo-chart) combines annual revenue
+  columns with a monthly stock price curve, dual axes, gradients, and clipping.
 - [Waffle chart](/tutorials/waffle-chart) turns proportional data into a compact
   10 by 10 square chart.
 
