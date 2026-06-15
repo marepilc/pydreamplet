@@ -20,9 +20,12 @@ def test_last_precedence():
 
 
 def test_none_precedence():
-    # With no precedence, both endpoints are included by default.
+    # With no precedence, both endpoints are included and every gap is equal.
     my_list = list(range(12))
-    assert sample_uniform(my_list, n=4) == (0, 4, 7, 11)
+    assert sample_uniform(my_list, n=4) == (0, 11)
+
+    my_list = list(range(11))
+    assert sample_uniform(my_list, n=4) == (0, 5, 10)
 
 
 def test_none_precedence_treats_n_as_maximum():

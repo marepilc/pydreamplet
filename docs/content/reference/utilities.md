@@ -164,9 +164,11 @@ sample_uniform(
 ```
 
 Returns evenly spaced indices. By default, the first and last indices are
-included, and `n` is the maximum number of indices returned. If `n` is greater
-than the input length, every index is returned. With `n=1`, the default mode
-returns the first index.
+included, every adjacent index gap is equal, and `n` is the maximum number of
+indices returned. The result can contain fewer than `n` indices when an equal
+integer gap is not possible with `n` indices. If `n` is greater than the input
+length, every index is returned. With `n=1`, the default mode returns the first
+index.
 
 `precedence="first"` and `"last"` retain the anchored sampling behavior.
 

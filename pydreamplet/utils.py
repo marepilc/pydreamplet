@@ -178,8 +178,13 @@ def sample_uniform(
         if count == L:
             return tuple(range(L))
 
-        uniform_step = (L - 1) / (count - 1)
-        return tuple(round(i * uniform_step) for i in range(count))
+        span = L - 1
+        interval_count = count - 1
+        while span % interval_count:
+            interval_count -= 1
+
+        step = span // interval_count
+        return tuple(i * step for i in range(interval_count + 1))
 
 
 def create_pool(
