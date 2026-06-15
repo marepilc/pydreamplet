@@ -3,6 +3,13 @@
 All notable changes for pyDreamplet 2.x are tracked here while the `version-2`
 branch is in progress.
 
+## 2.2.1
+
+### Fixed
+
+- `sample_uniform()` with no precedence now returns indices with equal gaps
+  while continuing to include the first and last elements.
+
 ## 2.2.0
 
 ### Added
