@@ -153,25 +153,25 @@ const showcaseSlides = [
 
 const featuredGallery = [
   {
-    title: 'Supplier performance',
+    title: 'Alice word cloud',
     category: 'Data visualization',
-    image: '/showcase/supplier_performance_chart_light.svg',
-    darkImage: '/showcase/supplier_performance_chart_dark.svg',
-    alt: 'Supplier performance chart made with pyDreamplet'
+    image: '/showcase/alice_word_cloud_light.svg',
+    darkImage: '/showcase/alice_word_cloud_dark.svg',
+    alt: 'Alice in Wonderland word cloud made with pyDreamplet'
   },
   {
-    title: 'Polar noise',
-    category: 'Generative art',
-    image: '/showcase/polar_noise.svg',
-    darkImage: '/showcase/polar_noise.svg',
-    alt: 'Polar noise generative artwork made with pyDreamplet'
+    title: 'Apple revenue and stock price',
+    category: 'Data visualization',
+    image: '/showcase/combo_chart_light.svg',
+    darkImage: '/showcase/combo_chart_dark.svg',
+    alt: 'Apple revenue and stock price combination chart made with pyDreamplet'
   },
   {
-    title: 'Dancing circles',
-    category: 'Animation',
-    image: '/showcase/dancing_circles_light.svg',
-    darkImage: '/showcase/dancing_circles_dark.svg',
-    alt: 'Dancing circles animation made with pyDreamplet'
+    title: 'Multi-series line chart',
+    category: 'Data visualization',
+    image: '/showcase/line_chart_light.svg',
+    darkImage: '/showcase/line_chart_dark.svg',
+    alt: 'Multi-series line chart made with pyDreamplet'
   }
 ]
 

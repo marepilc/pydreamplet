@@ -21,6 +21,7 @@
     "@iconify-json/lucide": "1.2.112"
   },
   "overrides": {
-    "esbuild": "0.28.1"
+    "esbuild": "0.28.1",
+    "ws": "8.21.0"
   }
 }
