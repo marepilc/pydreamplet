@@ -54,4 +54,5 @@ uv run ruff check .
 
 Pushing changes under `docs/` to `master` deploys the documentation to the VPS
 (`.github/workflows/deploy-docs.yml`). Library releases are published to PyPI
-separately.
+by pushing a `vX.Y.Z` tag matching the `pyproject.toml` version
+(`.github/workflows/publish.yml`, Trusted Publishing).
