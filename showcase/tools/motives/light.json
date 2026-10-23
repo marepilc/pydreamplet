@@ -1,0 +1,39 @@
+{
+  "font": {
+    "fontFamily": "'Proza Libre', sans-serif",
+    "fontSize": 14,
+    "fontWeight": 400,
+    "lineHeight": 1.5
+  },
+  "colors": {
+    "inherit": "inherit",
+    "current": "currentColor",
+    "transparent": "transparent",
+    "black": "#000000",
+    "white": "#ffffff",
+    "slate": "#314158",
+    "gray": "#364153",
+    "zinc": "#3f3f46",
+    "neutral": "#404040",
+    "stone": "#44403b",
+    "red": "#c10007",
+    "orange": "#ca3500",
+    "amber": "#bb4d00",
+    "yellow": "#a65f00",
+    "lime": "#497d00",
+    "green": "#008236",
+    "emerald": "#007a55",
+    "teal": "#00786f",
+    "cyan": "#007595",
+    "sky": "#0069a8",
+    "blue": "#1447e6",
+    "indigo": "#432dd7",
+    "violet": "#6e11b0",
+    "purple": "#8200db",
+    "fuchsia": "#c800de",
+    "pink": "#c6005c",
+    "rose": "#c70036",
+    "ink": "#18181b",
+    "surface": "#e4e4e7"
+  }
+}

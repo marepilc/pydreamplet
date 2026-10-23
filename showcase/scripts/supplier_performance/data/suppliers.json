@@ -1,0 +1,974 @@
+[
+  {
+    "supplierName": "CircuitSmith Fabrications",
+    "category": "EMS/PCB",
+    "qn": 8,
+    "ppm": 272,
+    "qty": 181298,
+    "spend": 113730,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "TechTrak PCB Solutions",
+    "category": "EMS/PCB",
+    "qn": 25,
+    "ppm": 185,
+    "qty": 119278,
+    "spend": 577151,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "EverCore Electronic Assembly",
+    "category": "EMS/PCB",
+    "qn": 6,
+    "ppm": 342,
+    "qty": 61369,
+    "spend": 321197,
+    "segmentation": 1
+  },
+  {
+    "supplierName": "PrimeWave EMS",
+    "category": "EMS/PCB",
+    "qn": 11,
+    "ppm": 5636,
+    "qty": 230365,
+    "spend": 224159,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "AeroLink Circuitry",
+    "category": "EMS/PCB",
+    "qn": 1,
+    "ppm": 1151,
+    "qty": 287753,
+    "spend": 607087,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "MicroMasters Manufacturing",
+    "category": "EMS/PCB",
+    "qn": 9,
+    "ppm": 2831,
+    "qty": 106788,
+    "spend": 522326,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "NovaFlex PCB Services",
+    "category": "EMS/PCB",
+    "qn": 25,
+    "ppm": 72,
+    "qty": 18553,
+    "spend": 922594,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "ProTechno Board Assembly",
+    "category": "EMS/PCB",
+    "qn": 26,
+    "ppm": 1240,
+    "qty": 286299,
+    "spend": 359447,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "ArcDynamics",
+    "category": "Electromechanics",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 12289,
+    "spend": 592182,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "TorquePulse",
+    "category": "Electromechanics",
+    "qn": 3,
+    "ppm": 243,
+    "qty": 274615,
+    "spend": 618066,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "VoltEdge Systems",
+    "category": "Electromechanics",
+    "qn": 5,
+    "ppm": 381,
+    "qty": 257816,
+    "spend": 386609,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "ElectroCore Industries",
+    "category": "Electromechanics",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 203803,
+    "spend": 712417,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "GearingX Solutions",
+    "category": "Electromechanics",
+    "qn": 22,
+    "ppm": 410,
+    "qty": 25241,
+    "spend": 368071,
+    "segmentation": 0
+  },
+  {
+    "supplierName": "MechWave Innovations",
+    "category": "Electromechanics",
+    "qn": 4,
+    "ppm": 385,
+    "qty": 98070,
+    "spend": 190176,
+    "segmentation": 1
+  },
+  {
+    "supplierName": "PowerMates International",
+    "category": "Electromechanics",
+    "qn": 19,
+    "ppm": 74,
+    "qty": 121731,
+    "spend": 644681,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "NovaDrive Technologies",
+    "category": "Electromechanics",
+    "qn": 26,
+    "ppm": 1023,
+    "qty": 232545,
+    "spend": 832976,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "AlloyLift Systems",
+    "category": "Electromechanics",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 285860,
+    "spend": 481920,
+    "segmentation": 1
+  },
+  {
+    "supplierName": "EMF Fusion",
+    "category": "Electromechanics",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 239285,
+    "spend": 321065,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "OmniMotion Tech",
+    "category": "Electromechanics",
+    "qn": 10,
+    "ppm": 1224,
+    "qty": 36180,
+    "spend": 895261,
+    "segmentation": 1
+  },
+  {
+    "supplierName": "ZenoGear Engineering",
+    "category": "Electromechanics",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 69620,
+    "spend": 958883,
+    "segmentation": 0
+  },
+  {
+    "supplierName": "AeroVolt Solutions",
+    "category": "Electromechanics",
+    "qn": 54,
+    "ppm": 244,
+    "qty": 217709,
+    "spend": 123988,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "OptimaTorque Industries",
+    "category": "Electromechanics",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 252475,
+    "spend": 426620,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "TeraMoto Co.",
+    "category": "Electromechanics",
+    "qn": 1,
+    "ppm": 219,
+    "qty": 275251,
+    "spend": 105863,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "MechXion",
+    "category": "Electromechanics",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 296059,
+    "spend": 294026,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "SonicVibe Mechanicals",
+    "category": "Electromechanics",
+    "qn": 56,
+    "ppm": 353,
+    "qty": 135640,
+    "spend": 427187,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "DynamoWorks",
+    "category": "Electromechanics",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 31370,
+    "spend": 172816,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "ElectroLink Global",
+    "category": "Electromechanics",
+    "qn": 8,
+    "ppm": 58,
+    "qty": 151760,
+    "spend": 644533,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "SurgeTech Manufacturing",
+    "category": "Electromechanics",
+    "qn": 2,
+    "ppm": 415,
+    "qty": 130023,
+    "spend": 981092,
+    "segmentation": 1
+  },
+  {
+    "supplierName": "Axilift Automation",
+    "category": "Electromechanics",
+    "qn": 9,
+    "ppm": 1101,
+    "qty": 168782,
+    "spend": 910568,
+    "segmentation": 1
+  },
+  {
+    "supplierName": "ApexCircuit Dynamics",
+    "category": "Electromechanics",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 207391,
+    "spend": 189418,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "GearNova Engineering",
+    "category": "Electromechanics",
+    "qn": 6,
+    "ppm": 2847,
+    "qty": 294981,
+    "spend": 944860,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "MagnaFlow Tech",
+    "category": "Electromechanics",
+    "qn": 27,
+    "ppm": 394,
+    "qty": 15788,
+    "spend": 864965,
+    "segmentation": 0
+  },
+  {
+    "supplierName": "VectorVoltage",
+    "category": "Electromechanics",
+    "qn": 10,
+    "ppm": 172,
+    "qty": 189400,
+    "spend": 902291,
+    "segmentation": 1
+  },
+  {
+    "supplierName": "TektonDrive Systems",
+    "category": "Electromechanics",
+    "qn": 24,
+    "ppm": 230,
+    "qty": 14473,
+    "spend": 408274,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "FissionMotion",
+    "category": "Electromechanics",
+    "qn": 3,
+    "ppm": 113,
+    "qty": 119195,
+    "spend": 788458,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "GravityGear Solutions",
+    "category": "Electromechanics",
+    "qn": 4,
+    "ppm": 559,
+    "qty": 277415,
+    "spend": 347975,
+    "segmentation": 1
+  },
+  {
+    "supplierName": "HelixSpark Mechanics",
+    "category": "Electromechanics",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 226651,
+    "spend": 185783,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "EquinoxTorque",
+    "category": "Electromechanics",
+    "qn": 24,
+    "ppm": 489,
+    "qty": 26203,
+    "spend": 239506,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "ProtoDrive Industries",
+    "category": "Electromechanics",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 79821,
+    "spend": 318338,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "AeroNexus Tech",
+    "category": "Electromechanics",
+    "qn": 28,
+    "ppm": 4879,
+    "qty": 263858,
+    "spend": 264550,
+    "segmentation": 1
+  },
+  {
+    "supplierName": "Electronova Solutions",
+    "category": "Electromechanics",
+    "qn": 61,
+    "ppm": 205,
+    "qty": 38134,
+    "spend": 707218,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "GearCore Global",
+    "category": "Electromechanics",
+    "qn": 21,
+    "ppm": 126,
+    "qty": 102819,
+    "spend": 764649,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "InnoMotion Systems",
+    "category": "Electromechanics",
+    "qn": 21,
+    "ppm": 459,
+    "qty": 107152,
+    "spend": 242625,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "ElectroQuantum",
+    "category": "Electromechanics",
+    "qn": 18,
+    "ppm": 279,
+    "qty": 118650,
+    "spend": 257982,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "TorqueForge Dynamics",
+    "category": "Electromechanics",
+    "qn": 23,
+    "ppm": 289,
+    "qty": 139182,
+    "spend": 921625,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "Vibranix Innovations",
+    "category": "Electromechanics",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 232585,
+    "spend": 611622,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "ApexDrive Mechanicals",
+    "category": "Electromechanics",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 32113,
+    "spend": 115547,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "KinetiFlow",
+    "category": "Electromechanics",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 40003,
+    "spend": 539927,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "MechNova Solutions",
+    "category": "Electromechanics",
+    "qn": 27,
+    "ppm": 429,
+    "qty": 299848,
+    "spend": 770544,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "BioCircuitry Tech",
+    "category": "Electromechanics",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 160592,
+    "spend": 718956,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "ArcLight Mechanicals",
+    "category": "Electromechanics",
+    "qn": 11,
+    "ppm": 372,
+    "qty": 146407,
+    "spend": 369070,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "PowerStride Systems",
+    "category": "Electromechanics",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 146352,
+    "spend": 764082,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "AlloyMeld Foundry",
+    "category": "Metals and Non-Iron Casting",
+    "qn": 12,
+    "ppm": 272,
+    "qty": 97167,
+    "spend": 754142,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "TerraCast Metals",
+    "category": "Metals and Non-Iron Casting",
+    "qn": 1,
+    "ppm": 936,
+    "qty": 29855,
+    "spend": 932536,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "CopperEdge Casting",
+    "category": "Metals and Non-Iron Casting",
+    "qn": 16,
+    "ppm": 1140,
+    "qty": 259782,
+    "spend": 495343,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "MeridianAlloy Foundry",
+    "category": "Metals and Non-Iron Casting",
+    "qn": 27,
+    "ppm": 201,
+    "qty": 61208,
+    "spend": 232964,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "BrassWorks Innovations",
+    "category": "Metals and Non-Iron Casting",
+    "qn": 28,
+    "ppm": 354,
+    "qty": 54676,
+    "spend": 994714,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "AluFusion Foundry",
+    "category": "Metals and Non-Iron Casting",
+    "qn": 18,
+    "ppm": 499,
+    "qty": 137449,
+    "spend": 571811,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "Galvanex Casting",
+    "category": "Metals and Non-Iron Casting",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 217934,
+    "spend": 637769,
+    "segmentation": 0
+  },
+  {
+    "supplierName": "CobaltFlow Foundry",
+    "category": "Metals and Non-Iron Casting",
+    "qn": 24,
+    "ppm": 237,
+    "qty": 80886,
+    "spend": 575181,
+    "segmentation": 1
+  },
+  {
+    "supplierName": "Argo Casting Solutions",
+    "category": "Metals and Non-Iron Casting",
+    "qn": 14,
+    "ppm": 53,
+    "qty": 34949,
+    "spend": 875790,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "MeltCore Non-Ferrous",
+    "category": "Metals and Non-Iron Casting",
+    "qn": 3,
+    "ppm": 430,
+    "qty": 140470,
+    "spend": 131782,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "NovaAlloy Foundry",
+    "category": "Metals and Non-Iron Casting",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 282804,
+    "spend": 585894,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "ElectraCast Solutions",
+    "category": "Metals and Non-Iron Casting",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 222263,
+    "spend": 259296,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "ValiantMetals Foundry",
+    "category": "Metals and Non-Iron Casting",
+    "qn": 9,
+    "ppm": 76,
+    "qty": 96259,
+    "spend": 853724,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "Zenith Alloy Industries",
+    "category": "Metals and Non-Iron Casting",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 262219,
+    "spend": 582524,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "MoltenMidas Casting",
+    "category": "Metals and Non-Iron Casting",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 236329,
+    "spend": 326247,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "PressTek Industries",
+    "category": "Pressed Parts",
+    "qn": 18,
+    "ppm": 381,
+    "qty": 16011,
+    "spend": 837065,
+    "segmentation": 0
+  },
+  {
+    "supplierName": "MetalForm Solutions",
+    "category": "Pressed Parts",
+    "qn": 4,
+    "ppm": 330,
+    "qty": 27419,
+    "spend": 136551,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "PressEdge Manufacturing",
+    "category": "Pressed Parts",
+    "qn": 14,
+    "ppm": 465,
+    "qty": 17245,
+    "spend": 836767,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "StampaPress Innovations",
+    "category": "Pressed Parts",
+    "qn": 6,
+    "ppm": 200,
+    "qty": 212888,
+    "spend": 935220,
+    "segmentation": 1
+  },
+  {
+    "supplierName": "PressForm Tech",
+    "category": "Pressed Parts",
+    "qn": 6,
+    "ppm": 4417,
+    "qty": 186934,
+    "spend": 677458,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "MetroPress Engineering",
+    "category": "Pressed Parts",
+    "qn": 11,
+    "ppm": 356,
+    "qty": 124394,
+    "spend": 185595,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "OmniStamp Solutions",
+    "category": "Pressed Parts",
+    "qn": 12,
+    "ppm": 177,
+    "qty": 71034,
+    "spend": 761551,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "FormX Pressed Parts",
+    "category": "Pressed Parts",
+    "qn": 22,
+    "ppm": 343,
+    "qty": 260539,
+    "spend": 664790,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "PressXtra Innovations",
+    "category": "Pressed Parts",
+    "qn": 54,
+    "ppm": 432,
+    "qty": 159912,
+    "spend": 759362,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "PressMate Manufacturing",
+    "category": "Pressed Parts",
+    "qn": 27,
+    "ppm": 3456,
+    "qty": 272758,
+    "spend": 817290,
+    "segmentation": 0
+  },
+  {
+    "supplierName": "TurnForge Solutions",
+    "category": "Turned and Hot Stamped",
+    "qn": 10,
+    "ppm": 332,
+    "qty": 7526,
+    "spend": 428046,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "HeatStamp Machining",
+    "category": "Turned and Hot Stamped",
+    "qn": 15,
+    "ppm": 316,
+    "qty": 243503,
+    "spend": 162996,
+    "segmentation": 1
+  },
+  {
+    "supplierName": "Rotex Precision",
+    "category": "Turned and Hot Stamped",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 59805,
+    "spend": 854921,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "ApexTurn Industries",
+    "category": "Turned and Hot Stamped",
+    "qn": 7,
+    "ppm": 5275,
+    "qty": 291706,
+    "spend": 218994,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "HotForm Machining",
+    "category": "Turned and Hot Stamped",
+    "qn": 21,
+    "ppm": 131,
+    "qty": 195281,
+    "spend": 341606,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "ForgeCraft Turned Parts",
+    "category": "Turned and Hot Stamped",
+    "qn": 8,
+    "ppm": 499,
+    "qty": 298810,
+    "spend": 367538,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "HelixStamp Mechanics",
+    "category": "Turned and Hot Stamped",
+    "qn": 16,
+    "ppm": 7881,
+    "qty": 295566,
+    "spend": 87343,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "TurnEdge Innovations",
+    "category": "Turned and Hot Stamped",
+    "qn": 3,
+    "ppm": 362,
+    "qty": 87359,
+    "spend": 804067,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "SolaStamp Hot Parts",
+    "category": "Turned and Hot Stamped",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 148876,
+    "spend": 66711,
+    "segmentation": 0
+  },
+  {
+    "supplierName": "MachiFlow Turned & Stamped",
+    "category": "Turned and Hot Stamped",
+    "qn": 17,
+    "ppm": 1844,
+    "qty": 169091,
+    "spend": 454733,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "VertexTurn Solutions",
+    "category": "Turned and Hot Stamped",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 86450,
+    "spend": 62719,
+    "segmentation": 1
+  },
+  {
+    "supplierName": "PressaForge",
+    "category": "Turned and Hot Stamped",
+    "qn": 1,
+    "ppm": 161,
+    "qty": 175880,
+    "spend": 395487,
+    "segmentation": 1
+  },
+  {
+    "supplierName": "QuadroStamp",
+    "category": "Turned and Hot Stamped",
+    "qn": 10,
+    "ppm": 1197,
+    "qty": 204951,
+    "spend": 544416,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "OmniTurn Engineering",
+    "category": "Turned and Hot Stamped",
+    "qn": 4,
+    "ppm": 117,
+    "qty": 296537,
+    "spend": 675230,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "HeatForm Tech",
+    "category": "Turned and Hot Stamped",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 215543,
+    "spend": 957897,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "NeoStamp Machining",
+    "category": "Turned and Hot Stamped",
+    "qn": 11,
+    "ppm": 106,
+    "qty": 179086,
+    "spend": 329582,
+    "segmentation": 1
+  },
+  {
+    "supplierName": "AxialForge",
+    "category": "Turned and Hot Stamped",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 43736,
+    "spend": 667222,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "TurnoNova Solutions",
+    "category": "Turned and Hot Stamped",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 41142,
+    "spend": 209630,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "StampAxion",
+    "category": "Turned and Hot Stamped",
+    "qn": 3,
+    "ppm": 693,
+    "qty": 4786,
+    "spend": 618883,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "MetroTurn Industries",
+    "category": "Turned and Hot Stamped",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 88962,
+    "spend": 833482,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "RapidForge Machining",
+    "category": "Turned and Hot Stamped",
+    "qn": 27,
+    "ppm": 326,
+    "qty": 173287,
+    "spend": 816384,
+    "segmentation": 2
+  },
+  {
+    "supplierName": "ThermalStamp",
+    "category": "Turned and Hot Stamped",
+    "qn": 18,
+    "ppm": 106,
+    "qty": 184584,
+    "spend": 224379,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "ProTurn Hot Parts",
+    "category": "Turned and Hot Stamped",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 166000,
+    "spend": 516772,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "DynamicStamp Innovations",
+    "category": "Turned and Hot Stamped",
+    "qn": 27,
+    "ppm": 492,
+    "qty": 233200,
+    "spend": 716618,
+    "segmentation": 1
+  },
+  {
+    "supplierName": "ForgeLine Turned Solutions",
+    "category": "Turned and Hot Stamped",
+    "qn": 1,
+    "ppm": 162,
+    "qty": 119940,
+    "spend": 443952,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "RevoTurn Tech",
+    "category": "Turned and Hot Stamped",
+    "qn": 84,
+    "ppm": 447,
+    "qty": 260845,
+    "spend": 585120,
+    "segmentation": 1
+  },
+  {
+    "supplierName": "SummitStamp",
+    "category": "Turned and Hot Stamped",
+    "qn": 0,
+    "ppm": 0,
+    "qty": 197918,
+    "spend": 193920,
+    "segmentation": 1
+  },
+  {
+    "supplierName": "CaliberForge",
+    "category": "Turned and Hot Stamped",
+    "qn": 1,
+    "ppm": 103,
+    "qty": 26593,
+    "spend": 720741,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "TurnXpress",
+    "category": "Turned and Hot Stamped",
+    "qn": 16,
+    "ppm": 243,
+    "qty": 200128,
+    "spend": 885232,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "InnoStamp",
+    "category": "Turned and Hot Stamped",
+    "qn": 7,
+    "ppm": 313,
+    "qty": 184414,
+    "spend": 197796,
+    "segmentation": 3
+  },
+  {
+    "supplierName": "ProHeatMach",
+    "category": "Turned and Hot Stamped",
+    "qn": 4,
+    "ppm": 26,
+    "qty": 226072,
+    "spend": 946870,
+    "segmentation": 3
+  }
+]
