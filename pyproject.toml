@@ -60,6 +60,7 @@ exclude = [
     "/docs/dist/**",
     "/docs/node_modules/**",
     "/docs/*.log",
+    "/showcase/**",
 ]
 
 [tool.hatch.build.targets.wheel.force-include]

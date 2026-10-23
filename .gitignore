@@ -6,8 +6,10 @@ __pycache__
 *.svg
 !pydreamplet/resources/*.svg
 !docs/**/*.svg
+!showcase/scripts/**/*.svg
 dist
 data
+!showcase/scripts/*/data/
 site
 docs/public/robots.txt
 docs/public/sitemap.xml

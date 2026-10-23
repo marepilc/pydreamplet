@@ -1,7 +1,9 @@
 # pydreamplet-showcase
 
-A collection of SVG examples created with
-[pydreamplet](https://github.com/marepilc/pydreamplet).
+A collection of SVG examples created with pydreamplet. It runs against the
+library in this repository (`..`), not the PyPI release, so every example
+reflects the current code. Run the commands below from the `showcase/`
+directory.
 
 ## Project Layout
 

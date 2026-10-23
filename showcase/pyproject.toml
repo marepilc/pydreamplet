@@ -22,3 +22,7 @@ packages = ["tools"]
 dev = [
     "ruff>=0.15.16",
 ]
+
+# Use the library from this repository so showcases always run against the current code
+[tool.uv.sources]
+pydreamplet = { path = "..", editable = true }
