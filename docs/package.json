@@ -10,18 +10,18 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
-    "@nuxt/content": "3.14.0",
-    "@nuxt/ui": "4.8.2",
-    "nuxt": "4.4.8",
-    "tailwindcss": "4.3.1",
-    "vue": "3.5.38",
-    "vue-router": "5.1.0"
+    "@nuxt/content": "3.16.2",
+    "@nuxt/ui": "4.12.0",
+    "nuxt": "4.6.2",
+    "tailwindcss": "4.3.3",
+    "vue": "3.5.44",
+    "vue-router": "5.4.0"
   },
   "devDependencies": {
     "@iconify-json/lucide": "1.2.112"
   },
   "overrides": {
-    "esbuild": "0.28.1",
-    "ws": "8.21.0"
+    "esbuild": "0.28.2",
+    "ws": "8.22.0"
   }
 }
